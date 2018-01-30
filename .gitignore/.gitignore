@@ -1,7 +1,0 @@
-.project
-.classpath
-.settings/
-.idea/
-.idea/.*
-**DS_Store**
-README.MD
