@@ -1,8 +1,11 @@
+/*
+* @author KaySaith
+* @date 2018-01-30
+*/
+
 let instance
 
-/**
- * 音效管理
- */
+
 export default class Music {
   constructor() {
     if (instance)
@@ -10,15 +13,15 @@ export default class Music {
 
     instance = this
 
-    this.bgmAudio = wx.createInnerAudioContext()
-    this.bgmAudio.loop = true
-    this.bgmAudio.src = 'audio/bgm.mp3'
+    this.backgroundMusic = wx.createInnerAudioContext()
+    this.backgroundMusic.loop = true
+    this.backgroundMusic.src = 'audio/bgm.mp3'
 
-    this.playBgm()
+    this.playBackgroundMusic()
   }
 
-  playBgm() {
-    this.bgmAudio.play()
+  playBackgroundMusic() {
+    this.backgroundMusic.play()
   }
 
 }
