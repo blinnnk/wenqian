@@ -1,3 +1,8 @@
+/*
+* @author KaySaith
+* @date 2018-01-30
+*/
+
 let canvas = wx.createCanvas()
 // 两倍视图解决 retina 的文字清晰度问题
 canvas.width = canvas.width * 2
@@ -13,9 +18,8 @@ let titleColor = '#6f6351'
 let context = canvas.getContext('2d')
 let logoContext = canvas.getContext('2d')
 
-/**
- * 游戏主函数
- */
+// 界面主函数
+
 export default class Main {
   constructor() {
     this.initLogo(0)
