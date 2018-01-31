@@ -2,51 +2,44 @@
 * @author KaySaith
 * @date 2018-01-31
 */
+import CustomImage from '../util/customImage'
 
 let titleColor = '#6f6351'
+let logoSize = 300
 
 export default class HomeLogoView {
-  constructor(canvas, screenSize) {
-    this.initLogo(canvas, screenSize)
+  constructor(screenSize, context) {
+
+    this.initLogo(screenSize, context)
   }
 
-  initLogo(canvas, screenSize) {
-    let context = canvas.getContext('2d')
-    let logoContext = canvas.getContext('2d')
+  initLogo(screenSize, context) {
 
-    let logoImage = wx.createImage()
-    let logoSize = 300
-    let logoLeft = (screenSize.width - logoSize) / 2
-    let logoTop = (screenSize.height - logoSize) / 2 - 100
-
-    logoImage.src = 'sources/image/wenqianLogo.png'
-
-    logoImage.onload = function () {
-      logoContext.clearRect(0, 0, screenSize.width, logoSize)
-      drawBackground()
-      logoContext.drawImage(
-        logoImage,
-        logoLeft,
-        logoTop,
-        logoSize,
-        logoSize
-      )
-      drawDescriptionText()
+    drawBackground()
+    
+    let rect = {
+      left: (screenSize.width - logoSize) / 2,
+      top: (screenSize.height - logoSize) / 2 - 100,
+      width: logoSize,
+      height: logoSize
     }
+    new CustomImage(context, rect).drawLogo()
 
+    drawDescriptionText()
+    
     function drawDescriptionText() {
-      logoContext.fillStyle = titleColor
-      logoContext.font = '24px avenir'
-      logoContext.textBaseline = 'middle'
-      logoContext.textAlign = 'center'
-      logoContext.fillText(
+      context.fillStyle = titleColor
+      context.font = '24px avenir'
+      context.textBaseline = 'middle'
+      context.textAlign = 'center'
+      context.fillText(
         'they determined that Cloyd had ovarian cysts',
         screenSize.width / 2,
         (screenSize.height + logoSize) / 2 - 50,
         screenSize.width
       )
 
-      logoContext.fillText(
+      context.fillText(
         'gave her pain medications that helped her feel better',
         screenSize.width / 2,
         (screenSize.height + logoSize) / 2 - 50 + 36,
