@@ -8,6 +8,7 @@ import LogoView from '../../common/homeLogoView'
 import CustomImage from '../../util/customImage'
 
 let redDotSize = 30
+let branchSize = 480
 
 export default class Main {
   constructor(canvas, screenSize) {
@@ -17,9 +18,9 @@ export default class Main {
     this.watchHistoryButton = new Button(canvas).initDestinyButton()
 
     this.branchRect = {
-      width: 480,
-      height: 480,
-      left: screenSize.width - 480,
+      width: branchSize,
+      height: branchSize,
+      left: screenSize.width - branchSize,
       top: 30
     }
     new CustomImage(this.context, this.branchRect).drawBranch()
