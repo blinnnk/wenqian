@@ -3,7 +3,9 @@
 * @date 2018-01-30
 */
 
-let canvas = wx.createCanvas()
+/*因为引入weapp-adapter.js，所以不需要再次创建canvas @shangqi*/
+// let canvas = wx.createCanvas()
+
 // 两倍视图解决 retina 的文字清晰度问题
 canvas.width = canvas.width * 2
 canvas.height = canvas.height * 2
