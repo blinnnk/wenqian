@@ -5,72 +5,63 @@
 */
 
 export default class PlayGif {
-  constructor() {
+  constructor(canvas) {
     this.timer = null
-    this.addTouchLogo()
+    this.addTouchLogo(canvas)
   }
 
-  //是否循环动画
-  isLoop(isloop){
-    return isloop
-  }
-
-  //绘制并播放动画
-  playFrameAnimation(frameArr, isloop) {
-    let that = this // this赋值
-    var isloop = that.isLoop(isloop) // 是否循环
-    var frameArr = frameArr // 赋值图片列表
-    var frameArrLength = frameArr.length // 获取图片数组长度
+  // 绘制并播放动画 canvas：canvas对象  frameArray：图片数组  isloop：是否循环
+  playFrameAnimation(canvas,frameArray, isloop) {
+    var frameArray = frameArray // 赋值图片列表
+    var frameArrayLength = frameArray.length // 获取图片数组长度
     
-    var serialNumber = 0 // 图片下标序列号
-    let unitNumber = 1 // 递增序列号
-
+    var index = 0 // 图片下标序列号
+    
     setTimeout(function () {
-      let contentText = canvas.getContext('2d')
+      let frameContext = canvas.getContext('2d')
       let image = wx.createImage()
 
-      that.timer = setInterval(function () {
-        image.src = frameArr[serialNumber]
+      this.timer = setInterval(function () {
+        image.src = frameArray[index]
         image.onload = function () {
-          contentText.clearRect(0, 0, 150, 150); // 绘制之前清除画布
-          contentText.drawImage(image, 0, 0, 150, 150) // 绘制图片
+          frameContext.clearRect(0, 0, 150, 150); // 绘制之前清除画布
+          frameContext.drawImage(image, 0, 0, 150, 150) // 绘制图片
         } 
 
-        serialNumber += unitNumber 
+        index += 1 
         
-        //第一次动画播放完毕
-        if (serialNumber == frameArrLength) {
+        // 第一次动画播放完毕
+        if (index == frameArrayLength) {
           if (isloop) {
-            serialNumber = 0
+            index = 0
           }else{
-            clearInterval(that.timer)
+            clearInterval(this.timer)
           }
         }
-      }, 50)
-    },500)
+      }.bind(this), 50)
+    }.bind(this), 500)
   }
-  //停止动画
+
+  // 停止动画
   stopFrameAnimation() {
     clearInterval(this.timer)
   }
-  
-  //监听触发事件
-  addTouchLogo() {
-    var that = this
 
+  // 监听触发事件
+  addTouchLogo(canvas) {
     wx.onTouchStart(function() {
-      var frameArr = []
+      var frameArray = []
       for (var i = 0; i < 19; i++) {
         let frame = 'image/explosion' + (i + 1) + '.png'
-        frameArr.push(frame)
+        frameArray.push(frame)
       }
-      that.playFrameAnimation(frameArr, true)
 
-      //5s后停止
+      this.playFrameAnimation(canvas, frameArray, true)
+
+      // 5s后停止
       setTimeout(function () {
-        that.stopFrameAnimation()
-      }, 5000)
-    })
-
+        this.stopFrameAnimation()
+      }.bind(this), 5000)
+    }.bind(this))
   }
 }

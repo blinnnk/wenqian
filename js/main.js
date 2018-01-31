@@ -3,8 +3,14 @@
 * @date 2018-01-30
 */
 
-/*因为引入weapp-adapter.js，所以不需要再次创建canvas @shangqi*/
-// let canvas = wx.createCanvas()
+/* 引入uikit.js @shangqi */
+import PlayGif from '../js/common/uikit'
+
+
+let canvas = wx.createCanvas()
+
+/* canvas传参 */
+new PlayGif(canvas)
 
 // 两倍视图解决 retina 的文字清晰度问题
 canvas.width = canvas.width * 2
