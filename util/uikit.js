@@ -52,7 +52,7 @@ export default class PlayGif {
     wx.onTouchStart(function() {
       var frameArray = []
       for (var i = 0; i < 19; i++) {
-        let frame = 'image/explosion' + (i + 1) + '.png'
+        let frame = 'sources/image/explosion' + (i + 1) + '.png'
         frameArray.push(frame)
       }
 
