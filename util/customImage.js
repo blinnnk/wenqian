@@ -23,6 +23,10 @@ export default class CustomImage {
     }
   }
 
+  drawImage(src) {
+    this.drawCustomImage(this.context, this.rect, src)
+  }
+
   drawLogo() {
     this.drawCustomImage(this.context, this.rect, 'sources/image/wenqianLogo.png')
   }
@@ -33,5 +37,9 @@ export default class CustomImage {
 
   drawRedDot() {
     this.drawCustomImage(this.context, this.rect, 'sources/image/redDot.png')
+  }
+
+  drawHomeButtonBackground() {
+    this.drawCustomImage(this.context, this.rect, 'sources/image/buttonBackground.png')
   }
 }
