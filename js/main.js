@@ -35,6 +35,7 @@ export default class Main {
   }
 
   initLogo(moveX) { 
+    console.log(11111111)
     let logoImage = wx.createImage()
     let logoSize = 300
     let logoLeft = (ScreenSize.width - logoSize) / 2

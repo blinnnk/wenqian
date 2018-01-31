@@ -11,7 +11,7 @@ export default class PlayGif {
   }
 
   // 绘制并播放动画 canvas：canvas对象  frameArray：图片数组  isloop：是否循环
-  playFrameAnimation(canvas,frameArray, isloop) {
+  playFrameAnimation(canvas, frameArray, isloop) {
     var frameArray = frameArray // 赋值图片列表
     var frameArrayLength = frameArray.length // 获取图片数组长度
     
