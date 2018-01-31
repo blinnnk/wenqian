@@ -3,6 +3,8 @@
 * @date 2018-01-30
 */
 
+import Button from './common/homeButton'
+
 let canvas = wx.createCanvas()
 // 两倍视图解决 retina 的文字清晰度问题
 canvas.width = canvas.width * 2
@@ -22,11 +24,13 @@ let logoContext = canvas.getContext('2d')
 
 export default class Main {
   constructor() {
-    this.initLogo(0)
-    this.addTouchListener()
+    this.initLogo()
+    this.watchHistoryButton = new Button(canvas).initHistoryButton()
+    this.watchHistoryButton = new Button(canvas).initDestinyButton()
   }
 
-  initLogo(moveX) { 
+  initLogo() {
+
     let logoImage = wx.createImage()
     let logoSize = 300
     let logoLeft = (ScreenSize.width - logoSize) / 2
@@ -35,9 +39,15 @@ export default class Main {
     logoImage.src = 'image/wenqianLogo.png'
 
     logoImage.onload = function () {
-      logoContext.clearRect(0, 0, ScreenSize.width, ScreenSize.height)
+      logoContext.clearRect(0, 0, ScreenSize.width, logoSize)
       drawBackground()
-      logoContext.drawImage(logoImage, logoLeft + moveX, logoTop, logoSize, logoSize)
+      logoContext.drawImage(
+        logoImage, 
+        logoLeft, 
+        logoTop, 
+        logoSize, 
+        logoSize
+        )
       drawDescriptionText()
     }
 
@@ -71,25 +81,5 @@ export default class Main {
       context.fillRect(0, 0, ScreenSize.width, ScreenSize.height)
     }
   }
-
-  addTouchListener() {
-    var startX = 0
-    var moveX = 0
-    wx.onTouchStart(function(event) {
-      startX = event.touches[0].clientX
-      console.log(startX)
-    }.bind(this))
-
-    wx.onTouchMove(function (event) {
-      moveX = event.touches[0].clientX - startX
-      this.initLogo(moveX)
-      console.log(event.touches[0].moveX)
-    }.bind(this))
-
-    wx.onTouchEnd(function(event) {
-      // 松手后归位
-      this.initLogo(0)
-      console.log('finish')
-    }.bind(this))
-  }
+  
 }
