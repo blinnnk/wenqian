@@ -14,18 +14,17 @@ if (typeof ButtonType == "undefined") {
 }
 
 export default class HomeButton {
-  constructor(canvas) {
+  constructor(screenSize, context) {
     
-    this.left = canvas.width * 0.2
+    this.left = screenSize.width * 0.2
     this.rect = {
-      top: canvas.height - 200,
+      top: screenSize.height - 200,
       left: this.left,
       width: 162,
       height: 80
     }
-    this.canvas = canvas
-    this.context = canvas.getContext('2d')
-    
+    this.screenSize = screenSize
+    this.context = context
   }
 
   initHistoryButton() {
@@ -33,7 +32,7 @@ export default class HomeButton {
   }
 
   initDestinyButton() {
-    this.rect.left = this.canvas.width - this.left - this.rect.width
+    this.rect.left = this.screenSize.width - this.left - this.rect.width
     this.initButton(this.context, ButtonType.Destiny, this.rect)
   }
 

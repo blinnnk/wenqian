@@ -10,7 +10,6 @@ let logoSize = 300
 
 export default class HomeLogoView {
   constructor(screenSize, context) {
-
     this.initLogo(screenSize, context)
   }
 

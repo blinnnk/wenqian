@@ -14,8 +14,8 @@ export default class Main {
   constructor(canvas, screenSize) {
     this.context = canvas.getContext('2d')
     this.logoView = new LogoView(screenSize, this.context)
-    this.watchHistoryButton = new Button(canvas).initHistoryButton()
-    this.watchHistoryButton = new Button(canvas).initDestinyButton()
+    this.watchHistoryButton = new Button(screenSize, this.context).initHistoryButton()
+    this.watchHistoryButton = new Button(screenSize, this.context).initDestinyButton()
 
     this.branchRect = {
       width: branchSize,
