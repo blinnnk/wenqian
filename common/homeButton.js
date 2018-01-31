@@ -3,6 +3,8 @@
 * @date 2018-01-31
 */
 
+import CustomImage from '../util/customImage'
+
 // Button 的枚举类型
 if (typeof ButtonType == "undefined") {
   var ButtonType = {
@@ -36,36 +38,7 @@ export default class HomeButton {
   }
 
   initButton(context, buttonType, rect) {
-    initBackground(context, rect)
-    initiTextButton(context, rect, buttonType)
-
-    function initiTextButton(context, rect, buttonType) {
-      let image = wx.createImage()
-      image.src = buttonType
-      image.onload = function () {
-        context.drawImage(
-          image,
-          rect.left,
-          rect.top,
-          rect.width,
-          rect.height
-        )
-      }
-    }
-    
-    function initBackground(context, rect) {
-      let background = wx.createImage()
-      background.src = 'sources/image/buttonBackground.png'
-
-      background.onload = function () {
-        context.drawImage(
-          background,
-          rect.left,
-          rect.top,
-          rect.width,
-          rect.height
-        )
-      }
-    }
+    new CustomImage(context, rect).drawHomeButtonBackground()
+    new CustomImage(context, rect).drawImage(buttonType)
   }
 }

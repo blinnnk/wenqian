@@ -2,6 +2,7 @@
 * @author KaySaith
 * @date 2018-01-31
 */
+
 import CustomImage from '../util/customImage'
 
 let titleColor = '#6f6351'
@@ -26,7 +27,7 @@ export default class HomeLogoView {
     new CustomImage(context, rect).drawLogo()
 
     drawDescriptionText()
-    
+
     function drawDescriptionText() {
       context.fillStyle = titleColor
       context.font = '24px avenir'
