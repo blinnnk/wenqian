@@ -3,8 +3,8 @@
 * @date 2018-01-30
 */
 
-import Main from './js/main'
-import Music from './js/common/music'
+import Main from 'main'
+import Music from './util/music'
 
 
 let backgroundMusic = new Music()

@@ -6,8 +6,8 @@
 // Button 的枚举类型
 if (typeof ButtonType == "undefined") {
   var ButtonType = {
-    History: 'image/watchHistory.png',
-    Destiny: 'image/requireDestiny.png'
+    History: 'sources/image/watchHistory.png',
+    Destiny: 'sources/image/requireDestiny.png'
   }
 }
 
@@ -55,7 +55,7 @@ export default class HomeButton {
     
     function initBackground(context, rect) {
       let background = wx.createImage()
-      background.src = 'image/buttonBackground.png'
+      background.src = 'sources/image/buttonBackground.png'
 
       background.onload = function () {
         context.drawImage(
