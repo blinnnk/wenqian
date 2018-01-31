@@ -3,8 +3,8 @@
 * @date 2018-01-30
 */
 
-import Button from 'common/homeButton'
-import LogoView from 'common/homeLogoView'
+import Button from '../../common/homeButton'
+import LogoView from '../../common/homeLogoView'
 
 let canvas = wx.createCanvas()
 // 两倍视图解决 retina 的文字清晰度问题
