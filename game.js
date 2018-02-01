@@ -3,203 +3,120 @@
 * @date 2018-01-30
 */
 
-import Main from 'module/home/home'
+import Controller from 'util/controller'
 import Music from 'util/music'
+import { UISize } from 'common/uikit'
+import { UIColor } from 'common/uikit'
+import { ImageSrc } from 'common/uikit'
+import { drawDescriptionText } from 'common/component'
+import { fallingLeaf } from 'common/component'
+import { canvas } from 'common/component'
+import { adaptingRetina } from 'common/component'
+import { drawCustomImage } from 'util/utils'
+import { drawImageAndMoveToLeftWithAnimation } from 'util/utils'
 
-let canvas = wx.createCanvas()
-// 两倍视图解决 retina 的文字清晰度问题
-canvas.width = canvas.width * 2
-canvas.height = canvas.height * 2
-
-// 屏幕的高宽
-let ScreenSize = {
-  width: canvas.width,
-  height: canvas.height
-}
+// 调整 Canvas 尺寸来解决 Retina 屏幕下的文字和图片虚边问题
+adaptingRetina()
 
 // 背景音乐
 let backgroundMusic = new Music()
 
-let logoImage = wx.createImage()
-logoImage.src = 'sources/image/wenqianLogo.png'
-
-let logoSize = 300
+// UI 的参数
 let logoRect = {
-  left: (ScreenSize.width - logoSize) / 2,
-  top: (ScreenSize.height - logoSize) / 2 - 100,
-  width: logoSize,
-  height: logoSize
+  left: (canvas.width - UISize.logo) / 2,
+  top: (canvas.height - UISize.logo) / 2 - 100,
+  width: UISize.logo,
+  height: UISize.logo
 }
 
-let titleColor = '#6f6351'
+let buttonLeft = canvas.width * 0.2
+let buttonTop = canvas.height - 200
 
-
-let buttonLeft = ScreenSize.width * 0.2
-let buttonRect = {
-  top: ScreenSize.height - 200,
+let buttonLeftRect = {
+  top: buttonTop,
   left: buttonLeft,
-  width: 162,
-  height: 80
+  width: UISize.buttonWidth,
+  height: UISize.buttonHeight
 }
 
-let buttonBackgroundImage = wx.createImage()
-buttonBackgroundImage.src = 'sources/image/buttonBackground.png'
+let buttonRightRect = {
+  top: buttonTop,
+  left: canvas.width - buttonLeft - UISize.buttonWidth,
+  width: UISize.buttonWidth,
+  height: UISize.buttonHeight
+}
 
-let historyImage = wx.createImage()
-historyImage.src = 'sources/image/watchHistory.png'
-
-let destinyImage = wx.createImage()
-destinyImage.src = 'sources/image/requireDestiny.png'
-
-let redDotImage = wx.createImage()
-redDotImage.src = 'sources/image/redDot.png'
-
-let redDotSize = 30
 let redDotRect = {
-  width: redDotSize,
-  height: redDotSize,
-  left: (ScreenSize.width - redDotSize) / 2,
-  top: ScreenSize.height - 175
+  width: UISize.redDot,
+  height: UISize.redDot,
+  left: (canvas.width - UISize.redDot) / 2,
+  top: canvas.height - 175
 }
 
-let branchImage = wx.createImage()
-branchImage.src = 'sources/image/branch.png'
-
-let branchSize = 480
 let branchRect = {
-  width: branchSize,
-  height: branchSize,
-  left: ScreenSize.width,
+  width: UISize.branch,
+  height: UISize.branch,
+  left: canvas.width,
   top: 30
 }
 
-let leafImage = wx.createImage()
-leafImage.src = 'sources/image/leaf.png'
-let leafSize = 66
+// 主页的图片对象
+let logoImage = wx.createImage()
+logoImage.src = ImageSrc.logo
 
-var branchMoveX = 0
+let buttonBackgroundImage = wx.createImage()
+buttonBackgroundImage.src = ImageSrc.buttonBackground
 
-var leafY = 0
-var leafX = 0
+let historyImage = wx.createImage()
+historyImage.src = ImageSrc.history
 
-// 主界面
-new Main(canvas, function(context, animation) {
+let destinyImage = wx.createImage()
+destinyImage.src = ImageSrc.destiny
 
-  drawBackground(context)
-  // 画 Logo
-  context.drawImage(
-    logoImage, 
-    logoRect.left, 
-    logoRect.top, 
-    logoRect.width, 
-    logoRect.height)
-  drawDescriptionText(context)
+let redDotImage = wx.createImage()
+redDotImage.src = ImageSrc.redDot
 
-  // 画按钮的背景笔墨
-  context.drawImage(
-    buttonBackgroundImage, 
-    buttonRect.left, 
-    buttonRect.top, 
-    buttonRect.width, 
-    buttonRect.height)
+let branchImage = wx.createImage()
+branchImage.src = ImageSrc.branch
 
-  // 画寻史按钮
-  context.drawImage(
-    historyImage,
-    buttonRect.left,
-    buttonRect.top,
-    buttonRect.width,
-    buttonRect.height)
 
-  // 画求签的背景笔墨
-  context.drawImage(
-    buttonBackgroundImage,
-    ScreenSize.width - buttonLeft - buttonRect.width,
-    buttonRect.top,
-    buttonRect.width,
-    buttonRect.height)
-
-  // 画求签按钮
-  context.drawImage(
-    destinyImage,
-    ScreenSize.width - buttonLeft - buttonRect.width,
-    buttonRect.top,
-    buttonRect.width,
-    buttonRect.height)  
-
-  // 画按钮之间的红色小点
-  context.drawImage(
-    redDotImage,
-    redDotRect.left,
-    redDotRect.top,
-    redDotRect.width,
-    redDotRect.height
-  )
-
-  // 画树枝并做动画
-  branchMoveX += 5
-  context.drawImage(
-    branchImage,
-    branchRect.left - branchMoveX,
-    branchRect.top,
-    branchRect.width,
-    branchRect.height
-  )
-  if (branchMoveX >= branchSize) {
-    branchMoveX = branchSize
-    fallingLeaf()
-  }
-
-  function fallingLeaf() {
-    leafX += 1
-    leafY += 1
-    context.drawImage(
-      leafImage,
-      300 + leafX,
-      100 + leafY,
-      leafSize,
-      leafSize
+// 主界面的内容
+new Controller(
+  canvas, 
+  function(context, animation) {
+    // 画 Logo 图
+    drawCustomImage(context, logoImage, logoRect)
+    // 画副标题
+    drawDescriptionText(context)
+    // 画按钮的背景笔墨
+    drawCustomImage(context, buttonBackgroundImage, buttonLeftRect)
+    // 画寻史按钮
+    drawCustomImage(context, historyImage, buttonLeftRect)
+    // 画求签的背景笔墨
+    drawCustomImage(context, buttonBackgroundImage, buttonRightRect)
+    // 画求签按钮
+    drawCustomImage(context, destinyImage, buttonRightRect) 
+    // 画按钮之间的红色小点
+    drawCustomImage(context, redDotImage, redDotRect) 
+    // 画树枝并做动画
+    drawImageAndMoveToLeftWithAnimation(
+      context, 
+      branchImage, 
+      branchRect, 
+      5,
+      UISize.branch,
+      function() {
+        // 画树叶的下落动画
+        fallingLeaf(context)
+      }
     )
-    if (leafY >= ScreenSize.height || leafX >= ScreenSize.width) {
-      leafY = 0
-      leafX = 0
-    }
   }
+)
 
-})
-
-function drawBackground(context) {
-  var gradient = context.createLinearGradient(0, 0, ScreenSize.width, ScreenSize.height)
-  gradient.addColorStop(0, '#dbd8d5')
-  gradient.addColorStop(0.5, '#ffffff')
-  gradient.addColorStop(1, '#eae8e6')
-
-  context.fillStyle = gradient
-  context.fillRect(0, 0, ScreenSize.width, ScreenSize.height)
-}
-
-function drawDescriptionText(context) {
-  context.fillStyle = titleColor
-  context.font = '24px avenir'
-  context.textBaseline = 'middle'
-  context.textAlign = 'center'
-  context.fillText(
-    'they determined that Cloyd had ovarian cysts',
-    ScreenSize.width / 2,
-    (ScreenSize.height + logoSize) / 2 - 50,
-    ScreenSize.width
-  )
-
-  context.fillText(
-    'gave her pain medications that helped her feel better',
-    ScreenSize.width / 2,
-    (ScreenSize.height + logoSize) / 2 - 50 + 36,
-    ScreenSize.width
-  )
-}
-
-// 后台恢复前台后继续播放背景音乐
-wx.onShow(function () {
+// 后台恢复前台后恢复相关事件
+wx.onShow(
+  function () {
   backgroundMusic.playBackgroundMusic()
-  new Main(canvas, ScreenSize)
-})
+  new Controller(canvas)
+  }
+)
