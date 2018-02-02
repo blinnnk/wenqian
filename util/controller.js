@@ -3,7 +3,7 @@
 * @date 2018-01-30
 */
 
-import { drawBackground } from '../common/component'
+import { Component } from '../common/component'
 
 export default class Controller {
   constructor(canvas, onDraw) {
@@ -17,7 +17,7 @@ export default class Controller {
       let animation = requestAnimationFrame(drawDetail)
       if (typeof onDraw === 'function') {
         context.clearRect(0, 0, canvas.width, canvas.height)
-        drawBackground(context)
+        Component.drawBackground(context)
         onDraw(context, animation)
       }
     }
