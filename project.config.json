@@ -10,7 +10,7 @@
 	"compileType": "game",
 	"libVersion": "game",
 	"appid": "touristappid",
-	"projectname": "wenqian",
+	"projectname": "wenQian",
 	"isGameTourist": true,
 	"condition": {
 		"search": {
