@@ -92,9 +92,15 @@ let titleRect = {
 export class DestinyPage {
 
   static backButtonRect = backButtonRect
+  static boxRect = boxRect
+  static loveBoxRect = loveBoxRect
 
-  static draw(context, touchMoveX, direction, triggerEdgeCallback) {
-
+  static draw(
+    context, 
+    touchMoveX, 
+    direction, 
+    triggerEdgeCallback
+    ) {
     Utils.drawCustomImage(context, backImage, backButtonRect)
     // 设定左右的边界滑动限制
     if (
@@ -108,11 +114,13 @@ export class DestinyPage {
     } else {
       isOnEdge = true
     }
+
     // 传递是否触发边界的回调
     if (typeof triggerEdgeCallback === 'function') {
       triggerEdgeCallback(isOnEdge)
     }
 
+    // 根据当前的 Offset 来更新签筒的名字
     if (boxRect.left < -Component.ScreenSize.width / 2.5) {
       Utils.drawCustomImage(context, zhouGongImage, titleRect)
     } else {

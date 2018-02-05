@@ -23,6 +23,8 @@ if (typeof PageName == "undefined") {
   PageName.home = 0
   PageName.history = 1
   PageName.destiny = 2
+  PageName.guanYinDetail = 3
+  PageName.zhouGongDetail = 4
 }
 
 var currentPage = PageName.home
@@ -31,9 +33,12 @@ var lastMoveX = 0
 var touchDirection = UIKit.direction.left
 var isTriggingEdge = false
 
-var currentTouchX = 0
-var currentTouchY = 0
-var hasPlayedSound = false
+var currentRect = {
+  width: 500,
+  height: 500,
+  left: 0,
+  top: 0
+}
 
 // 主界面的内容
 new Controller(
@@ -50,6 +55,22 @@ new Controller(
         drawHistoryPage(context)
         clickToLoadPage(DestinyPage.backButtonRect, PageName.history, PageName.home)
         break
+      case PageName.guanYinDetail:
+        drawGuanYinDetailPage(context)
+        clickToLoadPage(
+          DestinyPage.backButtonRect, 
+          PageName.guanYinDetail, 
+          PageName.destiny
+        )
+        break
+      case PageName.zhouGongDetail:
+        drawZhouGongDetailPage(context)
+        clickToLoadPage(
+          DestinyPage.backButtonRect, 
+          PageName.zhouGongDetail, 
+          PageName.destiny
+        )
+        break
       case PageName.destiny:
         DestinyPage.draw(
           context, 
@@ -60,6 +81,8 @@ new Controller(
           }
         )
         clickToLoadPage(DestinyPage.backButtonRect, PageName.destiny, PageName.home)
+        clickToLoadPage(DestinyPage.boxRect, PageName.destiny, PageName.guanYinDetail)
+        clickToLoadPage(DestinyPage.loveBoxRect, PageName.destiny, PageName.zhouGongDetail)
         break
       default:
         HomePage.draw(context)
@@ -67,17 +90,18 @@ new Controller(
   }
 )
 
+Utils.touchPointListener()
+
 // 通过在 Canvas 上面的点击区域来判断点击事件
 function clickToLoadPage(clickRect, currentPageName, targetPageName) {
-  Utils.dynamicClick(
-    currentTouchX,
-    currentTouchY,
+  Utils.onClick(
     clickRect,
     function () {
       if (currentPage == currentPageName) {
         sound.playClickSoundEffect()
       }
       currentPage = targetPageName
+      console.info('what 1900')
     }
   )
 }
@@ -107,10 +131,30 @@ function drawHistoryPage(context) {
   context.fillRect(0, 0, 200, 200)
 }
 
-wx.onTouchStart(function (event) {
-  currentTouchX = event.touches[0].clientX * 2
-  currentTouchY = event.touches[0].clientY * 2
-})
+let guanYinBox = wx.createImage()
+guanYinBox.src = UIKit.imageSrc.guanYinBox
+var guanYinBoxTop = 0
+let guanYinBoxRect = {
+  width: Component.ScreenSize.width,
+  height: Component.ScreenSize.width,
+  left: 0,
+  top: Component.ScreenSize.height
+}
+
+function drawGuanYinDetailPage(context) {
+  Utils.drawImageAndMoveToTopWithAnimation(
+    context, 
+    guanYinBox, 
+    guanYinBoxRect,
+    2,
+    Component.ScreenSize.width - 200
+  )
+}
+
+function drawZhouGongDetailPage(context) {
+  context.fillStyle = "black"
+  context.fillRect(200, 200, 500, 200)
+}
 
 // 后台到前台后恢复相关事件
 wx.onShow(

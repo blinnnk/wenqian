@@ -17,7 +17,7 @@ export default class Music {
 
     this.backgroundMusic = wx.createInnerAudioContext()
     this.backgroundMusic.loop = true
-    // this.backgroundMusic.src = 'sources/audio/bgm.mp3'
+    this.backgroundMusic.src = 'sources/audio/bgm.mp3'
 
     this.playBackgroundMusic()
 
