@@ -11,6 +11,7 @@ import { Utils } from 'util/utils'
 import { Canvas } from 'common/component'
 import { HomePage } from 'module/home/home'
 import { DestinyPage } from 'module/destiny/destiny'
+import { DestinyDetail } from 'module/destinyDetail/destinyDetail'
 
 // 调整 Canvas 尺寸来解决 Retina 屏幕下的文字和图片虚边问题
 Component.adaptingRetina()
@@ -33,14 +34,7 @@ var lastMoveX = 0
 var touchDirection = UIKit.direction.left
 var isTriggingEdge = false
 
-var currentRect = {
-  width: 500,
-  height: 500,
-  left: 0,
-  top: 0
-}
-
-// 主界面的内容
+// 主界面的刷新帧控制器
 new Controller(
   Canvas, 
   function(context, animation) {
@@ -53,20 +47,20 @@ new Controller(
         break
       case PageName.history:
         drawHistoryPage(context)
-        clickToLoadPage(DestinyPage.backButtonRect, PageName.history, PageName.home)
+        clickToLoadPage(Component.backButtonRect, PageName.history, PageName.home)
         break
       case PageName.guanYinDetail:
-        drawGuanYinDetailPage(context)
+        DestinyDetail.drawDestinyDetailPage(context, DestinyDetail.BoxType.guanYin)
         clickToLoadPage(
-          DestinyPage.backButtonRect, 
+          Component.backButtonRect, 
           PageName.guanYinDetail, 
           PageName.destiny
         )
         break
       case PageName.zhouGongDetail:
-        drawZhouGongDetailPage(context)
+        DestinyDetail.drawDestinyDetailPage(context, DestinyDetail.BoxType.zhouGong)
         clickToLoadPage(
-          DestinyPage.backButtonRect, 
+          Component.backButtonRect, 
           PageName.zhouGongDetail, 
           PageName.destiny
         )
@@ -80,7 +74,7 @@ new Controller(
             isTriggingEdge = isOnEdge
           }
         )
-        clickToLoadPage(DestinyPage.backButtonRect, PageName.destiny, PageName.home)
+        clickToLoadPage(Component.backButtonRect, PageName.destiny, PageName.home)
         clickToLoadPage(DestinyPage.boxRect, PageName.destiny, PageName.guanYinDetail)
         clickToLoadPage(DestinyPage.loveBoxRect, PageName.destiny, PageName.zhouGongDetail)
         break
@@ -98,10 +92,17 @@ function clickToLoadPage(clickRect, currentPageName, targetPageName) {
     clickRect,
     function () {
       if (currentPage == currentPageName) {
-        sound.playClickSoundEffect()
+        // 不同界面有不同的点击音效
+        if (
+          currentPage == PageName.destiny && 
+          targetPageName != PageName.home
+        ) {
+          sound.playBells()
+        } else {
+          sound.playClickSoundEffect()
+        }
       }
-      currentPage = targetPageName
-      console.info('what 1900')
+        currentPage = targetPageName
     }
   )
 }
@@ -129,31 +130,6 @@ Utils.touchMoveXDistance(
 function drawHistoryPage(context) {
   context.fillStyle = "blue"
   context.fillRect(0, 0, 200, 200)
-}
-
-let guanYinBox = wx.createImage()
-guanYinBox.src = UIKit.imageSrc.guanYinBox
-var guanYinBoxTop = 0
-let guanYinBoxRect = {
-  width: Component.ScreenSize.width,
-  height: Component.ScreenSize.width,
-  left: 0,
-  top: Component.ScreenSize.height
-}
-
-function drawGuanYinDetailPage(context) {
-  Utils.drawImageAndMoveToTopWithAnimation(
-    context, 
-    guanYinBox, 
-    guanYinBoxRect,
-    2,
-    Component.ScreenSize.width - 200
-  )
-}
-
-function drawZhouGongDetailPage(context) {
-  context.fillStyle = "black"
-  context.fillRect(200, 200, 500, 200)
 }
 
 // 后台到前台后恢复相关事件

@@ -23,6 +23,9 @@ export default class Music {
 
     this.clickSoundEffect = wx.createInnerAudioContext()
     this.clickSoundEffect.src = 'sources/audio/click.wav'
+
+    this.bellsSoundEffect = wx.createInnerAudioContext()
+    this.bellsSoundEffect.src = 'sources/audio/bells.mp3'
   }
 
   playBackgroundMusic() {
@@ -31,6 +34,10 @@ export default class Music {
 
   playClickSoundEffect() {
     this.clickSoundEffect.play()
+  }
+
+  playBells() {
+    this.bellsSoundEffect.play()
   }
 
 }
