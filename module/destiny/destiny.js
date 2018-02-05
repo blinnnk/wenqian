@@ -101,6 +101,9 @@ export class DestinyPage {
     direction,
     triggerEdgeCallback
   ) {
+    // 画背景色放到每个页面draw()里面，分开画因为history页面背景色不一样   @shangqi
+    Component.drawBackground(context)
+    
     Utils.drawCustomImage(context, backImage, backButtonRect)
     // 设定左右的边界滑动限制
     if (
