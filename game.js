@@ -31,6 +31,10 @@ var lastMoveX = 0
 var touchDirection = UIKit.direction.left
 var isTriggingEdge = false
 
+var currentTouchX = 0
+var currentTouchY = 0
+var hasPlayedSound = false
+
 // 主界面的内容
 new Controller(
   Canvas, 
@@ -38,9 +42,13 @@ new Controller(
     switch (currentPage) {
       case PageName.home:
         HomePage.draw(context)
+        // 设置首页按钮的点击跳转事件
+        clickToLoadPage(HomePage.destinyRect, PageName.home, PageName.destiny)
+        clickToLoadPage(HomePage.historyRect, PageName.home, PageName.history)
         break
       case PageName.history:
         drawHistoryPage(context)
+        clickToLoadPage(DestinyPage.backButtonRect, PageName.history, PageName.home)
         break
       case PageName.destiny:
         DestinyPage.draw(
@@ -51,6 +59,7 @@ new Controller(
             isTriggingEdge = isOnEdge
           }
         )
+        clickToLoadPage(DestinyPage.backButtonRect, PageName.destiny, PageName.home)
         break
       default:
         HomePage.draw(context)
@@ -58,15 +67,31 @@ new Controller(
   }
 )
 
+// 通过在 Canvas 上面的点击区域来判断点击事件
+function clickToLoadPage(clickRect, currentPageName, targetPageName) {
+  Utils.dynamicClick(
+    currentTouchX,
+    currentTouchY,
+    clickRect,
+    function () {
+      if (currentPage == currentPageName) {
+        sound.playClickSoundEffect()
+      }
+      currentPage = targetPageName
+    }
+  )
+}
+
 // 滑动屏幕的事件捕捉
 Utils.touchMoveXDistance(
   function(distance) {
-    // 开始滑动动态刷新这个值
+    // 滑动方向获取
     if (distance.x > 0) {
       touchDirection = UIKit.direction.right
-    } else {
+    } else if (distance.x < 0){
       touchDirection = UIKit.direction.left
     }
+
     if (isTriggingEdge == false) {
       touchMoveX = distance.x + lastMoveX
     }
@@ -82,32 +107,10 @@ function drawHistoryPage(context) {
   context.fillRect(0, 0, 200, 200)
 }
 
-// 返回按钮点击事件
-Utils.onclick(
-  DestinyPage.backButtonRect,
-  function () {
-    sound.playClickSoundEffect()
-    currentPage = PageName.home
-  }
-)
-
-// 查看寻史界面点击事件
-Utils.onclick(
-  HomePage.historyRect, 
-  function() {
-    sound.playClickSoundEffect()
-    currentPage = PageName.history
-  }
-)
-
-// 查看求签界面点击事件
-Utils.onclick(
-  HomePage.destinyRect,
-  function () {
-    sound.playClickSoundEffect()
-    currentPage = PageName.destiny
-  }
-)
+wx.onTouchStart(function (event) {
+  currentTouchX = event.touches[0].clientX * 2
+  currentTouchY = event.touches[0].clientY * 2
+})
 
 // 后台到前台后恢复相关事件
 wx.onShow(

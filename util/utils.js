@@ -83,6 +83,10 @@ export class Utils {
     })
   }
 
+  static dynamicClick(x, y, rect, callback) {
+    checkRectContainsPointOrElse(x, y, rect, callback)
+  }
+
   // 画副标题的文字
   static drawText(
     context, 

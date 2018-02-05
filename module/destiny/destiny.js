@@ -74,6 +74,21 @@ let backButtonRect = {
 let backImage = wx.createImage()
 backImage.src = UIKit.imageSrc.back
 
+let zhouGongImage = wx.createImage()
+zhouGongImage.src = UIKit.imageSrc.zhougong
+
+let guanyinImage = wx.createImage()
+guanyinImage.src = UIKit.imageSrc.guanyin
+
+let titleSize = 240
+let titleRect = {
+  width: titleSize,
+  height: titleSize,
+  left: Component.ScreenSize.width - titleSize - 50,
+  top: 80 + adaptingIPhoneXTop
+}
+
+
 export class DestinyPage {
 
   static backButtonRect = backButtonRect
@@ -96,6 +111,12 @@ export class DestinyPage {
     // 传递是否触发边界的回调
     if (typeof triggerEdgeCallback === 'function') {
       triggerEdgeCallback(isOnEdge)
+    }
+
+    if (boxRect.left < -Component.ScreenSize.width / 2.5) {
+      Utils.drawCustomImage(context, zhouGongImage, titleRect)
+    } else {
+      Utils.drawCustomImage(context, guanyinImage, titleRect)
     }
 
     Utils.drawImageAndMoveOvalPathWithAnimation(
