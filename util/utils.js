@@ -3,6 +3,9 @@
 * @date 2018-02-01
 */
 
+
+import { Interpolator } from '../util/animation'
+
 var moveX = 0
 var moveY = 0
 var moveValue = 0
@@ -17,9 +20,7 @@ var currentMoveX = 0
 var currentMoveY = 0
 var isClickEvent = false
 
-var accelerateValue = 0
-var speedValue = 0
-
+// 工具
 export class Utils {
   /*
   * @description
@@ -38,20 +39,21 @@ export class Utils {
       currentMoveY = event.touches[0].clientY * 2 - currentTouchY
     })
 
-    wx.onTouchEnd(function (event) {
-      console.log(currentMoveX)
-      if (
-        Math.abs(currentMoveX) < 20 || 
-        Math.abs(currentMoveY) < 20 ||
-        currentMoveX == 0 ||
-        currentMoveY == 0
-      ) {
-        isClickEvent = true
+    wx.onTouchEnd(
+      function (event) {
+        if (
+          Math.abs(currentMoveX) < 2 || 
+          Math.abs(currentMoveY) < 2 ||
+          currentMoveX == 0 ||
+          currentMoveY == 0
+        ) {
+          isClickEvent = true
+        }
+        // 初始化用来判断是点击还是滑动的值
+        currentMoveX = 0
+        currentMoveY = 0
       }
-      // 初始化用来判断是点击还是滑动的值
-      currentMoveX = 0
-      currentMoveY = 0
-    })
+    )
   }
   
   // 通用的画图方法
@@ -107,12 +109,33 @@ export class Utils {
     context.drawImage(
       image,
       rect.left,
-      rect.top - accelerateInterpolator(speed, maxMoveDistance),
+      rect.top - Interpolator.accelerateInterpolator(speed, maxMoveDistance),
       rect.width,
-      rect.height)
+      rect.height
+    )
       if (typeof callback === 'function') {
         callback()
       }
+  }
+
+  static drawImageAndMoveToBottomWithAnimation(
+    context,
+    image,
+    rect,
+    speed,
+    maxMoveDistance,
+    callback
+  ) {
+    context.drawImage(
+      image,
+      rect.left,
+      rect.top + Interpolator.accelerateInterpolator(speed, maxMoveDistance),
+      rect.width,
+      rect.height
+    )
+    if (typeof callback === 'function') {
+      callback()
+    }
   }
 
   static drawImageAndMoveOvalPathWithAnimation(
@@ -221,14 +244,4 @@ function checkRectContainsPointOrElse(x, y, rect, callback) {
       isClickEvent = false
     }
   }
-}
-
-function accelerateInterpolator(speed, maxAnimationValue) {
-  speedValue += speed
-  let animationValue = accelerateValue += speedValue
-  if (animationValue >= maxAnimationValue) {
-    animationValue = maxAnimationValue
-    speedValue = 0
-  }
-  return animationValue
 }

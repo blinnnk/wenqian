@@ -59,21 +59,6 @@ let loveShadowRect = {
 }
 let loveShadowLeft = loveBoxRect.left + Component.ScreenSize.width * 0.35
 
-var adaptingIPhoneXTop = 0
-// 适配 iPhoneX 的齐刘海
-Utils.isIPhoneX(function () {
-  adaptingIPhoneXTop = 30
-})
-
-let backButtonRect = {
-  width: UIKit.size.buttonWidth,
-  height: UIKit.size.buttonHeight,
-  left: Component.ScreenSize.width * 0.065,
-  top: Component.ScreenSize.width * 0.1 + adaptingIPhoneXTop
-}
-let backImage = wx.createImage()
-backImage.src = UIKit.imageSrc.back
-
 let zhouGongImage = wx.createImage()
 zhouGongImage.src = UIKit.imageSrc.zhougong
 
@@ -85,13 +70,12 @@ let titleRect = {
   width: titleSize,
   height: titleSize,
   left: Component.ScreenSize.width - titleSize - 50,
-  top: 80 + adaptingIPhoneXTop
+  top: 80 + Component.adaptingIPhoneXTop
 }
 
 
 export class DestinyPage {
 
-  static backButtonRect = backButtonRect
   static boxRect = boxRect
   static loveBoxRect = loveBoxRect
 
@@ -101,7 +85,9 @@ export class DestinyPage {
     direction, 
     triggerEdgeCallback
     ) {
-    Utils.drawCustomImage(context, backImage, backButtonRect)
+      
+    // 添加回退按钮
+    Component.addBackButton(context)
     // 设定左右的边界滑动限制
     if (
       (boxRect.left <= boxLeft || direction == UIKit.direction.left) && 

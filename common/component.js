@@ -4,6 +4,7 @@
 */
 
 import { UIKit } from 'uikit'
+import { Utils } from '../util/utils'
 
 // 落叶动画用到的参数
 let leafSrc =
@@ -20,12 +21,38 @@ let fallingLeafCount = 5
 
 export let Canvas = wx.createCanvas()
 
+// 适配 iPhoneX 的齐刘海
+var adaptingIPhoneXTop = 0
+Utils.isIPhoneX(function () {
+  adaptingIPhoneXTop = 30
+})
+
+let backButtonRect = {
+  width: UIKit.size.buttonWidth,
+  height: UIKit.size.buttonHeight,
+  left: Canvas.width * 2 * 0.065,
+  top: Canvas.width * 2 * 0.1 + adaptingIPhoneXTop
+}
+
+let backImage = wx.createImage()
+backImage.src = UIKit.imageSrc.back
+
 // 通用组件方法
 export class Component { 
+
+  static adaptingIPhoneXTop = adaptingIPhoneXTop
+
+  static canvas = Canvas
 
   static ScreenSize = {
     width: Canvas.width * 2,
     height: Canvas.height * 2
+  }
+
+  static backButtonRect = backButtonRect
+  
+  static addBackButton(context) {
+    Utils.drawCustomImage(context, backImage, backButtonRect)
   }
 
   // 两倍视图解决 retina 的文字清晰度问题
