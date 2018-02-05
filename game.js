@@ -5,6 +5,7 @@
 
 import Controller from 'util/controller'
 import Music from 'util/music'
+import History from 'module/history/history'
 import { UIKit } from 'common/uikit'
 import { Component } from 'common/component'
 import { Utils } from 'util/utils'
@@ -25,8 +26,7 @@ if (typeof PageName == "undefined") {
   PageName.destiny = 2
 }
 
-var currentPage = PageName.home
-
+var currentPage = PageName.history
 // 主界面的内容
 new Controller(
   Canvas, 
@@ -36,7 +36,7 @@ new Controller(
         HomePage.draw(context)
         break
       case PageName.history:
-        drawHistoryPage(context)
+        // new History(Canvas)
         break
       case PageName.destiny:
         DestinyPage.draw(context)
