@@ -32,8 +32,6 @@ var lastMoveX = 0
 var touchDirection = UIKit.direction.left
 var isTriggingEdge = false
 
-// new History(Canvas)
-
 // 主界面的内容
 new Controller(
   Canvas,
@@ -47,7 +45,7 @@ new Controller(
           context,
           touchMoveX,
           touchDirection,
-          function (isOnEdge) {
+          function(isOnEdge) {
             isTriggingEdge = isOnEdge
           }
         )
@@ -70,17 +68,15 @@ new Controller(
 
 // 滑动屏幕的事件捕捉
 Utils.touchMoveXDistance(
-  function (distance) {
+  function(distance) {
     // 开始滑动动态刷新这个值
     if (distance.x > 0) {
       touchDirection = UIKit.direction.right
-    } else {
+    }else {
       touchDirection = UIKit.direction.left
     }
     if (isTriggingEdge == false) {
       touchMoveX = distance.x + lastMoveX
-    }else{
-      touchMoveX = 0
     }
   },
   function () {
@@ -100,6 +96,7 @@ Utils.onclick(
   function () {
     sound.playClickSoundEffect()
     currentPage = PageName.home
+    // 重置touchMoveX @shangqi
     touchMoveX = 0
   }
 )
@@ -110,6 +107,7 @@ Utils.onclick(
   function () {
     sound.playClickSoundEffect()
     currentPage = PageName.history
+    // 重置touchMoveX @shangqi
     touchMoveX = 0
   }
 )
@@ -120,6 +118,7 @@ Utils.onclick(
   function () {
     sound.playClickSoundEffect()
     currentPage = PageName.destiny
+    // 重置touchMoveX @shangqi
     touchMoveX = 0
   }
 )

@@ -86,7 +86,7 @@ export class DestinyPage {
     Utils.drawCustomImage(context, backImage, backButtonRect)
     // 设定左右的边界滑动限制
     if (
-      (boxRect.left < boxLeft || direction == UIKit.direction.left) && 
+      (boxRect.left <= boxLeft || direction == UIKit.direction.left) && 
       (loveBoxRect.left > boxLeft || direction == UIKit.direction.right)) {
       boxRect.left = boxLeft + touchMoveX
       shadowRect.left = shadowLeft + touchMoveX
@@ -94,10 +94,6 @@ export class DestinyPage {
       loveShadowRect.left = loveShadowLeft + touchMoveX
       isOnEdge = false
     } else {
-      boxRect.left = boxLeft
-      shadowRect.left = shadowLeft
-      loveBoxRect.left = loveBoxLeft
-      loveShadowRect.left = loveShadowLeft
       isOnEdge = true
     }
     // 传递是否触发边界的回调

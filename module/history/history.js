@@ -49,7 +49,6 @@ let royalRalaceRect = {
   height: ScreenWidth * 0.42
 }
 
-
 let gantryImage = wx.createImage()
 gantryImage.src = 'sources/image/history/Gantry-01.png'
 
@@ -105,7 +104,6 @@ export class HistoryPage {
     Utils.drawCustomImage(context, cloudImage, cloudRect)
     Utils.drawCustomImage(context, textImage, textRect)
     Utils.drawCustomImage(context, cloudImage2, cloudRect2)
-
     Utils.drawCustomImage(context, backImage, backButtonRect)
   }
 }
