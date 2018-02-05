@@ -74,19 +74,37 @@ let backButtonRect = {
 let backImage = wx.createImage()
 backImage.src = UIKit.imageSrc.back
 
+let zhouGongImage = wx.createImage()
+zhouGongImage.src = UIKit.imageSrc.zhougong
+
+let guanyinImage = wx.createImage()
+guanyinImage.src = UIKit.imageSrc.guanyin
+
+let titleSize = 240
+let titleRect = {
+  width: titleSize,
+  height: titleSize,
+  left: Component.ScreenSize.width - titleSize - 50,
+  top: 80 + adaptingIPhoneXTop
+}
+
 
 export class DestinyPage {
 
   static backButtonRect = backButtonRect
+  static boxRect = boxRect
+  static loveBoxRect = loveBoxRect
 
-  static draw(context, touchMoveX, direction, triggerEdgeCallback) {
-    // 画背景色放到每个页面draw()里面，分开画因为history页面背景色不一样   @shangqi
-    Component.drawBackground(context)
-
+  static draw(
+    context,
+    touchMoveX,
+    direction,
+    triggerEdgeCallback
+  ) {
     Utils.drawCustomImage(context, backImage, backButtonRect)
     // 设定左右的边界滑动限制
     if (
-      (boxRect.left <= boxLeft || direction == UIKit.direction.left) && 
+      (boxRect.left <= boxLeft || direction == UIKit.direction.left) &&
       (loveBoxRect.left > boxLeft || direction == UIKit.direction.right)) {
       boxRect.left = boxLeft + touchMoveX
       shadowRect.left = shadowLeft + touchMoveX
@@ -96,9 +114,17 @@ export class DestinyPage {
     } else {
       isOnEdge = true
     }
+
     // 传递是否触发边界的回调
     if (typeof triggerEdgeCallback === 'function') {
       triggerEdgeCallback(isOnEdge)
+    }
+
+    // 根据当前的 Offset 来更新签筒的名字
+    if (boxRect.left < -Component.ScreenSize.width / 2.5) {
+      Utils.drawCustomImage(context, zhouGongImage, titleRect)
+    } else {
+      Utils.drawCustomImage(context, guanyinImage, titleRect)
     }
 
     Utils.drawImageAndMoveOvalPathWithAnimation(

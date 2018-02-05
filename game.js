@@ -5,8 +5,8 @@
 
 import Controller from 'util/controller'
 import Music from 'util/music'
-import { HistoryPage } from 'module/history/history'
 import { UIKit } from 'common/uikit'
+import { HistoryPage } from 'module/history/history'
 import { Component } from 'common/component'
 import { Utils } from 'util/utils'
 import { Canvas } from 'common/component'
@@ -24,6 +24,8 @@ if (typeof PageName == "undefined") {
   PageName.home = 0
   PageName.history = 1
   PageName.destiny = 2
+  PageName.guanYinDetail = 3
+  PageName.zhouGongDetail = 4
 }
 
 var currentPage = PageName.home
@@ -32,6 +34,13 @@ var lastMoveX = 0
 var touchDirection = UIKit.direction.left
 var isTriggingEdge = false
 
+var currentRect = {
+  width: 500,
+  height: 500,
+  left: 0,
+  top: 0
+}
+
 // 主界面的内容
 new Controller(
   Canvas,
@@ -39,15 +48,36 @@ new Controller(
     switch (currentPage) {
       case PageName.home:
         HomePage.draw(context)
+        // 设置首页按钮的点击跳转事件
+        clickToLoadPage(HomePage.destinyRect, PageName.home, PageName.destiny)
+        clickToLoadPage(HomePage.historyRect, PageName.home, PageName.history)
         break
       case PageName.history:
+        drawHistoryPage(context)
         HistoryPage.draw(
           context,
           touchMoveX,
           touchDirection,
-          function(isOnEdge) {
+          function (isOnEdge) {
             isTriggingEdge = isOnEdge
           }
+        )  
+        clickToLoadPage(DestinyPage.backButtonRect, PageName.history, PageName.home)
+        break
+      case PageName.guanYinDetail:
+        drawGuanYinDetailPage(context)
+        clickToLoadPage(
+          DestinyPage.backButtonRect,
+          PageName.guanYinDetail,
+          PageName.destiny
+        )
+        break
+      case PageName.zhouGongDetail:
+        drawZhouGongDetailPage(context)
+        clickToLoadPage(
+          DestinyPage.backButtonRect,
+          PageName.zhouGongDetail,
+          PageName.destiny
         )
         break
       case PageName.destiny:
@@ -59,6 +89,9 @@ new Controller(
             isTriggingEdge = isOnEdge
           }
         )
+        clickToLoadPage(DestinyPage.backButtonRect, PageName.destiny, PageName.home)
+        clickToLoadPage(DestinyPage.boxRect, PageName.destiny, PageName.guanYinDetail)
+        clickToLoadPage(DestinyPage.loveBoxRect, PageName.destiny, PageName.zhouGongDetail)
         break
       default:
         HomePage.draw(context)
@@ -66,15 +99,32 @@ new Controller(
   }
 )
 
+Utils.touchPointListener()
+
+// 通过在 Canvas 上面的点击区域来判断点击事件
+function clickToLoadPage(clickRect, currentPageName, targetPageName) {
+  Utils.onClick(
+    clickRect,
+    function () {
+      if (currentPage == currentPageName) {
+        sound.playClickSoundEffect()
+      }
+      currentPage = targetPageName
+      console.info('what 1900')
+    }
+  )
+}
+
 // 滑动屏幕的事件捕捉
 Utils.touchMoveXDistance(
-  function(distance) {
-    // 开始滑动动态刷新这个值
+  function (distance) {
+    // 滑动方向获取
     if (distance.x > 0) {
       touchDirection = UIKit.direction.right
-    }else {
+    } else if (distance.x < 0) {
       touchDirection = UIKit.direction.left
     }
+
     if (isTriggingEdge == false) {
       touchMoveX = distance.x + lastMoveX
     }
@@ -90,38 +140,30 @@ function drawHistoryPage(context) {
   context.fillRect(0, 0, 200, 200)
 }
 
-// 返回按钮点击事件
-Utils.onclick(
-  DestinyPage.backButtonRect,
-  function () {
-    sound.playClickSoundEffect()
-    currentPage = PageName.home
-    // 重置touchMoveX @shangqi
-    touchMoveX = 0
-  }
-)
+let guanYinBox = wx.createImage()
+guanYinBox.src = UIKit.imageSrc.guanYinBox
+var guanYinBoxTop = 0
+let guanYinBoxRect = {
+  width: Component.ScreenSize.width,
+  height: Component.ScreenSize.width,
+  left: 0,
+  top: Component.ScreenSize.height
+}
 
-// 查看寻史界面点击事件
-Utils.onclick(
-  HomePage.historyRect,
-  function () {
-    sound.playClickSoundEffect()
-    currentPage = PageName.history
-    // 重置touchMoveX @shangqi
-    touchMoveX = 0
-  }
-)
+function drawGuanYinDetailPage(context) {
+  Utils.drawImageAndMoveToTopWithAnimation(
+    context,
+    guanYinBox,
+    guanYinBoxRect,
+    2,
+    Component.ScreenSize.width - 200
+  )
+}
 
-// 查看求签界面点击事件
-Utils.onclick(
-  HomePage.destinyRect,
-  function () {
-    sound.playClickSoundEffect()
-    currentPage = PageName.destiny
-    // 重置touchMoveX @shangqi
-    touchMoveX = 0
-  }
-)
+function drawZhouGongDetailPage(context) {
+  context.fillStyle = "black"
+  context.fillRect(200, 200, 500, 200)
+}
 
 // 后台到前台后恢复相关事件
 wx.onShow(
