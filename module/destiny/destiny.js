@@ -74,16 +74,19 @@ let backButtonRect = {
 let backImage = wx.createImage()
 backImage.src = UIKit.imageSrc.back
 
+
 export class DestinyPage {
 
   static backButtonRect = backButtonRect
 
   static draw(context, touchMoveX, direction, triggerEdgeCallback) {
+    // 画背景色放到每个页面draw()里面，分开画因为history页面背景色不一样   @shangqi
+    Component.drawBackground(context)
 
     Utils.drawCustomImage(context, backImage, backButtonRect)
     // 设定左右的边界滑动限制
     if (
-      (boxRect.left <= boxLeft || direction == UIKit.direction.left) && 
+      (boxRect.left < boxLeft || direction == UIKit.direction.left) && 
       (loveBoxRect.left > boxLeft || direction == UIKit.direction.right)) {
       boxRect.left = boxLeft + touchMoveX
       shadowRect.left = shadowLeft + touchMoveX
@@ -91,6 +94,10 @@ export class DestinyPage {
       loveShadowRect.left = loveShadowLeft + touchMoveX
       isOnEdge = false
     } else {
+      boxRect.left = boxLeft
+      shadowRect.left = shadowLeft
+      loveBoxRect.left = loveBoxLeft
+      loveShadowRect.left = loveShadowLeft
       isOnEdge = true
     }
     // 传递是否触发边界的回调

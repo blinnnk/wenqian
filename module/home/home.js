@@ -81,6 +81,8 @@ export class HomePage {
 
   // 画首页的布局和动画
   static draw(context) {
+    // 画背景色放到每个页面draw()里面，分开画因为history页面背景色不一样   @shangqi
+    Component.drawBackground(context)
     // 画 Logo 图
     Utils.drawCustomImage(context, logoImage, logoRect)
     // 画副标题

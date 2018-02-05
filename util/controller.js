@@ -17,7 +17,8 @@ export default class Controller {
       let animation = requestAnimationFrame(drawDetail)
       if (typeof onDraw === 'function') {
         context.clearRect(0, 0, canvas.width, canvas.height)
-        Component.drawBackground(context)
+        // 画背景色放到每个页面draw()里面，分开画因为history页面背景色不一样   @shangqi
+        // Component.drawBackground(context)
         onDraw(context, animation)
       }
     }

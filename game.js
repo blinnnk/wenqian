@@ -5,7 +5,7 @@
 
 import Controller from 'util/controller'
 import Music from 'util/music'
-import History from 'module/history/history'
+import { HistoryPage } from 'module/history/history'
 import { UIKit } from 'common/uikit'
 import { Component } from 'common/component'
 import { Utils } from 'util/utils'
@@ -33,6 +33,7 @@ var touchDirection = UIKit.direction.left
 var isTriggingEdge = false
 
 // new History(Canvas)
+
 // 主界面的内容
 new Controller(
   Canvas,
@@ -42,7 +43,14 @@ new Controller(
         HomePage.draw(context)
         break
       case PageName.history:
-        drawHistoryPage(context)
+        HistoryPage.draw(
+          context,
+          touchMoveX,
+          touchDirection,
+          function (isOnEdge) {
+            isTriggingEdge = isOnEdge
+          }
+        )
         break
       case PageName.destiny:
         DestinyPage.draw(
@@ -69,9 +77,10 @@ Utils.touchMoveXDistance(
     } else {
       touchDirection = UIKit.direction.left
     }
-    console.log(isTriggingEdge)
     if (isTriggingEdge == false) {
       touchMoveX = distance.x + lastMoveX
+    }else{
+      touchMoveX = 0
     }
   },
   function () {
@@ -91,6 +100,7 @@ Utils.onclick(
   function () {
     sound.playClickSoundEffect()
     currentPage = PageName.home
+    touchMoveX = 0
   }
 )
 
@@ -100,6 +110,7 @@ Utils.onclick(
   function () {
     sound.playClickSoundEffect()
     currentPage = PageName.history
+    touchMoveX = 0
   }
 )
 
@@ -109,6 +120,7 @@ Utils.onclick(
   function () {
     sound.playClickSoundEffect()
     currentPage = PageName.destiny
+    touchMoveX = 0
   }
 )
 
