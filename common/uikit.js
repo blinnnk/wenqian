@@ -29,7 +29,13 @@ export class UIKit {
     leaf: 'sources/image/leaf.png',
     box: 'sources/image/box.png',
     shadow: 'sources/image/shadow.png',
-    back: 'sources/image/backArrow.png'
+    back: 'sources/image/backArrow.png',
+    loveBox: 'sources/image/loveBox.png',
+  }
+
+  static direction = {
+    left: 'left',
+    right: 'right'
   }
 }
 

@@ -26,24 +26,57 @@ if (typeof PageName == "undefined") {
   PageName.destiny = 2
 }
 
-var currentPage = PageName.history
+var currentPage = PageName.home
+var touchMoveX = 0
+var lastMoveX = 0
+var touchDirection = UIKit.direction.left
+var isTriggingEdge = false
+
+// new History(Canvas)
 // 主界面的内容
 new Controller(
-  Canvas, 
-  function(context, animation) {
+  Canvas,
+  function (context, animation) {
     switch (currentPage) {
       case PageName.home:
         HomePage.draw(context)
         break
       case PageName.history:
-        // new History(Canvas)
+        drawHistoryPage(context)
         break
       case PageName.destiny:
-        DestinyPage.draw(context)
+        DestinyPage.draw(
+          context,
+          touchMoveX,
+          touchDirection,
+          function (isOnEdge) {
+            isTriggingEdge = isOnEdge
+          }
+        )
         break
       default:
         HomePage.draw(context)
     }
+  }
+)
+
+// 滑动屏幕的事件捕捉
+Utils.touchMoveXDistance(
+  function (distance) {
+    // 开始滑动动态刷新这个值
+    if (distance.x > 0) {
+      touchDirection = UIKit.direction.right
+    } else {
+      touchDirection = UIKit.direction.left
+    }
+    console.log(isTriggingEdge)
+    if (isTriggingEdge == false) {
+      touchMoveX = distance.x + lastMoveX
+    }
+  },
+  function () {
+    // 滑动结束后记录上次移动的距离
+    lastMoveX = touchMoveX
   }
 )
 
@@ -63,8 +96,8 @@ Utils.onclick(
 
 // 查看寻史界面点击事件
 Utils.onclick(
-  HomePage.historyRect, 
-  function() {
+  HomePage.historyRect,
+  function () {
     sound.playClickSoundEffect()
     currentPage = PageName.history
   }
@@ -83,6 +116,6 @@ Utils.onclick(
 wx.onShow(
   function () {
     sound.playBackgroundMusic()
-  new Controller(Canvas)
+    new Controller(Canvas)
   }
 )

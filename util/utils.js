@@ -7,7 +7,11 @@ var moveX = 0
 var moveValue = 0
 var gearValue = 0
 
+var startX = 0
+var startY = 0
+
 export class Utils {
+  
   // 通用的画图方法
   static drawCustomImage(context, image, rect) {
     context.drawImage(
@@ -110,6 +114,34 @@ export class Utils {
             callback()
           }
         }
+      }
+    })
+  }
+
+  static touchMoveXDistance(movingCallback, endCallback) {
+    var distance = {
+      x: 0,
+      y: 0
+    }
+    wx.onTouchStart(function (event) {
+      startX = event.touches[0].clientX
+      startY = event.touches[0].clientY
+    })
+
+    wx.onTouchMove(function (event) {
+      distance.x = (event.touches[0].clientX - startX) * 2
+      distance.y = (event.touches[0].clientY - startY) * 2
+      if (typeof movingCallback === 'function') {
+        movingCallback(distance)
+      }
+    })
+
+    wx.onTouchEnd(function (event) {
+      // 松手后归位
+      startX = 0
+      startY = 0
+      if (typeof endCallback === 'function') {
+        endCallback()
       }
     })
   }
