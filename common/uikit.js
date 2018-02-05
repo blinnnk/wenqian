@@ -33,6 +33,7 @@ export class UIKit {
     loveBox: 'sources/image/loveBox.png',
     zhougong: 'sources/image/zhougong.png',
     guanyin: 'sources/image/guanyin.png',
+    guanYinBox: 'sources/image/guanYinBox.png'
   }
 
   static direction = {
