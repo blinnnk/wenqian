@@ -31,6 +31,8 @@ export class UIKit {
     shadow: 'sources/image/shadow.png',
     back: 'sources/image/backArrow.png',
     loveBox: 'sources/image/loveBox.png',
+    zhougong: 'sources/image/zhougong.png',
+    guanyin: 'sources/image/guanyin.png',
   }
 
   static direction = {
