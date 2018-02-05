@@ -6,6 +6,7 @@
 import Controller from 'util/controller'
 import Music from 'util/music'
 import { UIKit } from 'common/uikit'
+import { HistoryPage } from 'module/history/history'
 import { Component } from 'common/component'
 import { Utils } from 'util/utils'
 import { Canvas } from 'common/component'
@@ -42,8 +43,8 @@ var currentRect = {
 
 // 主界面的内容
 new Controller(
-  Canvas, 
-  function(context, animation) {
+  Canvas,
+  function (context, animation) {
     switch (currentPage) {
       case PageName.home:
         HomePage.draw(context)
@@ -53,30 +54,38 @@ new Controller(
         break
       case PageName.history:
         drawHistoryPage(context)
+        HistoryPage.draw(
+          context,
+          touchMoveX,
+          touchDirection,
+          function (isOnEdge) {
+            isTriggingEdge = isOnEdge
+          }
+        )  
         clickToLoadPage(DestinyPage.backButtonRect, PageName.history, PageName.home)
         break
       case PageName.guanYinDetail:
         drawGuanYinDetailPage(context)
         clickToLoadPage(
-          DestinyPage.backButtonRect, 
-          PageName.guanYinDetail, 
+          DestinyPage.backButtonRect,
+          PageName.guanYinDetail,
           PageName.destiny
         )
         break
       case PageName.zhouGongDetail:
         drawZhouGongDetailPage(context)
         clickToLoadPage(
-          DestinyPage.backButtonRect, 
-          PageName.zhouGongDetail, 
+          DestinyPage.backButtonRect,
+          PageName.zhouGongDetail,
           PageName.destiny
         )
         break
       case PageName.destiny:
         DestinyPage.draw(
-          context, 
-          touchMoveX, 
-          touchDirection, 
-          function(isOnEdge) {
+          context,
+          touchMoveX,
+          touchDirection,
+          function (isOnEdge) {
             isTriggingEdge = isOnEdge
           }
         )
@@ -108,11 +117,11 @@ function clickToLoadPage(clickRect, currentPageName, targetPageName) {
 
 // 滑动屏幕的事件捕捉
 Utils.touchMoveXDistance(
-  function(distance) {
+  function (distance) {
     // 滑动方向获取
     if (distance.x > 0) {
       touchDirection = UIKit.direction.right
-    } else if (distance.x < 0){
+    } else if (distance.x < 0) {
       touchDirection = UIKit.direction.left
     }
 
@@ -120,7 +129,7 @@ Utils.touchMoveXDistance(
       touchMoveX = distance.x + lastMoveX
     }
   },
-  function() {
+  function () {
     // 滑动结束后记录上次移动的距离
     lastMoveX = touchMoveX
   }
@@ -143,8 +152,8 @@ let guanYinBoxRect = {
 
 function drawGuanYinDetailPage(context) {
   Utils.drawImageAndMoveToTopWithAnimation(
-    context, 
-    guanYinBox, 
+    context,
+    guanYinBox,
     guanYinBoxRect,
     2,
     Component.ScreenSize.width - 200
@@ -160,6 +169,6 @@ function drawZhouGongDetailPage(context) {
 wx.onShow(
   function () {
     sound.playBackgroundMusic()
-  new Controller(Canvas)
+    new Controller(Canvas)
   }
 )

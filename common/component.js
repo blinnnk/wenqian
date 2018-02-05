@@ -96,4 +96,5 @@ export class Component {
     context.fillStyle = gradient
     context.fillRect(0, 0, context.canvas.width, context.canvas.height)
   }
+
 }

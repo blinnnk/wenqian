@@ -41,4 +41,3 @@ export class UIKit {
     right: 'right'
   }
 }
-
