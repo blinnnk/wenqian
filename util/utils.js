@@ -226,6 +226,28 @@ export class Utils {
       }
     })
   }
+  
+  // 绘制竖排文字  寻史界面  @shagnqi
+  static drawVerticalColumnText(context, text, textRect, columnNumber) { // columnNumber每列几个字
+    context.fillStyle = "black";
+    context.font = "34px '宋体'";
+    context.textAlign = "center";
+
+    let textHeight = 40 // 文字高度
+    let textWidth = 50 // 文字宽度
+    var column = 0 // 第几列
+    var textLeft = 0 // 每列的left值 从右往左
+    let remainder = 0 // 每一列的第几个
+    var textTop = 0; // 每个文字到顶部的距离
+
+    for (var index = 0; index < text.length; index++) {
+      column = parseInt(index / columnNumber)
+      textLeft = textRect.left - column * textWidth
+      remainder = index % columnNumber
+      textTop = textRect.top + remainder * textHeight
+      context.fillText(text[index], textLeft, textTop);
+    }
+  }
 }
 
 function checkRectContainsPointOrElse(x, y, rect, callback) {

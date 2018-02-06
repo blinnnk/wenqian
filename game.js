@@ -100,6 +100,8 @@ function clickToLoadPage(clickRect, currentPageName, targetPageName) {
     clickRect,
     function () {
       if (currentPage == currentPageName) {
+        // 打开页面重置touchMoveX @shangqi
+        touchMoveX = 0
         // 不同界面有不同的点击音效
         if (
           currentPage == PageName.destiny && 
@@ -110,6 +112,7 @@ function clickToLoadPage(clickRect, currentPageName, targetPageName) {
           sound.playClickSoundEffect()
         }
       }
+        
         currentPage = targetPageName
     }
   )
@@ -120,16 +123,15 @@ Utils.touchMoveXDistance(
   function(distance) {
     // 滑动方向获取
     if (distance.x > 0) {
-      touchDirection = UIKit.direction.right
+      touchDirection = UIKit.direction.right   
     } else if (distance.x < 0){
       touchDirection = UIKit.direction.left
     }
-
     if (isTriggingEdge == false) {
       touchMoveX = distance.x + lastMoveX
     }
   },
-  function() {
+  function () {
     // 滑动结束后记录上次移动的距离
     lastMoveX = touchMoveX
   }

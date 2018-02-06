@@ -13,7 +13,7 @@ var isOnEdge = false
 
 let GantryX1 = 0
 let CloudX1 = ScreenWidth * 0.42
-let TextX1 = ScreenWidth * 0.58
+let TextX1 = ScreenWidth * 0.88
 let CloudX2 = ScreenWidth
 let RoyalRalaceX = ScreenWidth * 0.74
 
@@ -30,11 +30,11 @@ let cloudRect = {
   width: ScreenWidth * 0.16,
   height: ScreenWidth * 0.07
 }
+let text1 = '求签至迟产生於唐朝末年的道观中,後来几乎遍及一切神庙、宫观和寺院。求签活动是什麽时候开始的,具体年月不大容易确定。但最迟应当出现於唐末。'
+let text1ColumnNumber = 16
 let textRect = {
   top: ScreenHeight * 0.22,
-  left: TextX1,
-  width: ScreenWidth * 0.35,
-  height: ScreenWidth * 0.88
+  left: TextX1
 }
 let cloudRect2 = {
   top: ScreenHeight * 0.54,
@@ -54,9 +54,6 @@ gantryImage.src = 'sources/image/history/Gantry-01.png'
 
 let cloudImage = wx.createImage()
 cloudImage.src = 'sources/image/history/yun-01.png'
-
-let textImage = wx.createImage()
-textImage.src = 'sources/image/history/text-01.png'
 
 let cloudImage2 = wx.createImage()
 cloudImage2.src = 'sources/image/history/yun-02.png'
@@ -96,14 +93,15 @@ export class HistoryPage {
     if (typeof triggerEdgeCallback === 'function') {
       triggerEdgeCallback(isOnEdge, GantryRect.left)
     }
+
     //绘制背景色
     context.fillStyle = '#fffbf8'
     context.fillRect(0, 0, Canvas.width*2, Canvas.height*2)
     Utils.drawCustomImage(context, royalRalaceImage, royalRalaceRect)
     Utils.drawCustomImage(context, gantryImage, GantryRect) 
     Utils.drawCustomImage(context, cloudImage, cloudRect)
-    Utils.drawCustomImage(context, textImage, textRect)
     Utils.drawCustomImage(context, cloudImage2, cloudRect2)
     Utils.drawCustomImage(context, backImage, backButtonRect)
+    Utils.drawVerticalColumnText(context, text1, textRect, text1ColumnNumber)
   }
 }
