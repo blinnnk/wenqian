@@ -12,6 +12,7 @@ import { Canvas } from 'common/component'
 import { HomePage } from 'module/home/home'
 import { DestinyPage } from 'module/destiny/destiny'
 import { DestinyDetail } from 'module/destinyDetail/destinyDetail'
+import { HistoryPage } from 'module/history/history'
 
 // 调整 Canvas 尺寸来解决 Retina 屏幕下的文字和图片虚边问题
 Component.adaptingRetina()
@@ -46,7 +47,14 @@ new Controller(
         clickToLoadPage(HomePage.historyRect, PageName.home, PageName.history)
         break
       case PageName.history:
-        drawHistoryPage(context)
+        HistoryPage.draw(
+          context,
+          touchMoveX,
+          touchDirection,
+          function (isOnEdge) {
+            isTriggingEdge = isOnEdge
+          }
+        )  
         clickToLoadPage(Component.backButtonRect, PageName.history, PageName.home)
         break
       case PageName.guanYinDetail:
