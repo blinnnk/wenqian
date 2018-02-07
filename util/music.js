@@ -26,6 +26,12 @@ export default class Music {
 
     this.bellsSoundEffect = wx.createInnerAudioContext()
     this.bellsSoundEffect.src = 'sources/audio/bells.mp3'
+
+    this.shakingProd = wx.createInnerAudioContext()
+    this.shakingProd.src = 'sources/audio/prod.wav'
+
+    this.amazing = wx.createInnerAudioContext()
+    this.amazing.src = 'sources/audio/amazing.wav'
   }
 
   playBackgroundMusic() {
@@ -38,6 +44,14 @@ export default class Music {
 
   playBells() {
     this.bellsSoundEffect.play()
+  }
+
+  playShakingProd() {
+    this.shakingProd.play()
+  }
+
+  playAmazingSoundEffect() {
+    this.amazing.play()
   }
 
 }

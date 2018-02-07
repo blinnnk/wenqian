@@ -19,6 +19,12 @@ var leafY = 0
 var leafX = 0
 let fallingLeafCount = 5
 
+// 摇晃判断
+var accelerometerX = [0]
+var accelerometerY = [0]
+var accelerometerZ = [0]
+var isShakingPhone = false
+
 export let Canvas = wx.createCanvas()
 
 // 适配 iPhoneX 的齐刘海
@@ -39,6 +45,57 @@ backImage.src = UIKit.imageSrc.back
 
 // 通用组件方法
 export class Component { 
+
+  static isShakingPhone(callback) {
+    wx.onAccelerometerChange(function (value) {
+      var accelerMeterXValue = 0
+      var accelerMeterYValue = 0
+      var accelerMeterZValue = 0
+
+      accelerometerX.push(value.x)
+      accelerometerY.push(value.y)
+      accelerometerZ.push(value.z)
+      if (accelerometerX.length == 3) {
+        accelerometerX.splice(0, 1)
+      }
+      if (accelerometerY.length == 3) {
+        accelerometerY.splice(0, 1)
+      }
+      if (accelerometerZ.length == 3) {
+        accelerometerZ.splice(0, 1)
+      }
+      // 判断 X轴方向 用户开始主观加速移动
+      if (
+        accelerometerX[0] != 0 &&
+        Math.abs(accelerometerX[1] - accelerometerX[0]) > 1
+      ) {
+        accelerMeterXValue = accelerometerX[1] - accelerometerX[0]
+      }
+      // 判断 X轴方向 用户开始主观加速移动
+      if (
+        accelerometerY[0] != 0 &&
+        Math.abs(accelerometerY[1] - accelerometerY[0]) > 1
+      ) {
+        accelerMeterYValue = accelerometerY[1] - accelerometerY[0]
+      }
+      // 判断 X轴方向 用户开始主观加速移动
+      if (
+        accelerometerZ[0] != 0 &&
+        Math.abs(accelerometerZ[1] - accelerometerZ[0]) > 1
+      ) {
+        accelerMeterZValue = accelerometerZ[1] - accelerometerZ[0]
+      }
+
+      if (accelerMeterXValue * accelerMeterYValue * accelerMeterZValue != 0) {
+        isShakingPhone = true
+        if (typeof callback === 'function') {
+          callback()
+        }
+      } else {
+        isShakingPhone = false
+      }
+    })
+  }
 
   static adaptingIPhoneXTop = adaptingIPhoneXTop
 
@@ -116,9 +173,9 @@ export class Component {
   static drawBackground(context) {
     var gradient =
       context.createLinearGradient(0, 0, context.canvas.width, context.canvas.height)
-    gradient.addColorStop(0, '#dbd8d5')
-    gradient.addColorStop(0.5, '#ffffff')
-    gradient.addColorStop(1, '#eae8e6')
+    gradient.addColorStop(0, '#d8cec5')
+    gradient.addColorStop(0.5, '#faf7f3')
+    gradient.addColorStop(1, '#e8e3dd')
 
     context.fillStyle = gradient
     context.fillRect(0, 0, context.canvas.width, context.canvas.height)
