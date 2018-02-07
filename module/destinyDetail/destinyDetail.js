@@ -30,23 +30,23 @@ let prodWidth = Component.ScreenSize.width * 0.22
 let prodRect = {
   width: prodWidth,
   height: prodWidth * 5,
-  left: Component.ScreenSize.width * 0.17,
+  left: Component.ScreenSize.width * 0.19,
   top: -600
 }
 
 let prodTop = Component.ScreenSize.height * 0.1
 let randomLeft =
   [
-    prodRect.left + Math.random() * Component.ScreenSize.width * 0.45,
-    prodRect.left + Math.random() * Component.ScreenSize.width * 0.45,
-    prodRect.left + Math.random() * Component.ScreenSize.width * 0.45,
-    prodRect.left + Math.random() * Component.ScreenSize.width * 0.45,
-    prodRect.left + Math.random() * Component.ScreenSize.width * 0.45,
-    prodRect.left + Math.random() * Component.ScreenSize.width * 0.45,
-    prodRect.left + Math.random() * Component.ScreenSize.width * 0.45,
-    prodRect.left + Math.random() * Component.ScreenSize.width * 0.45,
-    prodRect.left + Math.random() * Component.ScreenSize.width * 0.45,
-    prodRect.left + Math.random() * Component.ScreenSize.width * 0.45
+    prodRect.left + Math.random() * Component.ScreenSize.width * 0.39,
+    prodRect.left + Math.random() * Component.ScreenSize.width * 0.39,
+    prodRect.left + Math.random() * Component.ScreenSize.width * 0.39,
+    prodRect.left + Math.random() * Component.ScreenSize.width * 0.39,
+    prodRect.left + Math.random() * Component.ScreenSize.width * 0.39,
+    prodRect.left + Math.random() * Component.ScreenSize.width * 0.39,
+    prodRect.left + Math.random() * Component.ScreenSize.width * 0.39,
+    prodRect.left + Math.random() * Component.ScreenSize.width * 0.39,
+    prodRect.left + Math.random() * Component.ScreenSize.width * 0.39,
+    prodRect.left + Math.random() * Component.ScreenSize.width * 0.39
   ]
 let randomTop =
   [
@@ -71,7 +71,7 @@ if (typeof BoxType == "undefined") {
 export class DestinyDetail {
   static BoxType = BoxType
 
-  static drawDestinyDetailPage(context, boxType) {
+  static drawDestinyDetailPage(context, boxType, prodHorizontalOffset) {
     var image = guanYinBox
     var background = guanYinBoxBackground
     if (boxType == BoxType.zhouGong) {
@@ -93,11 +93,10 @@ export class DestinyDetail {
       background,
       boxRect,
       2,
-      Component.ScreenSize.height * 0.5,
-      function() {
-        drawProds(context)
-      }
+      Component.ScreenSize.height * 0.5
     )
+
+    drawProds(context, prodHorizontalOffset)
 
     Utils.drawImageAndMoveToTopWithAnimation(
       context,
@@ -109,12 +108,18 @@ export class DestinyDetail {
   }
 }
 
-function drawProds(context) {
-
+function drawProds(context, offset) {
+  if (Math.abs(offset) > 20) {
+    if(offset > 0) {
+      offset = 20
+    } else if (offset < 0) {
+      offset = -20
+    }
+  }
   for (var index = 0; index < 10; index++) {
     let prodImage = wx.createImage()
     prodImage.src = UIKit.imageSrc.prod
-    prodRect.left = randomLeft[index]
+    prodRect.left = randomLeft[index] - offset
 
     Utils.drawImageAndMoveToBottomWithAnimation(
       context, 

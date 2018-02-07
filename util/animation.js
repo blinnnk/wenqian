@@ -7,6 +7,11 @@ var accelerateValue = 0
 var speedValue = 0
 
 export class Interpolator {
+  // 初始化数值
+  static recovery() {
+    accelerateValue = 0
+    speedValue = 0
+  }
   /*
   * @description
   * 加速度插值器
