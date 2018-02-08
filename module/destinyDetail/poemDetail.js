@@ -8,6 +8,7 @@ import { Component } from '../../common/component'
 import { Utils } from '../../util/utils'
 import { NetUtils } from '../../util/netUtils'
 import { Api } from '../../common/api'
+import { ProdInfo } from '../../module/destinyDetail/prodDetail'
 
 let destinyImage = wx.createImage()
 let destinyImageRect = {
@@ -36,16 +37,27 @@ let saveButtonRect = {
 export class PoemDetail {
 
   static explanationButtonRect = buttonRect
+  static saveButtonRect = saveButtonRect
+
+  static savePoemImageToAlbum() {
+    if (destinyImage.src == '') {
+      wx.showToast({
+        title: '还没有生成图片',
+      })
+    } else {
+      Utils.saveImageToAlbum(destinyImage.src)
+    }
+  }
 
   static getPoemImage() {
     // 显示 Loading
     wx.showLoading({
       title: '正在生成签语',
-      mask: true
+      // mask: true
     })
-    NetUtils.getLocalPathByDownloadingNetFile(
-      Api.destinyPoem,
-      function (localSrc) {
+    NetUtils.downloadFile(
+      ProdInfo.src,
+      function(localSrc) {
         destinyImage.src = localSrc
       },
       function (isSuccsee) {
@@ -57,10 +69,17 @@ export class PoemDetail {
             title: '加载图片失败',
           })
         }
+      },
+      function () {
+        // 接口调用失败重新拉取
+        PoemDetail.getPoemImage()
       }
-    )
+    ) 
   }
   static draw(context) {
+
+    Component.addBackButton(context)
+
     Utils.drawCustomImage(
       context,
       destinyImage,

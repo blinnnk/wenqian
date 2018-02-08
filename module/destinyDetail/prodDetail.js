@@ -6,6 +6,9 @@
 import { UIKit } from '../../common/uikit'
 import { Component } from '../../common/component'
 import { Utils } from '../../util/utils'
+import { NetUtils } from '../../util/netUtils'
+import { Api } from '../../common/api'
+import { CurrentBoxType } from '../../module/destinyDetail/destinyDetail'
 
 let prodImage = wx.createImage()
 prodImage.src = UIKit.imageSrc.prod
@@ -21,7 +24,7 @@ let prodRect = {
 }
 
 let prodNameImage = wx.createImage()
-prodNameImage.src = UIKit.imageSrc.prodName1
+prodNameImage.src = UIKit.prodType.prodName1
 
 let adaptingTop = Math.max(300, Component.ScreenSize.height - prodRect.height + 100)
 let prodNameRect = {
@@ -39,9 +42,37 @@ let buttonRect = {
   height: UIKit.size.roundRectButtonHeight 
 }
 
+/*
+* 因为网络返回的接口中 签的类型和图片一起返回, 这里设计成在这个页面解析出
+* 图片的网络参数数据, 在这里主要使用签的类型 [xj] 上上签,中签...
+* 把网络 Src 传入到 PoemDetail 进行本地路径转换, 有点耦合但是接口这么给
+* 的这样子设计效率是最高的. 故此.
+*/
+export var ProdInfo = {
+  src: '',
+  xj: ''
+}
+
 export class ProdDetail {
 
   static buttonRect = buttonRect
+  
+  static getPoemInfo() {
+    NetUtils.getNetFile(
+      Api.destinyPoem,
+      function (info) {
+        ProdInfo = info
+      },
+      CurrentBoxType,
+      function(isSuccess) {
+        if (isSuccess == true) {
+          wx.showToast({
+            title: ProdInfo.xj,
+          })
+        }
+      }
+    )
+  }
 
   static draw(context) {
     Utils.drawImageAndMoveToTopWithAnimation(
