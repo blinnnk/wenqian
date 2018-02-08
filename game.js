@@ -12,6 +12,8 @@ import { Canvas } from 'common/component'
 import { HomePage } from 'module/home/home'
 import { DestinyPage } from 'module/destiny/destiny'
 import { DestinyDetail } from 'module/destinyDetail/destinyDetail'
+import { ProdDetail } from 'module/destinyDetail/prodDetail'
+import { Interpolator } from 'util/animation'
 import { HistoryPage } from 'module/history/history'
 
 // 调整 Canvas 尺寸来解决 Retina 屏幕下的文字和图片虚边问题
@@ -27,13 +29,17 @@ if (typeof PageName == "undefined") {
   PageName.destiny = 2
   PageName.guanYinDetail = 3
   PageName.zhouGongDetail = 4
+  PageName.prodDetail = 5
+  PageName.poemDetail = 6
 }
 
-var currentPage = PageName.history
+var currentPage = PageName.home
 var touchMoveX = 0
 var lastMoveX = 0
 var touchDirection = UIKit.direction.left
 var isTriggingEdge = false
+
+var prodHorizontalOffset = 0
 
 // 主界面的刷新帧控制器
 new Controller(
@@ -43,8 +49,14 @@ new Controller(
       case PageName.home:
         HomePage.draw(context)
         // 设置首页按钮的点击跳转事件
-        clickToLoadPage(HomePage.destinyRect, PageName.home, PageName.destiny)
-        clickToLoadPage(HomePage.historyRect, PageName.home, PageName.history)
+        clickToLoadPage(
+          HomePage.destinyRect, 
+          PageName.destiny
+        )
+        clickToLoadPage(
+          HomePage.historyRect, 
+          PageName.history
+        )
         break
       case PageName.history:
         HistoryPage.draw(
@@ -55,22 +67,49 @@ new Controller(
             isTriggingEdge = isOnEdge
           }
         )  
-        clickToLoadPage(Component.backButtonRect, PageName.history, PageName.home)
-        break
-      case PageName.guanYinDetail:
-        DestinyDetail.drawDestinyDetailPage(context, DestinyDetail.BoxType.guanYin)
         clickToLoadPage(
           Component.backButtonRect, 
-          PageName.guanYinDetail, 
+          PageName.home
+        )
+        break
+      case PageName.guanYinDetail:
+        DestinyDetail.drawDestinyDetailPage(
+          context, 
+          DestinyDetail.BoxType.guanYin,
+          prodHorizontalOffset
+        )
+        clickToLoadPage(
+          Component.backButtonRect, 
           PageName.destiny
         )
         break
       case PageName.zhouGongDetail:
-        DestinyDetail.drawDestinyDetailPage(context, DestinyDetail.BoxType.zhouGong)
+        DestinyDetail.drawDestinyDetailPage(
+          context, 
+          DestinyDetail.BoxType.zhouGong,
+          prodHorizontalOffset
+        )
         clickToLoadPage(
           Component.backButtonRect, 
-          PageName.zhouGongDetail, 
           PageName.destiny
+        )
+        break
+      case PageName.prodDetail:
+        ProdDetail.draw(context)
+        clickToLoadPage(
+          Component.backButtonRect,
+          PageName.destiny
+        )
+        clickToLoadPage(
+          ProdDetail.buttonRect,
+          PageName.poemDetail
+        )
+        break
+      case PageName.poemDetail: 
+        drawPoemDetailPage(context)
+        clickToLoadPage(
+          Component.backButtonRect,
+          PageName.prodDetail
         )
         break
       case PageName.destiny:
@@ -82,37 +121,71 @@ new Controller(
             isTriggingEdge = isOnEdge
           }
         )
-        clickToLoadPage(Component.backButtonRect, PageName.destiny, PageName.home)
-        clickToLoadPage(DestinyPage.boxRect, PageName.destiny, PageName.guanYinDetail)
-        clickToLoadPage(DestinyPage.loveBoxRect, PageName.destiny, PageName.zhouGongDetail)
+        clickToLoadPage(
+          Component.backButtonRect, 
+          PageName.home
+        )
+        clickToLoadPage(
+          DestinyPage.boxRect, 
+          PageName.guanYinDetail
+        )
+        clickToLoadPage(
+          DestinyPage.loveBoxRect, 
+          PageName.zhouGongDetail
+        )
         break
       default:
         HomePage.draw(context)
     }
   }
-)
+) 
 
+// 监听屏幕上的手指事件用来做点击和滑动的兼容
 Utils.touchPointListener()
 
+// 监听陀螺仪的倾斜角度
+Utils.addCompassListener(function(offset) {
+  prodHorizontalOffset = offset
+})
+
+// 摇晃手机的监听并判断是否处在可以求签的界面触发对应的事件
+Component.isShakingPhone(function() {
+  if (
+    currentPage == PageName.guanYinDetail ||
+    currentPage == PageName.zhouGongDetail
+  ) {
+    sound.playShakingProd()
+    setTimeout(function () {
+      resetGeneralParameters()
+      currentPage = PageName.prodDetail
+      sound.playAmazingSoundEffect()
+    }, 1500)
+  }
+})
+
 // 通过在 Canvas 上面的点击区域来判断点击事件
-function clickToLoadPage(clickRect, currentPageName, targetPageName) {
+function clickToLoadPage(clickRect, targetPageName) {
   Utils.onClick(
     clickRect,
     function () {
-      if (currentPage == currentPageName) {
-        // 不同界面有不同的点击音效
-        if (
-          currentPage == PageName.destiny && 
-          targetPageName != PageName.home
-        ) {
-          sound.playBells()
-        } else {
-          sound.playClickSoundEffect()
-        }
-      }   
-        currentPage = targetPageName
+      resetGeneralParameters()
+      // 不同点击事件设定不同的点击音效
+      if (
+        currentPage == PageName.destiny &&
+        targetPageName != PageName.home
+      ) {
+        sound.playBells()
+      } else {
+        sound.playClickSoundEffect()
+      }
+      currentPage = targetPageName
     }
   )
+}
+
+// 用来做通用常量或变量的参数在更换页面后恢复初始数值
+function resetGeneralParameters() {
+  Interpolator.recovery()
 }
 
 // 滑动屏幕的事件捕捉
@@ -139,7 +212,12 @@ function drawHistoryPage(context) {
   context.fillRect(0, 0, 200, 200)
 }
 
-// 后台到前台后恢复相关事件
+function drawPoemDetailPage(context) {
+  context.fillStyle = "black"
+  context.fillRect(200, 200, 200, 500)
+}
+
+// 后台到前台后恢复事件
 wx.onShow(
   function () {
     sound.playBackgroundMusic()

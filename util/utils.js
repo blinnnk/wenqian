@@ -20,8 +20,89 @@ var currentMoveX = 0
 var currentMoveY = 0
 var isClickEvent = false
 
+var degree = [0]
+// 陀螺仪的水平偏移度数
+var horizontalOffset = 0
+var buttonTextSize = 32
+
 // 工具
 export class Utils {
+
+  /*
+  * @description
+  * 画圆角矩形的工具函数
+  * [strokeWidth] Stroke 的宽度
+  * 圆角矩形会是全圆角矩形, 高度就是 radius * 2
+  */
+  static drawRoundRect(context, strokeWidth, rect, radius, strokeColor, text) {
+    context.beginPath()
+    context.strokeStyle = strokeColor
+    context.lineWidth = strokeWidth
+    context.lineCap = 'round'
+    
+    var buttonHeight = 0
+    if (rect.height > radius * 2) {
+      buttonHeight = rect.height - radius * 2
+    }
+
+    for (var index = 0; index < 4; index++) {
+      var modulus = 0
+      if (index == 1 || index == 2) {
+        modulus = 1
+      } else {
+        modulus = 0
+      }
+      var heightModulus = 0
+      if (index == 2 || index == 3) {
+        heightModulus = 1
+      } else {
+        heightModulus = 0
+      }
+      context.arc(
+        rect.left + rect.width * modulus,
+        rect.top + buttonHeight * heightModulus,
+        radius,
+        convertAngel(180 + 90 * index),
+        convertAngel(180 + 90 * (index + 1)),
+        false
+      )
+    }
+    context.closePath()
+    context.stroke()
+    Utils.drawText(
+      context,
+      text,
+      strokeColor,
+      rect.top + (buttonHeight + radius - buttonTextSize) / 2 - strokeWidth,
+      0,
+      '' + buttonTextSize + '',
+      true
+    )
+    context.restore()
+    
+  }
+
+  // 罗盘监听
+  static addCompassListener(callback) {
+    wx.onCompassChange(function (value) {
+      degree.push(value.direction)
+      if (degree.length == 3) {
+        degree.splice(0, 1)
+      }
+      var calculateValue = degree[1] - degree[0]
+      if (degree[0] != 0) {
+        if (calculateValue > 0) {
+          horizontalOffset += calculateValue
+        } else if (calculateValue < 0) {
+          horizontalOffset += calculateValue
+        }
+      }
+      if (typeof callback === 'function') {
+        callback(horizontalOffset)
+      }
+    })
+  }
+
   /*
   * @description
   * 这个函数用来监听手指事件并判断是点击事件还是滑动事件
@@ -106,16 +187,20 @@ export class Utils {
     maxMoveDistance,
     callback
   ) {
+    var accelerateValue = 
+      Interpolator.accelerateInterpolator(speed, maxMoveDistance)
     context.drawImage(
       image,
       rect.left,
-      rect.top - Interpolator.accelerateInterpolator(speed, maxMoveDistance),
+      rect.top - accelerateValue,
       rect.width,
       rect.height
     )
+    if (accelerateValue == maxMoveDistance) {
       if (typeof callback === 'function') {
         callback()
       }
+    } 
   }
 
   static drawImageAndMoveToBottomWithAnimation(
@@ -126,15 +211,19 @@ export class Utils {
     maxMoveDistance,
     callback
   ) {
+    var accelerateValue = 
+      Interpolator.accelerateInterpolator(speed, maxMoveDistance)
     context.drawImage(
       image,
       rect.left,
-      rect.top + Interpolator.accelerateInterpolator(speed, maxMoveDistance),
+      rect.top + accelerateValue,
       rect.width,
       rect.height
     )
-    if (typeof callback === 'function') {
-      callback()
+    if (accelerateValue == maxMoveDistance) {
+      if (typeof callback === 'function') {
+        callback()
+      }
     }
   }
 
@@ -144,7 +233,8 @@ export class Utils {
     rect,
     speed,
     horizontalRadius,
-    verticalRadius
+    verticalRadius,
+    callback
   ) {
     // 这个是速度变化的系数值越大加减速度的程度就越大
     let gearDegree = 0.2
@@ -156,6 +246,10 @@ export class Utils {
       rect.top + verticalRadius * Math.sin(gearValue),
       rect.width + 10 * gearValue,
       rect.height + 10 * gearValue)
+
+    if (typeof callback === 'function') {
+      callback()
+    }
   }
 
   // Canvas 点击事件
@@ -170,10 +264,16 @@ export class Utils {
     text, 
     color,
     centerY,
-    lineHeight
+    lineHeight,
+    textSize = '24px',
+    isBold = false
     ) {
+    var bold = ''
+    if (isBold == true) {
+      bold = 'bold'
+    }
     context.fillStyle = color
-    context.font = '24px avenir'
+    context.font = '' + bold + textSize + ' avenir'
     context.textBaseline = 'middle'
     context.textAlign = 'center'
     let newText = text.split('/n')
@@ -266,4 +366,8 @@ function checkRectContainsPointOrElse(x, y, rect, callback) {
       isClickEvent = false
     }
   }
+}
+
+function convertAngel(degrees) {
+  return (Math.PI * degrees) / 180
 }

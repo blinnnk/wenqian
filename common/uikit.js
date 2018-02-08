@@ -38,6 +38,7 @@ export class UIKit {
     prod: 'sources/image/prod.png',
     zhouGongBox: 'sources/image/zhouGongBox.png',
     zhouGongBoxBackground: 'sources/image/zhouGongBoxBackground.png',
+    prodName1: 'sources/image/prodName1.png',
   }
 
   static direction = {
