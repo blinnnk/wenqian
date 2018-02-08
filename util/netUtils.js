@@ -6,23 +6,37 @@
 
 export class NetUtils {
   // 解析 `Api Url` 返回一个可用的 `Json` 值
-  static getNetFile(url, hold) {
+  // 目前这个方法和问签的业务耦合比较大不适合转移到不同的项目
+  static getNetFile(url, hold, boxType, complete) {
+    var isSuccess = false
     wx.request({
       url: url,
       data: {
-        noncestr: Date.now()
+        noncestr: Date.now(),
+        type: boxType
       },
       success: function (result) {
+        isSuccess = true
         if (typeof hold === "function") {
           // 这里的 `key` 值暂时写死了 `image`
-          hold(result.data.image)
+          hold({ 
+            src: result.data.image, 
+            xj: result.data.xj
+            })
+          // 和 Server 联合调试会持续监测一段时间 这个打印保留 By KaySaith
+          console.info(result)
+        }
+      },
+      complete: function() {
+        if (typeof complete === 'function') {
+          complete(isSuccess)
         }
       }
     })
   }
 
   // 通过网络地址把文件下载到本地的 `tempFilePath`
-  static downloadFile(url, hold, finishCallback) {
+  static downloadFile(url, hold, finishCallback, failCallback) {
     var isSuccess = false
     wx.downloadFile(
       {
@@ -31,6 +45,11 @@ export class NetUtils {
           isSuccess = true
           if (typeof hold === 'function') {
             hold(result.tempFilePath)
+          }
+        },
+        fail: function() {
+          if (typeof failCallback === 'function') {
+            failCallback()
           }
         },
         complete: function() {
@@ -43,7 +62,13 @@ export class NetUtils {
   }
 
   // 通过 `Api Url` 获取 文件的网络地址并保存本地 返回本地的 `tempPathFile` 路径
-  static getLocalPathByDownloadingNetFile(api, holdTempPath, finishCallback) {
+  static getLocalPathByDownloadingNetFile(
+    api,
+    holdTempPath, 
+    boxType,
+    finishCallback, 
+    failCallback
+    ) {
     NetUtils.getNetFile(
       api,
       function (src) {
@@ -61,9 +86,15 @@ export class NetUtils {
             if (typeof finishCallback === 'function') {
               finishCallback(isSuccess)
             }
+          },
+          function() {
+            if (typeof failCallback === 'function') {
+              failCallback()
+            }
           }
         )
-      }
+      },
+      boxType
     )
   }
 }

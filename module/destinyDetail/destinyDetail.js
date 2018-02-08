@@ -64,16 +64,21 @@ let randomTop =
 
 if (typeof BoxType == "undefined") {
   var BoxType = {}
-  BoxType.guanYin = 'guanyin'
-  BoxType.zhouGong = 'zhougong'
+  BoxType.guanYin = 0
+  BoxType.zhouGong = 1
 }
 
+export var CurrentBoxType = BoxType.guanYin
+
 export class DestinyDetail {
+
   static BoxType = BoxType
 
   static drawDestinyDetailPage(context, boxType, prodHorizontalOffset) {
     var image = guanYinBox
     var background = guanYinBoxBackground
+    // 用来记录当前签筒类型的变量, 用来从服务端获取签语的类型判断
+    CurrentBoxType = boxType
     if (boxType == BoxType.zhouGong) {
       image = zhouGongBox
       background = zhouGongBoxBackground

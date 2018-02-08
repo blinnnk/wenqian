@@ -23,10 +23,26 @@ var isClickEvent = false
 var degree = [0]
 // 陀螺仪的水平偏移度数
 var horizontalOffset = 0
-var buttonTextSize = 32
+var buttonTextSize = 30
 
 // 工具
 export class Utils {
+
+  static saveImageToAlbum(localSrc) {
+    wx.saveImageToPhotosAlbum({
+      filePath: localSrc,
+      success: function() {
+        wx.showToast({
+          title: '正在保存',
+        })
+      },
+      complete: function() {
+        wx.showToast({
+          title: '保存相册成功',
+        })
+      }
+    })
+  }
 
   /*
   * @description

@@ -111,6 +111,10 @@ new Controller(
           PoemDetail.explanationButtonRect, 
           PageName.explanationDetail
         )
+        clickToLoadPage(
+          PoemDetail.saveButtonRect,
+          PageName.poemDetail
+        )
         break
       case PageName.destiny:
         DestinyPage.draw(
@@ -168,6 +172,9 @@ Component.isShakingPhone(
   },
   // 摇晃结束的回调
   function() {
+    // 摇晃结束后拉取网络数据签子的基础信息
+    ProdDetail.getPoemInfo()
+    // 显示界面
     resetGeneralParameters()
     currentPage = PageName.prodDetail
     sound.playAmazingSoundEffect()
@@ -192,13 +199,19 @@ function clickToLoadPage(clickRect, targetPageName) {
 
       // 加载签语网络图片并显示
       if (
-        currentPage == PageName.prodDetail &&
-        targetPageName == PageName.poemDetail  
+        currentPage == PageName.prodDetail && 
+        targetPageName == PageName.poemDetail
       ) {
-        sound.playBells()
-        PoemDetail.getPoemImage()
+          PoemDetail.getPoemImage()
       }
 
+      // 点击保存按钮把签语图片保存到本地相册
+      if (
+        currentPage == PageName.poemDetail &&
+        targetPageName == PageName.poemDetail
+      ) {
+        PoemDetail.savePoemImageToAlbum()
+      }
       currentPage = targetPageName
     }
   )
@@ -238,6 +251,8 @@ function drawexplanationDetail(context) {
   context.fillStyle = "black"
   context.fillRect(200, 200, 600, 200)
 }
+
+let image = wx.createImage()
 
 // 后台到前台后恢复事件.
 wx.onShow(
