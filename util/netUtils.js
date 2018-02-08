@@ -5,9 +5,36 @@
 
 
 export class NetUtils {
+
+  static checkNetWorkStatus(callback) {
+    var isSuccess = false
+    wx.showLoading({
+      title: '正在生成',
+    })
+    wx.getNetworkType({
+      success: function (result) {
+        isSuccess = true
+        if (result.networkType == 'none') {
+          wx.showModal({
+            title: '检查网络连接',
+            content: '目前查找不到网络, 请检查当前网络是否可用',
+          })
+        } else {
+          if (typeof callback === 'function') {
+            callback()
+          }
+        }
+      },
+      complete: function() {
+        if (isSuccess == true) {
+          wx.hideLoading()
+        }
+      }
+    })
+  }
   // 解析 `Api Url` 返回一个可用的 `Json` 值
   // 目前这个方法和问签的业务耦合比较大不适合转移到不同的项目
-  static getNetFile(url, hold, boxType, complete) {
+  static getApiInfo(url, hold, boxType, complete) {
     var isSuccess = false
     wx.request({
       url: url,
@@ -69,7 +96,7 @@ export class NetUtils {
     finishCallback, 
     failCallback
     ) {
-    NetUtils.getNetFile(
+    NetUtils.getApiInfo(
       api,
       function (src) {
         // 解析返回网络地址

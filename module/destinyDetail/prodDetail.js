@@ -10,32 +10,32 @@ import { NetUtils } from '../../util/netUtils'
 import { Api } from '../../common/api'
 import { CurrentBoxType } from '../../module/destinyDetail/destinyDetail'
 
-let prodImage = wx.createImage()
+const prodImage = wx.createImage()
 prodImage.src = UIKit.imageSrc.prod
 
-let moveDistance = Component.ScreenSize.height * 2
+const moveDistance = Component.ScreenSize.height * 2
 
-let prodWidth = Component.ScreenSize.width * 0.32
-let prodRect = {
+const prodWidth = Component.ScreenSize.width * 0.32
+const prodRect = {
   width: prodWidth,
   height: prodWidth * 5,
   left: (Component.ScreenSize.width - prodWidth) / 2,
   top: moveDistance
 }
 
-let prodNameImage = wx.createImage()
+const prodNameImage = wx.createImage()
 prodNameImage.src = UIKit.prodType.prodName1
 
-let adaptingTop = Math.max(300, Component.ScreenSize.height - prodRect.height + 100)
-let prodNameRect = {
+const adaptingTop = Math.max(300, Component.ScreenSize.height - prodRect.height + 100)
+const prodNameRect = {
   width: prodRect.width,
   height: prodRect.width,
   left: prodRect.left,
   top: adaptingTop + prodRect.height * 0.056
 }
 
-let buttonLeft = (Component.ScreenSize.width - UIKit.size.roundRectButtonWidth) / 2
-let buttonRect = { 
+const buttonLeft = (Component.ScreenSize.width - UIKit.size.roundRectButtonWidth) / 2
+const buttonRect = { 
   left: buttonLeft, 
   top: adaptingTop - 80, 
   width: UIKit.size.roundRectButtonWidth, 
@@ -58,7 +58,7 @@ export class ProdDetail {
   static buttonRect = buttonRect
   
   static getPoemInfo() {
-    NetUtils.getNetFile(
+    NetUtils.getApiInfo(
       Api.destinyPoem,
       function (info) {
         ProdInfo = info
@@ -155,7 +155,7 @@ function getCurrentProdTypeImageSrc(xj) {
       src = UIKit.prodType.prodName15
       break
     default:
-      src = UIKit.prodType.prodName1
+      src = ''
       break
   }
   return src

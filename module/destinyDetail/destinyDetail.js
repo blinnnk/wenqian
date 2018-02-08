@@ -7,35 +7,35 @@ import { UIKit } from '../../common/uikit'
 import { Component } from '../../common/component'
 import { Utils } from '../../util/utils'
 
-let guanYinBox = wx.createImage()
+const guanYinBox = wx.createImage()
 guanYinBox.src = UIKit.imageSrc.guanYinBox
 
-let guanYinBoxBackground = wx.createImage()
+const guanYinBoxBackground = wx.createImage()
 guanYinBoxBackground.src = UIKit.imageSrc.guanYinBoxBackground
 
-let zhouGongBox = wx.createImage()
+const zhouGongBox = wx.createImage()
 zhouGongBox.src = UIKit.imageSrc.zhouGongBox
 
-let zhouGongBoxBackground = wx.createImage()
+const zhouGongBoxBackground = wx.createImage()
 zhouGongBoxBackground.src = UIKit.imageSrc.zhouGongBoxBackground
 
-let boxRect = {
+const boxRect = {
   width: Component.ScreenSize.width,
   height: Component.ScreenSize.width * 1.5,
   left: 0,
   top: Component.ScreenSize.height
 }
 
-let prodWidth = Component.ScreenSize.width * 0.22
-let prodRect = {
+const prodWidth = Component.ScreenSize.width * 0.22
+const prodRect = {
   width: prodWidth,
   height: prodWidth * 5,
   left: Component.ScreenSize.width * 0.19,
   top: -600
 }
 
-let prodTop = Component.ScreenSize.height * 0.1
-let randomLeft =
+const prodTop = Component.ScreenSize.height * 0.1
+const randomLeft =
   [
     prodRect.left + Math.random() * Component.ScreenSize.width * 0.39,
     prodRect.left + Math.random() * Component.ScreenSize.width * 0.39,
@@ -48,7 +48,7 @@ let randomLeft =
     prodRect.left + Math.random() * Component.ScreenSize.width * 0.39,
     prodRect.left + Math.random() * Component.ScreenSize.width * 0.39
   ]
-let randomTop =
+const randomTop =
   [
     prodTop + (prodTop * (Math.random() + 5.8)),
     prodTop + (prodTop * (Math.random() + 5.8)),
@@ -74,7 +74,7 @@ export class DestinyDetail {
 
   static BoxType = BoxType
 
-  static drawDestinyDetailPage(context, boxType, prodHorizontalOffset) {
+  static draw(context, boxType, prodHorizontalOffset) {
     var image = guanYinBox
     var background = guanYinBoxBackground
     // 用来记录当前签筒类型的变量, 用来从服务端获取签语的类型判断
@@ -122,7 +122,7 @@ function drawProds(context, offset) {
     }
   }
   for (var index = 0; index < 10; index++) {
-    let prodImage = wx.createImage()
+    const prodImage = wx.createImage()
     prodImage.src = UIKit.imageSrc.prod
     prodRect.left = randomLeft[index] - offset
 

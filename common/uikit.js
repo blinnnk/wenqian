@@ -16,7 +16,9 @@ export class UIKit {
   }
 
   static color = {
-    title: '#6f6351'
+    title: '#6f6351',
+    opacity5: 'rgba(255, 255, 255, 0.5)',
+    opacity1: 'rgba(255, 255, 255, 0.1)',
   }
 
   static imageSrc = {
@@ -39,7 +41,8 @@ export class UIKit {
     guanYinBoxBackground: 'sources/image/guanYinBoxBackground.png',
     prod: 'sources/image/prod.png',
     zhouGongBox: 'sources/image/zhouGongBox.png',
-    zhouGongBoxBackground: 'sources/image/zhouGongBoxBackground.png'
+    zhouGongBoxBackground: 'sources/image/zhouGongBoxBackground.png',
+    timeBackground: 'sources/image/timeBackground.png'
   }
 
   static prodType = {

@@ -28,6 +28,25 @@ var buttonTextSize = 30
 // 工具
 export class Utils {
 
+  static convertTimeWithMillsecond(millsecond) {
+    var totalSecond = millsecond / 1000
+    var totalMinute = Math.floor(totalSecond / 60)
+
+    var hour = Math.floor(totalMinute / 60)
+    var minute = totalMinute - hour * 60
+    var second = Math.ceil(totalSecond - totalMinute * 60)
+    if (hour < 10) {
+      hour = '0' + hour
+    }
+    if (minute < 10) {
+      minute = '0' + minute
+    }
+    if (second < 10) {
+      second = '0' + second
+    }
+    return '' + hour + ' : ' + minute + ' : ' + second
+  }
+
   static saveImageToAlbum(localSrc) {
     wx.saveImageToPhotosAlbum({
       filePath: localSrc,
@@ -268,6 +287,20 @@ export class Utils {
   static onClick(rect, callback) {
     if (isClickEvent == false) return
     checkRectContainsPointOrElse(currentTouchX, currentTouchY, rect, callback)
+  }
+
+  static eraseTouchEvent(...rectArguments) {
+    for (var index = 0; index < rectArguments.length; index++) {
+      checkRectContainsPointOrElse(
+        currentTouchX,
+        currentTouchY,
+        rectArguments[index],
+        function () {
+          currentTouchX = 0
+          currentTouchY = 0
+        }
+      )
+    } 
   }
 
   // 画副标题的文字
