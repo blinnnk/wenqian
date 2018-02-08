@@ -10,7 +10,9 @@ export class UIKit {
     branch: 480,
     leaf: 66,
     buttonWidth: 130,
-    buttonHeight: 64
+    buttonHeight: 64,
+    roundRectButtonWidth: 300,
+    roundRectButtonHeight: 50,
   }
 
   static color = {

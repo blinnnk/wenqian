@@ -8,11 +8,13 @@ import Music from 'util/music'
 import { UIKit } from 'common/uikit'
 import { Component } from 'common/component'
 import { Utils } from 'util/utils'
+import { NetUtils } from 'util/netUtils'
 import { Canvas } from 'common/component'
 import { HomePage } from 'module/home/home'
 import { DestinyPage } from 'module/destiny/destiny'
 import { DestinyDetail } from 'module/destinyDetail/destinyDetail'
 import { ProdDetail } from 'module/destinyDetail/prodDetail'
+import { PoemDetail } from 'module/destinyDetail/poemDetail'
 import { Interpolator } from 'util/animation'
 
 // 调整 Canvas 尺寸来解决 Retina 屏幕下的文字和图片虚边问题
@@ -30,6 +32,7 @@ if (typeof PageName == "undefined") {
   PageName.zhouGongDetail = 4
   PageName.prodDetail = 5
   PageName.poemDetail = 6
+  PageName.explanationDetail = 7
 }
 
 var currentPage = PageName.home
@@ -97,11 +100,16 @@ new Controller(
           PageName.poemDetail
         )
         break
+      // 古诗的签语界面
       case PageName.poemDetail: 
-        drawPoemDetailPage(context)
+        PoemDetail.draw(context)
         clickToLoadPage(
           Component.backButtonRect,
           PageName.prodDetail
+        )
+        clickToLoadPage(
+          PoemDetail.explanationButtonRect, 
+          PageName.explanationDetail
         )
         break
       case PageName.destiny:
@@ -126,6 +134,13 @@ new Controller(
           PageName.zhouGongDetail
         )
         break
+      case PageName.explanationDetail:
+        drawexplanationDetail(context)
+        clickToLoadPage(
+          Component.backButtonRect,
+          PageName.poemDetail
+        )
+        break
       default:
         HomePage.draw(context)
     }
@@ -141,19 +156,23 @@ Utils.addCompassListener(function(offset) {
 })
 
 // 摇晃手机的监听并判断是否处在可以求签的界面触发对应的事件
-Component.isShakingPhone(function() {
-  if (
-    currentPage == PageName.guanYinDetail ||
-    currentPage == PageName.zhouGongDetail
-  ) {
-    sound.playShakingProd()
-    setTimeout(function () {
-      resetGeneralParameters()
-      currentPage = PageName.prodDetail
-      sound.playAmazingSoundEffect()
-    }, 1500)
+Component.isShakingPhone(
+  // 持续摇晃的回调
+  function() {
+    if (
+      currentPage == PageName.guanYinDetail ||
+      currentPage == PageName.zhouGongDetail
+    ) {
+      sound.playShakingProd()
+    }
+  },
+  // 摇晃结束的回调
+  function() {
+    resetGeneralParameters()
+    currentPage = PageName.prodDetail
+    sound.playAmazingSoundEffect()
   }
-})
+)
 
 // 通过在 Canvas 上面的点击区域来判断点击事件
 function clickToLoadPage(clickRect, targetPageName) {
@@ -170,6 +189,16 @@ function clickToLoadPage(clickRect, targetPageName) {
       } else {
         sound.playClickSoundEffect()
       }
+
+      // 加载签语网络图片并显示
+      if (
+        currentPage == PageName.prodDetail &&
+        targetPageName == PageName.poemDetail  
+      ) {
+        sound.playBells()
+        PoemDetail.getPoemImage()
+      }
+
       currentPage = targetPageName
     }
   )
@@ -205,12 +234,12 @@ function drawHistoryPage(context) {
   context.fillRect(0, 0, 200, 200)
 }
 
-function drawPoemDetailPage(context) {
+function drawexplanationDetail(context) {
   context.fillStyle = "black"
-  context.fillRect(200, 200, 200, 500)
+  context.fillRect(200, 200, 600, 200)
 }
 
-// 后台到前台后恢复事件
+// 后台到前台后恢复事件.
 wx.onShow(
   function () {
     sound.playBackgroundMusic()

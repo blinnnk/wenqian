@@ -46,7 +46,7 @@ backImage.src = UIKit.imageSrc.back
 // 通用组件方法
 export class Component { 
 
-  static isShakingPhone(callback) {
+  static isShakingPhone(isShakingCallback, hasFinishedCallback) {
     wx.onAccelerometerChange(function (value) {
       var accelerMeterXValue = 0
       var accelerMeterYValue = 0
@@ -88,11 +88,19 @@ export class Component {
 
       if (accelerMeterXValue * accelerMeterYValue * accelerMeterZValue != 0) {
         isShakingPhone = true
-        if (typeof callback === 'function') {
-          callback()
+        if (typeof isShakingCallback === 'function') {
+          isShakingCallback()
         }
       } else {
-        isShakingPhone = false
+        if (
+          isShakingPhone == true &&
+          Math.abs(value.x) + Math.abs(value.y) + Math.abs(value.z) < 1.5
+        ) {
+          if (typeof hasFinishedCallback === 'function') {
+           hasFinishedCallback()
+           isShakingPhone = false
+          }
+        }
       }
     })
   }

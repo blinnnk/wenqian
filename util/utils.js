@@ -91,11 +91,7 @@ export class Utils {
       }
       var calculateValue = degree[1] - degree[0]
       if (degree[0] != 0) {
-        if (calculateValue > 0) {
-          horizontalOffset += calculateValue
-        } else if (calculateValue < 0) {
-          horizontalOffset += calculateValue
-        }
+        horizontalOffset += calculateValue
       }
       if (typeof callback === 'function') {
         callback(horizontalOffset)
