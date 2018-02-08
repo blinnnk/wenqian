@@ -16,7 +16,9 @@ export class UIKit {
   }
 
   static color = {
-    title: '#6f6351'
+    title: '#6f6351',
+    opacity5: 'rgba(255, 255, 255, 0.5)',
+    opacity1: 'rgba(255, 255, 255, 0.1)',
   }
 
   static imageSrc = {
@@ -39,12 +41,26 @@ export class UIKit {
     guanYinBoxBackground: 'sources/image/guanYinBoxBackground.png',
     prod: 'sources/image/prod.png',
     zhouGongBox: 'sources/image/zhouGongBox.png',
-    zhouGongBoxBackground: 'sources/image/zhouGongBoxBackground.png'
+    zhouGongBoxBackground: 'sources/image/zhouGongBoxBackground.png',
+    timeBackground: 'sources/image/timeBackground.png'
   }
 
   static prodType = {
     prodName1: 'sources/image/prodName1.png',
-    prodName2: 'sources/image/prodName1.png',
+    prodName2: 'sources/image/prodName2.png',
+    prodName3: 'sources/image/prodName3.png',
+    prodName4: 'sources/image/prodName4.png',
+    prodName5: 'sources/image/prodName5.png',
+    prodName6: 'sources/image/prodName6.png',
+    prodName7: 'sources/image/prodName7.png',
+    prodName8: 'sources/image/prodName8.png',
+    prodName9: 'sources/image/prodName9.png',
+    prodName10: 'sources/image/prodName10.png',
+    prodName11: 'sources/image/prodName11.png',
+    prodName12: 'sources/image/prodName12.png',
+    prodName13: 'sources/image/prodName13.png',
+    prodName14: 'sources/image/prodName14.png',
+    prodName15: 'sources/image/prodName15.png'
   }
 
   static direction = {

@@ -17,20 +17,24 @@ export default class Music {
 
     this.backgroundMusic = wx.createInnerAudioContext()
     this.backgroundMusic.loop = true
-    this.backgroundMusic.src = 'sources/audio/bgm.mp3'
+    // this.backgroundMusic.src = 'sources/audio/bgm.mp3'
 
     this.playBackgroundMusic()
 
     this.clickSoundEffect = wx.createInnerAudioContext()
+    this.clickSoundEffect.obeyMuteSwitch = false
     this.clickSoundEffect.src = 'sources/audio/click.wav'
 
     this.bellsSoundEffect = wx.createInnerAudioContext()
+    this.bellsSoundEffect.obeyMuteSwitch = false
     this.bellsSoundEffect.src = 'sources/audio/bells.mp3'
 
     this.shakingProd = wx.createInnerAudioContext()
+    this.shakingProd.obeyMuteSwitch = false
     this.shakingProd.src = 'sources/audio/prod.wav'
 
     this.amazing = wx.createInnerAudioContext()
+    this.amazing.obeyMuteSwitch = false
     this.amazing.src = 'sources/audio/amazing.wav'
   }
 

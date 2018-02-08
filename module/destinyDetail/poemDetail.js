@@ -10,24 +10,24 @@ import { NetUtils } from '../../util/netUtils'
 import { Api } from '../../common/api'
 import { ProdInfo } from '../../module/destinyDetail/prodDetail'
 
-let destinyImage = wx.createImage()
-let destinyImageRect = {
+const destinyImage = wx.createImage()
+const destinyImageRect = {
   left: 0,
   top: 200,
   width: Component.ScreenSize.width,
   height: Component.ScreenSize.width
 }
 
-let buttonLeft = 
+const buttonLeft = 
   (Component.ScreenSize.width - UIKit.size.roundRectButtonWidth) / 2
-let buttonRect = {
+const buttonRect = {
   left: buttonLeft,
   top: Component.ScreenSize.height * 0.9 - 50 - 128,
   width: UIKit.size.roundRectButtonWidth,
   height: UIKit.size.roundRectButtonHeight
 }
 
-let saveButtonRect = {
+const saveButtonRect = {
   left: buttonLeft,
   top: Component.ScreenSize.height * 0.9 - 50,
   width: UIKit.size.roundRectButtonWidth,
@@ -53,7 +53,7 @@ export class PoemDetail {
     // 显示 Loading
     wx.showLoading({
       title: '正在生成签语',
-      // mask: true
+      mask: true
     })
     NetUtils.downloadFile(
       ProdInfo.src,
