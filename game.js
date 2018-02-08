@@ -41,6 +41,7 @@ var touchMoveX = 0
 var lastMoveX = 0
 var prodHorizontalOffset = 0
 
+// 这个时间会替换成服务器可配置的时间
 const singleLockTime = 36 * 1000
 
 var buttonRect = {

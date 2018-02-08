@@ -196,13 +196,12 @@ export class DestinyPage {
         } else {
           setTimeout(function() {
             wx.hideLoading()
-          }, 3000)
+          }, 2000)
         }
       }
     })
 
     setInterval(function () {
-      console.log(LockTime)
       LockTime -= 1000
       if (LockTime <= 0) {
         isBlockStatus = false
