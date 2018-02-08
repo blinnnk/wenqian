@@ -38,9 +38,6 @@ if (typeof PageName == "undefined") {
 var currentPage = PageName.home
 var touchMoveX = 0
 var lastMoveX = 0
-var touchDirection = UIKit.direction.left
-var isTriggingEdge = false
-
 var prodHorizontalOffset = 0
 
 // 主界面的刷新帧控制器
@@ -119,11 +116,7 @@ new Controller(
       case PageName.destiny:
         DestinyPage.draw(
           context, 
-          touchMoveX, 
-          touchDirection, 
-          function(isOnEdge) {
-            isTriggingEdge = isOnEdge
-          }
+          touchMoveX
         )
         clickToLoadPage(
           Component.backButtonRect, 
@@ -139,7 +132,7 @@ new Controller(
         )
         break
       case PageName.explanationDetail:
-        drawexplanationDetail(context)
+        drawExplanationDetail(context)
         clickToLoadPage(
           Component.backButtonRect,
           PageName.poemDetail
@@ -225,15 +218,11 @@ function resetGeneralParameters() {
 // 滑动屏幕的事件捕捉
 Utils.touchMoveXDistance(
   function(distance) {
-    // 滑动方向获取
-    if (distance.x > 0) {
-      touchDirection = UIKit.direction.right
-    } else if (distance.x < 0){
-      touchDirection = UIKit.direction.left
-    }
-
-    if (isTriggingEdge == false) {
-      touchMoveX = distance.x + lastMoveX
+    touchMoveX = distance.x + lastMoveX
+    if (touchMoveX < -Component.ScreenSize.width) {
+      touchMoveX = -Component.ScreenSize.width
+    } else if (touchMoveX > 0) {
+      touchMoveX = 0
     }
   },
   function() {
@@ -247,14 +236,12 @@ function drawHistoryPage(context) {
   context.fillRect(0, 0, 200, 200)
 }
 
-function drawexplanationDetail(context) {
+function drawExplanationDetail(context) {
   context.fillStyle = "black"
-  context.fillRect(200, 200, 600, 200)
+  context.fillRect(0, 0, 500, 600)
 }
 
-let image = wx.createImage()
-
-// 后台到前台后恢复事件.
+// 后台到前台后恢复事件
 wx.onShow(
   function () {
     sound.playBackgroundMusic()

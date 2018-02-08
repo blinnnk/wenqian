@@ -62,6 +62,7 @@ export class ProdDetail {
       Api.destinyPoem,
       function (info) {
         ProdInfo = info
+        prodNameImage.src = getCurrentProdTypeImageSrc(info.xj)
       },
       CurrentBoxType,
       function(isSuccess) {
@@ -104,4 +105,58 @@ export class ProdDetail {
       'Check Prod Detail'
     )
   }
+}
+
+function getCurrentProdTypeImageSrc(xj) {
+  var src = ''
+  switch (xj) {
+    case '上上签':
+      src = UIKit.prodType.prodName1
+      break
+    case '上签':
+      src = UIKit.prodType.prodName2
+      break
+    case '上中签':
+      src = UIKit.prodType.prodName3
+      break
+    case '中签':
+      src = UIKit.prodType.prodName4
+      break
+    case '中上签':
+      src = UIKit.prodType.prodName5
+      break
+    case '中中签':
+      src = UIKit.prodType.prodName6
+      break
+    case '中下签':
+      src = UIKit.prodType.prodName7
+      break
+    case '下签':
+      src = UIKit.prodType.prodName8
+      break
+    case '大吉':
+      src = UIKit.prodType.prodName9
+      break
+    case '上吉':
+      src = UIKit.prodType.prodName10
+      break
+    case '中吉':
+      src = UIKit.prodType.prodName11
+    case '上平签':
+      src = UIKit.prodType.prodName12
+      break
+    case '中平签':
+      src = UIKit.prodType.prodName13
+      break
+    case '平中签':
+      src = UIKit.prodType.prodName14
+      break
+    case '平平签':
+      src = UIKit.prodType.prodName15
+      break
+    default:
+      src = UIKit.prodType.prodName1
+      break
+  }
+  return src
 }

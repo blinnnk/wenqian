@@ -11,10 +11,9 @@ let boxSize = Component.ScreenSize.width * 0.9
 let shadowSize = Component.ScreenSize.width * 0.5
 let boxTop = (Component.ScreenSize.height - boxSize) / 2.6
 let boxLeft = Component.ScreenSize.width * 0.05
-let loveBoxLeft = Component.ScreenSize.width * 0.05 + boxSize
-var currentLeft = 0
-var isOnEdge = false
+let loveBoxLeft = Component.ScreenSize.width * 1.05
 
+var currentLeft = 0
 let shadowImage = wx.createImage()
 shadowImage.src = UIKit.imageSrc.shadow
 
@@ -81,31 +80,16 @@ export class DestinyPage {
 
   static draw(
     context, 
-    touchMoveX, 
-    direction, 
-    triggerEdgeCallback
+    touchMoveX
     ) {
       
     // 添加回退按钮
     Component.addBackButton(context)
-    // 设定左右的边界滑动限制
-    if (
-      (boxRect.left <= boxLeft || direction == UIKit.direction.left) && 
-      (loveBoxRect.left > boxLeft || direction == UIKit.direction.right)) {
-      boxRect.left = boxLeft + touchMoveX
-      shadowRect.left = shadowLeft + touchMoveX
-      loveBoxRect.left = loveBoxLeft + touchMoveX
-      loveShadowRect.left = loveShadowLeft + touchMoveX
-      isOnEdge = false
-    } else {
-      isOnEdge = true
-    }
-
-    // 传递是否触发边界的回调
-    if (typeof triggerEdgeCallback === 'function') {
-      triggerEdgeCallback(isOnEdge)
-    }
-
+    // 移动距离赋值
+    boxRect.left = boxLeft + touchMoveX
+    shadowRect.left = shadowLeft + touchMoveX
+    loveBoxRect.left = loveBoxLeft + touchMoveX
+    loveShadowRect.left = loveShadowLeft + touchMoveX
     // 根据当前的 Offset 来更新签筒的名字
     if (boxRect.left < -Component.ScreenSize.width / 2.5) {
       Utils.drawCustomImage(context, zhouGongImage, titleRect)
