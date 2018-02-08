@@ -1,6 +1,5 @@
 
 export default class historyImage {
-  constructor() {}
   creatImage() {
     this.gantryImage = wx.createImage()
     this.gantryImage.src = 'sources/image/history/Gantry-01.png'

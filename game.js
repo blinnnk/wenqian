@@ -169,6 +169,8 @@ function clickToLoadPage(clickRect, targetPageName) {
     clickRect,
     function () {
       resetGeneralParameters()
+      // 点击打开页面时重置touchMoveX
+      touchMoveX = 0
       // 不同点击事件设定不同的点击音效
       if (
         currentPage == PageName.destiny &&
