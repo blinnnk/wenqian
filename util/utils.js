@@ -233,8 +233,8 @@ export class Utils {
     context.font = "34px '宋体'";
     context.textAlign = "center";
 
-    let textHeight = 40 // 文字高度
-    let textWidth = 50 // 文字宽度
+    let textHeight = 50 // 文字高度
+    let textWidth = 60 // 文字宽度
     var column = 0 // 第几列
     var textLeft = 0 // 每列的left值 从右往左
     let remainder = 0 // 每一列的第几个

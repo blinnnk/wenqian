@@ -29,7 +29,7 @@ if (typeof PageName == "undefined") {
   PageName.zhouGongDetail = 4
 }
 
-var currentPage = PageName.home
+var currentPage = PageName.history
 var touchMoveX = 0
 var lastMoveX = 0
 var touchDirection = UIKit.direction.left
@@ -100,8 +100,6 @@ function clickToLoadPage(clickRect, currentPageName, targetPageName) {
     clickRect,
     function () {
       if (currentPage == currentPageName) {
-        // 打开页面重置touchMoveX @shangqi
-        touchMoveX = 0
         // 不同界面有不同的点击音效
         if (
           currentPage == PageName.destiny && 
@@ -111,8 +109,7 @@ function clickToLoadPage(clickRect, currentPageName, targetPageName) {
         } else {
           sound.playClickSoundEffect()
         }
-      }
-        
+      }   
         currentPage = targetPageName
     }
   )
@@ -121,7 +118,7 @@ function clickToLoadPage(clickRect, currentPageName, targetPageName) {
 // 滑动屏幕的事件捕捉
 Utils.touchMoveXDistance(
   function(distance) {
-    // 滑动方向获取
+    // 滑动方向获取  
     if (distance.x > 0) {
       touchDirection = UIKit.direction.right   
     } else if (distance.x < 0){
