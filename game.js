@@ -141,19 +141,23 @@ Utils.addCompassListener(function(offset) {
 })
 
 // 摇晃手机的监听并判断是否处在可以求签的界面触发对应的事件
-Component.isShakingPhone(function() {
-  if (
-    currentPage == PageName.guanYinDetail ||
-    currentPage == PageName.zhouGongDetail
-  ) {
-    sound.playShakingProd()
-    setTimeout(function () {
-      resetGeneralParameters()
-      currentPage = PageName.prodDetail
-      sound.playAmazingSoundEffect()
-    }, 1500)
+Component.isShakingPhone(
+  // 持续摇晃的回调
+  function() {
+    if (
+      currentPage == PageName.guanYinDetail ||
+      currentPage == PageName.zhouGongDetail
+    ) {
+      sound.playShakingProd()
+    }
+  },
+  // 摇晃结束的回调
+  function() {
+    resetGeneralParameters()
+    currentPage = PageName.prodDetail
+    sound.playAmazingSoundEffect()
   }
-})
+)
 
 // 通过在 Canvas 上面的点击区域来判断点击事件
 function clickToLoadPage(clickRect, targetPageName) {
