@@ -31,12 +31,12 @@ let prodNameRect = {
   top: adaptingTop + prodRect.height * 0.056
 }
 
-let buttonLeft = (Component.ScreenSize.width - 300) / 2
+let buttonLeft = (Component.ScreenSize.width - UIKit.size.roundRectButtonWidth) / 2
 let buttonRect = { 
   left: buttonLeft, 
   top: adaptingTop - 80, 
-  width: 300, 
-  height: 50 
+  width: UIKit.size.roundRectButtonWidth, 
+  height: UIKit.size.roundRectButtonHeight 
 }
 
 export class ProdDetail {
@@ -68,7 +68,7 @@ export class ProdDetail {
       context, 
       6, 
       buttonRect, 
-      50, 
+      UIKit.size.roundRectButtonHeight, 
       UIKit.color.title,
       'Check Prod Detail'
     )
