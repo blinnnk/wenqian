@@ -14,6 +14,7 @@ import { DestinyPage } from 'module/destiny/destiny'
 import { DestinyDetail } from 'module/destinyDetail/destinyDetail'
 import { ProdDetail } from 'module/destinyDetail/prodDetail'
 import { Interpolator } from 'util/animation'
+import { HistoryPage } from 'module/history/history'
 
 // 调整 Canvas 尺寸来解决 Retina 屏幕下的文字和图片虚边问题
 Component.adaptingRetina()
@@ -58,7 +59,14 @@ new Controller(
         )
         break
       case PageName.history:
-        drawHistoryPage(context)
+        HistoryPage.draw(
+          context,
+          touchMoveX,
+          touchDirection,
+          function (isOnEdge) {
+            isTriggingEdge = isOnEdge
+          }
+        )  
         clickToLoadPage(
           Component.backButtonRect, 
           PageName.home
@@ -183,18 +191,17 @@ function resetGeneralParameters() {
 // 滑动屏幕的事件捕捉
 Utils.touchMoveXDistance(
   function(distance) {
-    // 滑动方向获取
+    // 滑动方向获取  
     if (distance.x > 0) {
-      touchDirection = UIKit.direction.right
+      touchDirection = UIKit.direction.right   
     } else if (distance.x < 0){
       touchDirection = UIKit.direction.left
     }
-
     if (isTriggingEdge == false) {
       touchMoveX = distance.x + lastMoveX
     }
   },
-  function() {
+  function () {
     // 滑动结束后记录上次移动的距离
     lastMoveX = touchMoveX
   }
