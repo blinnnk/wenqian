@@ -115,11 +115,8 @@ export class DestinyDetail {
 
 function drawProds(context, offset) {
   if (Math.abs(offset) > 20) {
-    if(offset > 0) {
-      offset = 20
-    } else if (offset < 0) {
-      offset = -20
-    }
+    if(offset > 0) offset = 20
+    else if (offset < 0) offset = -20
   }
   for (var index = 0; index < 10; index++) {
     const prodImage = wx.createImage()

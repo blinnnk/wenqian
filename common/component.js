@@ -5,6 +5,8 @@
 
 import { UIKit } from 'uikit'
 import { Utils } from '../util/utils'
+import { NetUtils } from '../util/netUtils'
+import { Api } from '../common/api'
 
 // 落叶动画用到的参数
 let leafSrc =
@@ -50,7 +52,7 @@ export class Component {
 
   static userAgent = userAgent
 
-  static isShakingPhone(isShakingCallback, hasFinishedCallback) {
+  static isShakingPhone(param = { onShaking: Function, onEnd: Function }) {
     wx.onAccelerometerChange(function (value) {
       var accelerMeterXValue = 0
       var accelerMeterYValue = 0
@@ -59,15 +61,9 @@ export class Component {
       accelerometerX.push(value.x)
       accelerometerY.push(value.y)
       accelerometerZ.push(value.z)
-      if (accelerometerX.length == 3) {
-        accelerometerX.splice(0, 1)
-      }
-      if (accelerometerY.length == 3) {
-        accelerometerY.splice(0, 1)
-      }
-      if (accelerometerZ.length == 3) {
-        accelerometerZ.splice(0, 1)
-      }
+      if (accelerometerX.length == 3) accelerometerX.splice(0, 1)
+      if (accelerometerY.length == 3) accelerometerY.splice(0, 1)
+      if (accelerometerZ.length == 3) accelerometerZ.splice(0, 1)
       // 判断 X轴方向 用户开始主观加速移动
       if (
         accelerometerX[0] != 0 &&
@@ -92,17 +88,15 @@ export class Component {
 
       if (accelerMeterXValue * accelerMeterYValue * accelerMeterZValue != 0) {
         isShakingPhone = true
-        if (typeof isShakingCallback === 'function') {
-          isShakingCallback()
-        }
+        if (typeof param.onShaking === 'function') param.onShaking()
       } else {
         if (
           isShakingPhone == true &&
           Math.abs(value.x) + Math.abs(value.y) + Math.abs(value.z) < 1.5
         ) {
-          if (typeof hasFinishedCallback === 'function') {
-           hasFinishedCallback()
-           isShakingPhone = false
+          if (typeof param.onEnd === 'function') {
+            param.onEnd()
+            isShakingPhone = false
           }
         }
       }
@@ -154,7 +148,7 @@ export class Component {
   // 画落叶的函数
   static fallingLeaf(context) {
     for (var index = 0; index < fallingLeafCount; index++) {
-      let leafImage = wx.createImage()
+      const leafImage = wx.createImage()
       leafY += 1
       // X轴的动画算法
       leafX = context.canvas.width / 2 * (1.75 - index % 2) *
@@ -172,10 +166,7 @@ export class Component {
       )
     }
 
-    if (
-      leafY >= context.canvas.height * 3 || 
-      leafX >= context.canvas.width
-      ) {
+    if (leafY >= context.canvas.height * 3 || leafX >= context.canvas.width ) {
       leafY = 0
       leafX = 0
     }
@@ -196,7 +187,7 @@ export class Component {
   static getUserAgent(holdResponse) {
     var myTempID = null
     // 初次设定 TempID
-    var setTempID = (hasRequired) => {
+    const setTempID = (hasRequired) => {
       if (hasRequired == true) {
         wx.setStorage({
           key: 'tempID',
@@ -226,11 +217,23 @@ export class Component {
       key: 'tempID',
       success: (result) => {
         myTempID = result.data
-        if (typeof holdResponse === 'function') {
-          holdResponse(myTempID)
-        }
+        if (typeof holdResponse === 'function') holdResponse(myTempID)
       },
       fail: () => initTempID()
+    })
+  }
+
+  static updateUserAgent(callback) {
+    // 生成用户相关信息 `UserAgent`
+    Component.getUserAgent((code) => {
+      NetUtils.getToken({
+        url: Api.token,
+        tempCode: code,
+        response: (userAgent) => {
+          Component.userAgent = userAgent
+          if (typeof callback === 'function') callback(userAgent)
+        }
+      })
     })
   }
   

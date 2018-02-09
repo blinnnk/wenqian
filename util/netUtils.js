@@ -12,7 +12,7 @@ export class NetUtils {
       title: '正在生成',
     })
     wx.getNetworkType({
-      success: function (result) {
+      success: (result) => {
         isSuccess = true
         if (result.networkType == 'none') {
           wx.showModal({
@@ -20,34 +20,31 @@ export class NetUtils {
             content: '目前查找不到网络, 请检查当前网络是否可用',
           })
         } else {
-          if (typeof callback === 'function') {
-            callback()
-          }
+          if (typeof callback === 'function') callback()
         }
       },
-      complete: function() {
-        if (isSuccess == true) {
-          wx.hideLoading()
-        }
-      }
+      complete: () => { if (isSuccess == true) wx.hideLoading() }
     })
   }
-  // 解析 `Api Url` 返回一个可用的 `Json` 值
-  // 目前这个方法和问签的业务耦合比较大不适合转移到不同的项目
-  static getApiInfo(url, hold, boxType, token, complete) {
+
+  /*
+  * 解析 `Api Url` 返回一个可用的 `Json` 值
+  * 目前这个方法和问签的业务耦合比较大不适合转移到不同的项目
+  */
+  static getApiInfo(param = { url: '', response: Function, boxType: 0, token: '', failCallback: Function, complete: Function}) {
     var isSuccess = false
     wx.request({
-      url: url,
+      url: param.url,
       data: {
         noncestr: Date.now(),
-        type: boxType
+        type: param.boxType
       },
-      header: { 'X-Lot-Token': token},
-      success: function (result) {
+      header: { 'X-Lot-Token': param.token},
+      success: (result) => {
         isSuccess = true
-        if (typeof hold === "function") {
+        if (typeof param.response === "function") {
           // 这里的 `key` 值暂时写死了 `image`
-          hold({ 
+          param.response({ 
             src: result.data.image, 
             xj: result.data.xj
             })
@@ -55,61 +52,40 @@ export class NetUtils {
           console.info(result)
         }
       },
-      complete: function() {
-        if (typeof complete === 'function') {
-          complete(isSuccess)
-        }
-      }
+      complete: () => { if (typeof param.complete === 'function') param.complete(isSuccess) },
+      fail: () => { if (typeof param.failCallback === 'function') param.failCallback() }
     })
   }
 
-  static getToken(url, tempCode, holdToken, complete) {
+  static getToken(param = { url: '', tempCode: '', response: Function, complete: Function}) {
     var isSuccess = false
     wx.request({
-      url: url,
+      url: param.url,
       data: {
         noncestr: Date.now(),
-        code: tempCode
+        code: param.tempCode
       },
       method: 'post',
-      success: function (response) {
+      success: (result) => {
         isSuccess = true
-        if (typeof holdToken === "function") {
-          holdToken(response.data)
-        }
+        if (typeof param.response === "function") param.response(result.data)
       },
-      complete: function () {
-        if (typeof complete === 'function') {
-          complete(isSuccess)
-        }
-      }
+      complete: () => { if (typeof param.complete === 'function') param.complete(isSuccess) }
     })
   }
 
   // 通过网络地址把文件下载到本地的 `tempFilePath`
-  static downloadFile(url, hold, finishCallback, failCallback) {
+  static downloadFile(param = { url: '', response: Function, finish: Function, fail: Function}) {
     var isSuccess = false
-    wx.downloadFile(
-      {
-        url: url,
-        success: function (result) {
-          isSuccess = true
-          if (typeof hold === 'function') {
-            hold(result.tempFilePath)
-          }
-        },
-        fail: function() {
-          if (typeof failCallback === 'function') {
-            failCallback()
-          }
-        },
-        complete: function() {
-          if (typeof finishCallback === 'function') {
-            finishCallback(isSuccess)
-          }
-        }
-      }
-    )
+    wx.downloadFile({
+      url: param.url,
+      success: (result) => {
+        isSuccess = true
+        if (typeof param.response === 'function') param.response(result.tempFilePath)
+      },
+      fail: () => { if (typeof param.fail === 'function') param.fail() },
+      complete: () => { if (typeof param.finish === 'function') param.finish(isSuccess) }
+    })
   }
 
   // 通过 `Api Url` 获取 文件的网络地址并保存本地 返回本地的 `tempPathFile` 路径
@@ -120,32 +96,20 @@ export class NetUtils {
     finishCallback, 
     failCallback
     ) {
-    NetUtils.getApiInfo(
-      api,
-      function (src) {
+    NetUtils.getApiInfo({
+      url: api,
+      response: (src) => {
         // 解析返回网络地址
         NetUtils.downloadFile(
           src,
-          function (tempFileSrc) {
-            // 解析返回本地文件临时路径
-            if (typeof holdTempPath === 'function') {
-              holdTempPath(tempFileSrc)
-            }
-          },
-          function(isSuccess) {
-            // 调用结束后的回调
-            if (typeof finishCallback === 'function') {
-              finishCallback(isSuccess)
-            }
-          },
-          function() {
-            if (typeof failCallback === 'function') {
-              failCallback()
-            }
-          }
+          // 解析返回本地文件临时路径
+          (tempFileSrc) => { if (typeof holdTempPath === 'function') holdTempPath(tempFileSrc) },
+          // 调用结束后的回调
+          (isSuccess) => { if (typeof finishCallback === 'function') finishCallback(isSuccess) },
+          () => { if (typeof failCallback === 'function') failCallback() }
         )
       },
-      boxType
-    )
+      boxType: boxType
+    })
   }
 }

@@ -58,22 +58,17 @@ export class ProdDetail {
   static buttonRect = buttonRect
   
   static getPoemInfo() {
-    NetUtils.getApiInfo(
-      Api.destinyPoem,
-      function (info) {
-        ProdInfo = info
-        prodNameImage.src = getCurrentProdTypeImageSrc(info.xj)
+    NetUtils.getApiInfo({
+      url: Api.destinyPoem,
+      response: (result) => {
+        ProdInfo = result
+        prodNameImage.src = getCurrentProdTypeImageSrc(result.xj)
       },
-      CurrentBoxType,
-      Component.userAgent.token,
-      function(isSuccess) {
-        if (isSuccess == true) {
-          wx.showToast({
-            title: ProdInfo.xj,
-          })
-        }
-      }
-    )
+      boxType: CurrentBoxType, 
+      token: Component.userAgent.token,
+      failCallback: () => { ProdDetail.getPoemInfo() },
+      complete: (isSuccess) => { /* Do Something */ }
+    })
   }
 
   static draw(context) {
@@ -83,9 +78,7 @@ export class ProdDetail {
       prodRect,
       5,
       Math.min(moveDistance - 300, prodRect.height - 100 + Component.ScreenSize.height),
-      function() {
-        Utils.drawCustomImage(context, prodNameImage, prodNameRect)
-      }
+      () => Utils.drawCustomImage(context, prodNameImage, prodNameRect)
     )
 
     Component.addBackButton(context)

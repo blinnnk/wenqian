@@ -35,31 +35,19 @@ export class Utils {
     var hour = Math.floor(totalMinute / 60)
     var minute = totalMinute - hour * 60
     var second = Math.ceil(totalSecond - totalMinute * 60)
-    if (hour < 10) {
-      hour = '0' + hour
-    }
-    if (minute < 10) {
-      minute = '0' + minute
-    }
-    if (second < 10) {
-      second = '0' + second
-    }
+
+    if (hour < 10) hour = '0' + hour
+    if (minute < 10) minute = '0' + minute
+    if (second < 10) second = '0' + second
+
     return '' + hour + ' : ' + minute + ' : ' + second
   }
 
   static saveImageToAlbum(localSrc) {
     wx.saveImageToPhotosAlbum({
       filePath: localSrc,
-      success: function() {
-        wx.showToast({
-          title: '正在保存',
-        })
-      },
-      complete: function() {
-        wx.showToast({
-          title: '保存相册成功',
-        })
-      }
+      success: () => wx.showToast({ title: '正在保存' }),
+      complete: () => wx.showToast({ title: '保存相册成功' })
     })
   }
 
@@ -76,23 +64,18 @@ export class Utils {
     context.lineCap = 'round'
     
     var buttonHeight = 0
-    if (rect.height > radius * 2) {
-      buttonHeight = rect.height - radius * 2
-    }
+    if (rect.height > radius * 2) buttonHeight = rect.height - radius * 2
 
     for (var index = 0; index < 4; index++) {
+      
       var modulus = 0
-      if (index == 1 || index == 2) {
-        modulus = 1
-      } else {
-        modulus = 0
-      }
+      if (index == 1 || index == 2) modulus = 1
+      else modulus = 0
+      
       var heightModulus = 0
-      if (index == 2 || index == 3) {
-        heightModulus = 1
-      } else {
-        heightModulus = 0
-      }
+      if (index == 2 || index == 3) heightModulus = 1
+      else heightModulus = 0
+
       context.arc(
         rect.left + rect.width * modulus,
         rect.top + buttonHeight * heightModulus,
@@ -119,18 +102,12 @@ export class Utils {
 
   // 罗盘监听
   static addCompassListener(callback) {
-    wx.onCompassChange(function (value) {
+    wx.onCompassChange((value) => {
       degree.push(value.direction)
-      if (degree.length == 3) {
-        degree.splice(0, 1)
-      }
+      if (degree.length == 3) degree.splice(0, 1)
       var calculateValue = degree[1] - degree[0]
-      if (degree[0] != 0) {
-        horizontalOffset += calculateValue
-      }
-      if (typeof callback === 'function') {
-        callback(horizontalOffset)
-      }
+      if (degree[0] != 0) horizontalOffset += calculateValue
+      if (typeof callback === 'function') callback(horizontalOffset)
     })
   }
 
@@ -140,32 +117,30 @@ export class Utils {
   */
   static touchPointListener() {
     // 获取点击的 Point 用来处理点击事件
-    wx.onTouchStart(function (event) {
+    wx.onTouchStart((event) => {
       currentTouchX = event.touches[0].clientX * 2
       currentTouchY = event.touches[0].clientY * 2
     })
 
     // 获取点击的 Point 用来处理点击事件
-    wx.onTouchMove(function (event) {
+    wx.onTouchMove((event) => {
       currentMoveX = event.touches[0].clientX * 2 - currentTouchX
       currentMoveY = event.touches[0].clientY * 2 - currentTouchY
     })
 
-    wx.onTouchEnd(
-      function (event) {
-        if (
-          Math.abs(currentMoveX) < 2 || 
-          Math.abs(currentMoveY) < 2 ||
-          currentMoveX == 0 ||
-          currentMoveY == 0
-        ) {
-          isClickEvent = true
-        }
-        // 初始化用来判断是点击还是滑动的值
-        currentMoveX = 0
-        currentMoveY = 0
+    wx.onTouchEnd((event) => {
+      if (
+        Math.abs(currentMoveX) < 2 || 
+        Math.abs(currentMoveY) < 2 ||
+        currentMoveX == 0 ||
+        currentMoveY == 0
+      ) {
+        isClickEvent = true
       }
-    )
+      // 初始化用来判断是点击还是滑动的值
+      currentMoveX = 0
+      currentMoveY = 0
+    })
   }
   
   // 通用的画图方法
@@ -204,9 +179,7 @@ export class Utils {
       rect.height)
     if (moveX >= maxMoveDistance) {
       moveX = maxMoveDistance
-      if (typeof callback === 'function') {
-        callback()
-      }
+      if (typeof callback === 'function') callback()
     }
   }
 
@@ -228,9 +201,7 @@ export class Utils {
       rect.height
     )
     if (accelerateValue == maxMoveDistance) {
-      if (typeof callback === 'function') {
-        callback()
-      }
+      if (typeof callback === 'function') callback()
     } 
   }
 
@@ -252,9 +223,7 @@ export class Utils {
       rect.height
     )
     if (accelerateValue == maxMoveDistance) {
-      if (typeof callback === 'function') {
-        callback()
-      }
+      if (typeof callback === 'function') callback()
     }
   }
 
@@ -270,17 +239,15 @@ export class Utils {
     // 这个是速度变化的系数值越大加减速度的程度就越大
     let gearDegree = 0.2
     moveValue += speed
-    gearValue = 2 * (1 + gearDegree * Math.sin(moveValue))
+    gearValue = 2* (1 + gearDegree * Math.sin(moveValue))
     context.drawImage(
       image,
       rect.left + horizontalRadius * Math.cos(gearValue),
       rect.top + verticalRadius * Math.sin(gearValue),
-      rect.width + 10 * gearValue,
-      rect.height + 10 * gearValue)
+      rect.width + 12 * gearValue,
+      rect.height + 12 * gearValue)
 
-    if (typeof callback === 'function') {
-      callback()
-    }
+    if (typeof callback === 'function') callback()
   }
 
   // Canvas 点击事件
@@ -295,7 +262,7 @@ export class Utils {
         currentTouchX,
         currentTouchY,
         rectArguments[index],
-        function () {
+        () => {
           currentTouchX = 0
           currentTouchY = 0
         }
@@ -313,12 +280,10 @@ export class Utils {
     textSize = '24px',
     isBold = false
     ) {
-    var bold = ''
-    if (isBold == true) {
-      bold = 'bold'
-    }
+    const bold = value => isBold == true ? 'bold' : value = ''
+
     context.fillStyle = color
-    context.font = '' + bold + textSize + ' avenir'
+    context.font = '' + bold() + textSize + ' avenir'
     context.textBaseline = 'middle'
     context.textAlign = 'center'
     let newText = text.split('/n')
@@ -334,43 +299,51 @@ export class Utils {
   static isIPhoneX(callback) {
     var isIPhoneX = false
     wx.getSystemInfo({
-      success: function (res) {
+      success: (res) => {
         if (res.model.indexOf('iPhone X') != -1) {
-          if (typeof callback === 'function') {
-            callback()
-          }
+          if (typeof callback === 'function') callback()
         }
       }
     })
   }
 
-  static touchMoveXDistance(movingCallback, endCallback) {
-    var distance = {
-      x: 0,
-      y: 0
-    }
-    wx.onTouchStart(function (event) {
+  static touchMoveXDistance(param = { onMoving: Function, onEnd: Function}) {
+    var distance = { x: 0, y: 0 }
+    wx.onTouchStart((event) => {
       startX = event.touches[0].clientX
       startY = event.touches[0].clientY
     })
 
-    wx.onTouchMove(function (event) {
+    wx.onTouchMove((event) => {
       distance.x = (event.touches[0].clientX - startX) * 2
       distance.y = (event.touches[0].clientY - startY) * 2
-      if (typeof movingCallback === 'function') {
-        movingCallback(distance)
-      }
+      if (typeof param.onMoving === 'function') param.onMoving(distance)
     })
 
-    wx.onTouchEnd(function (event) {
+    wx.onTouchEnd((event) => {
       // 松手后归位
       startX = 0
       startY = 0
-      if (typeof endCallback === 'function') {
-        endCallback()
-      }
+      if (typeof param.onEnd === 'function') param.onEnd()
     })
   }
+  // 利用 JavaScript ES6 的新特性实现的顺序执行函数
+  static sequentialExecution(param = { early: Function, later: Function }) {
+    function step1(resolve, reject) {
+      param.early()
+      resolve('finish')
+    }
+
+    function step2(resolve, reject) {
+      param.later()
+      resolve('finish')
+    }
+    // 用 `Promise` 函数特性严格切分时机
+    new Promise(step1).then(() => {
+      return new Promise(step2)
+    })
+  }
+
 }
 
 function checkRectContainsPointOrElse(x, y, rect, callback) {

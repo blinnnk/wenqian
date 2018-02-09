@@ -18,7 +18,7 @@ const destinyImageRect = {
   height: Component.ScreenSize.width
 }
 
-const buttonLeft = 
+const buttonLeft =
   (Component.ScreenSize.width - UIKit.size.roundRectButtonWidth) / 2
 const buttonRect = {
   left: buttonLeft,
@@ -40,13 +40,8 @@ export class PoemDetail {
   static saveButtonRect = saveButtonRect
 
   static savePoemImageToAlbum() {
-    if (destinyImage.src == '') {
-      wx.showToast({
-        title: '还没有生成图片',
-      })
-    } else {
-      Utils.saveImageToAlbum(destinyImage.src)
-    }
+    if (destinyImage.src == '') wx.showToast({ title: '还没有生成图片' })
+    else Utils.saveImageToAlbum(destinyImage.src)
   }
 
   static getPoemImage() {
@@ -55,35 +50,29 @@ export class PoemDetail {
       title: '正在生成签语',
       mask: true
     })
-    NetUtils.downloadFile(
-      ProdInfo.src,
-      function(localSrc) {
+    NetUtils.downloadFile({
+      url: ProdInfo.src,
+      response: (localSrc) => {
         destinyImage.src = localSrc
       },
-      function (isSuccsee) {
-        // 调用成功后的回调
-        if (isSuccsee == true) {
-          wx.hideLoading()
-        } else {
-          wx.showToast({
-            title: '加载图片失败',
-          })
-        }
+      // 调用成功后的回调
+      finish: (isSuccsee) => {
+        if (isSuccsee == true) wx.hideLoading()
+        else wx.showToast({ title: '加载图片失败' })
       },
-      function () {
-        // 接口调用失败重新拉取
-        PoemDetail.getPoemImage()
-      }
-    ) 
+      // 接口调用失败重新拉取
+      fail: () => PoemDetail.getPoemImage()
+    })
   }
   static draw(context) {
 
     Component.addBackButton(context)
 
-    Utils.drawCustomImage(
+    Utils.drawImageAndMoveOvalPathWithAnimation(
       context,
       destinyImage,
-      destinyImageRect
+      destinyImageRect,
+      0.02, 30, 20
     )
 
     Utils.drawText(context,
