@@ -97,12 +97,15 @@ export class ExplanationDetailPage {
     Utils.drawCustomImage(context, signImage, guanYinRect) //灵签
     Utils.drawCircle(context, dotsRect) // 圆点
     Utils.drawVerticalColumnText(context, textChapter, textChapterRect, textColumnNumber) // 第多少签
+
     const solveSignListLength = solveSignList.length // 获取数据的长度
+
     // 获取页面总行数
     var totalRows = 0
     for (var p = 0; p < rows.length; p++) {
       totalRows += rows[p]
     }
+
     // 计算页面总高度
     pageHeight = titleMarginTop * (solveSignListLength + 1) + titleHight * solveSignListLength + totalRows * textHeight
 
@@ -118,6 +121,7 @@ export class ExplanationDetailPage {
       var titleTop = titleHight * index + titleMarginTop * (index + 1) + rowAdd * textHeight + touchMoveY
       // 计算每个text的top值
       var textTop = titleHight * (index + 1) + titleMarginTop * (index + 1) + rowAdd *  textHeight + touchMoveY
+      
       drawTitle(context, solveSignList[index].title, 150, titleTop) // 绘制标题
       drawText(context, solveSignList[index].text, 150, textTop) // 绘制内容
     }

@@ -37,7 +37,7 @@ if (typeof PageName == "undefined") {
   PageName.explanationDetail = 7
 }
 
-var currentPage = PageName.explanationDetail
+var currentPage = PageName.home
 var touchMoveX = 0
 var lastMoveX = 0
 var prodHorizontalOffset = 0
