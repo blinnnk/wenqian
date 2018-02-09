@@ -42,7 +42,9 @@ export class UIKit {
     prod: 'sources/image/prod.png',
     zhouGongBox: 'sources/image/zhouGongBox.png',
     zhouGongBoxBackground: 'sources/image/zhouGongBoxBackground.png',
-    timeBackground: 'sources/image/timeBackground.png'
+    timeBackground: 'sources/image/timeBackground.png',
+    guanYinSign: 'sources/image/solveSign/GuanyinSign.png',
+    zhouGongSign: 'sources/image/solveSign/ZhongGong.png'
   }
 
   static prodType = {

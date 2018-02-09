@@ -17,7 +17,7 @@ import { DestinyDetail } from 'module/destinyDetail/destinyDetail'
 import { ProdDetail } from 'module/destinyDetail/prodDetail'
 import { PoemDetail } from 'module/destinyDetail/poemDetail'
 import { Interpolator } from 'util/animation'
-import { SolveSignPage } from 'module/solveSign/solveSign'
+import { ExplanationDetailPage } from 'module/explanationDetail/explanationDetail'
 
 // 调整 Canvas 尺寸来解决 Retina 屏幕下的文字和图片虚边问题
 Component.adaptingRetina()
@@ -37,7 +37,7 @@ if (typeof PageName == "undefined") {
   PageName.explanationDetail = 7
 }
 
-var currentPage = PageName.home
+var currentPage = PageName.explanationDetail
 var touchMoveX = 0
 var lastMoveX = 0
 var prodHorizontalOffset = 0
@@ -71,8 +71,8 @@ new Controller(
         drawHistoryPage(context)
         clickToLoadPage(buttonRect.back, PageName.home)
         break
-      case PageName.solveSign:
-        SolveSignPage.draw(
+      case PageName.explanationDetail:
+        ExplanationDetailPage.draw(
           context,
           touchMoveX
         )
