@@ -69,3 +69,13 @@ export class UIKit {
   }
 }
 
+export const PageName = {
+  home: 0,
+  history: 1,
+  destiny: 2,
+  guanYinDetail: 3,
+  zhouGongDetail: 4,
+  prodDetail: 5,
+  poemDetail: 6,
+  explanationDetail: 7
+}

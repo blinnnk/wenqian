@@ -83,7 +83,7 @@ const timeBackgroundRect = {
 }
 
 // 计算倒计时的参数
-var currentTime = ''
+var currentTime
 var isBlockStatus = false
 
 export class DestinyPage {
@@ -175,10 +175,10 @@ export class DestinyPage {
       function () {
         currentLockTime -= 1000
         if (currentLockTime <= 0) {
-          if (typeof callback === 'function') {
-            callback()
-          }
+          // 当倒计时结束后从服务器更新本地的冷却时间
+          Component.updateUserAgent()
           isBlockStatus = false
+          // 关闭 `Interval`
           clearInterval(countDown)
         } else {
           isBlockStatus = true
@@ -203,6 +203,6 @@ function showCountDownUnlockButton(context) {
   context.fillText(
     '' + currentTime,
     context.canvas.width / 2,
-    timeBackgroundRect.top + 56
+    timeBackgroundRect.top + 58
   )
 }

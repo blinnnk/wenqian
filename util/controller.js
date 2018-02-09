@@ -4,6 +4,7 @@
 */
 
 import { Component } from '../common/component'
+import { Utils } from '../util/utils'
 
 export default class Controller {
   constructor(canvas, onDraw) {
@@ -15,10 +16,15 @@ export default class Controller {
     drawDetail()
     function drawDetail() {
       let animation = requestAnimationFrame(drawDetail)
+      
       if (typeof onDraw === 'function') {
-        context.clearRect(0, 0, canvas.width, canvas.height)
-        Component.drawBackground(context)
-        onDraw(context, animation)
+        Utils.sequentialExecution({
+          early: () => context.clearRect(0, 0, canvas.width, canvas.height),
+          later: () => {
+            Component.drawBackground(context)
+            onDraw(context, animation)
+          }
+        })
       }
     }
   }

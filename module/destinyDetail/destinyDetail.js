@@ -31,7 +31,7 @@ const prodRect = {
   width: prodWidth,
   height: prodWidth * 5,
   left: Component.ScreenSize.width * 0.19,
-  top: -600
+  top: -Component.ScreenSize.height * 0.3 + Component.adaptingIPhoneXTop
 }
 
 const prodTop = Component.ScreenSize.height * 0.1
@@ -50,16 +50,16 @@ const randomLeft =
   ]
 const randomTop =
   [
-    prodTop + (prodTop * (Math.random() + 5.8)),
-    prodTop + (prodTop * (Math.random() + 5.8)),
-    prodTop + (prodTop * (Math.random() + 5.8)),
-    prodTop + (prodTop * (Math.random() + 5.8)),
-    prodTop + (prodTop * (Math.random() + 5.8)),
-    prodTop + (prodTop * (Math.random() + 5.8)),
-    prodTop + (prodTop * (Math.random() + 5.8)),
-    prodTop + (prodTop * (Math.random() + 5.8)),
-    prodTop + (prodTop * (Math.random() + 5.8)),
-    prodTop + (prodTop * (Math.random() + 5.8))
+    prodTop + (prodTop * (Math.random() + 4.8)),
+    prodTop + (prodTop * (Math.random() + 4.8)),
+    prodTop + (prodTop * (Math.random() + 4.8)),
+    prodTop + (prodTop * (Math.random() + 4.8)),
+    prodTop + (prodTop * (Math.random() + 4.8)),
+    prodTop + (prodTop * (Math.random() + 4.8)),
+    prodTop + (prodTop * (Math.random() + 4.8)),
+    prodTop + (prodTop * (Math.random() + 4.8)),
+    prodTop + (prodTop * (Math.random() + 4.8)),
+    prodTop + (prodTop * (Math.random() + 4.8))
   ]
 
 if (typeof BoxType == "undefined") {
@@ -115,11 +115,8 @@ export class DestinyDetail {
 
 function drawProds(context, offset) {
   if (Math.abs(offset) > 20) {
-    if(offset > 0) {
-      offset = 20
-    } else if (offset < 0) {
-      offset = -20
-    }
+    if(offset > 0) offset = 20
+    else if (offset < 0) offset = -20
   }
   for (var index = 0; index < 10; index++) {
     const prodImage = wx.createImage()
