@@ -162,9 +162,9 @@ function clickToLoadPage(clickRect, targetPageName) {
     () => {
       resetGeneralParameters()
       // 不同点击事件设定不同的点击音效
-      if (
-        currentPage == PageName.destiny &&
-        targetPageName != PageName.home
+      if(
+        targetPageName == PageName.guanYinDetail ||
+        targetPageName == PageName.zhouGongDetail
       ) {
         sound.playBells()
       } else {

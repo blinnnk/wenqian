@@ -79,4 +79,3 @@ export const PageName = {
   poemDetail: 6,
   explanationDetail: 7
 }
-

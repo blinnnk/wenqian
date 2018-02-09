@@ -75,7 +75,7 @@ export class NetUtils {
   }
 
   // 通过网络地址把文件下载到本地的 `tempFilePath`
-  static downloadFile(param = { url: '', response: Function, finish: Function, fail: Function}) {
+  static downloadFile(param = { url: '', response: Function, complete: Function, fail: Function}) {
     var isSuccess = false
     wx.downloadFile({
       url: param.url,
@@ -84,7 +84,7 @@ export class NetUtils {
         if (typeof param.response === 'function') param.response(result.tempFilePath)
       },
       fail: () => { if (typeof param.fail === 'function') param.fail() },
-      complete: () => { if (typeof param.finish === 'function') param.finish(isSuccess) }
+      complete: () => { if (typeof param.complete === 'function') param.complete(isSuccess) }
     })
   }
 

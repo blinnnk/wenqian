@@ -56,7 +56,7 @@ export class PoemDetail {
         destinyImage.src = localSrc
       },
       // 调用成功后的回调
-      finish: (isSuccsee) => {
+      complete: (isSuccsee) => {
         if (isSuccsee == true) wx.hideLoading()
         else wx.showToast({ title: '加载图片失败' })
       },
