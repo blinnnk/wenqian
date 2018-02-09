@@ -12,7 +12,6 @@ import { NetUtils } from 'util/netUtils'
 import { Canvas } from 'common/component'
 import { HomePage } from 'module/home/home'
 import { DestinyPage } from 'module/destiny/destiny'
-import { LockTime } from 'module/destiny/destiny'
 import { DestinyDetail } from 'module/destinyDetail/destinyDetail'
 import { ProdDetail } from 'module/destinyDetail/prodDetail'
 import { PoemDetail } from 'module/destinyDetail/poemDetail'
@@ -41,9 +40,7 @@ var touchMoveX = 0
 var lastMoveX = 0
 var prodHorizontalOffset = 0
 
-// 这个时间会替换成服务器可配置的时间
-const singleLockTime = 36 * 1000
-
+// 首页各个按钮的点击区域
 var buttonRect = {
   back: Component.backButtonRect,
   destiny: HomePage.destinyRect,
@@ -54,6 +51,9 @@ var buttonRect = {
   zhouGong: DestinyPage.loveBoxRect,
   save: PoemDetail.saveButtonRect
 }
+
+// 从服务器获取的冷却时间
+var currentLockTime = 10 * 1000
 
 // 主界面的刷新帧控制器
 new Controller(
@@ -100,8 +100,8 @@ new Controller(
         break
       // 签筒的选择界面
       case PageName.destiny:
-        // 通过在 `DestinyPage` 的是否限制使用的条件来执行开关事件
-        setBlockStatus(LockTime > 0)
+        // 当前冷却时间的数值判断是否可用
+        setBlockStatus(currentLockTime > 0)
         DestinyPage.draw(context, touchMoveX)
         clickToLoadPage(buttonRect.back, PageName.home)
         clickToLoadPage(buttonRect.guanYin, PageName.guanYinDetail)
@@ -151,18 +151,20 @@ Component.isShakingPhone(
           resetGeneralParameters()
           currentPage = PageName.prodDetail
           sound.playAmazingSoundEffect()
-          // 存入摇签后的时间
-          var time = new Date()
-          wx.setStorage({
-            key: 'time',
-            data: time.getTime(),
-          })
-          DestinyPage.setLockTimeValue(singleLockTime)
+          DestinyPage.setLockTimeValue(currentLockTime)
         })
       },
       PageName.guanYinDetail,
       PageName.zhouGongDetail
     )
+  }
+)
+
+wx.login(
+  {
+    success: function(result) {
+      console.log(result.code)
+    }
   }
 )
 
@@ -199,7 +201,12 @@ function clickToLoadPage(clickRect, targetPageName) {
       }
 
       if (targetPageName == PageName.destiny) {
-        DestinyPage.initLockTime(singleLockTime)
+        DestinyPage.initLockTime(
+          currentLockTime,
+          function() {
+            currentLockTime = 0
+          }
+        )
       }
 
       currentPage = targetPageName
@@ -207,15 +214,19 @@ function clickToLoadPage(clickRect, targetPageName) {
   )
 }
 
-wx.clearStorage()
-
+var hasPlayedUnlockSound = false
 // 使用限制设定开关点击事件
 function setBlockStatus(isBlocking) {
   if (isBlocking == true) {
+    hasPlayedUnlockSound = false
     buttonRect.guanYin = 0
     buttonRect.zhouGong = 0
     Utils.eraseTouchEvent(DestinyPage.boxRect, DestinyPage.loveBoxRect)
   } else {
+    if (currentLockTime == 0 && hasPlayedUnlockSound == false) {
+      sound.playUnlockSoundEffect()
+      hasPlayedUnlockSound = true
+    }
     buttonRect.guanYin = DestinyPage.boxRect
     buttonRect.zhouGong = DestinyPage.loveBoxRect
   }
