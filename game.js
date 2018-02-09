@@ -17,7 +17,7 @@ import { DestinyDetail } from 'module/destinyDetail/destinyDetail'
 import { ProdDetail } from 'module/destinyDetail/prodDetail'
 import { PoemDetail } from 'module/destinyDetail/poemDetail'
 import { Interpolator } from 'util/animation'
-import { ExplanationDetailPage } from 'module/explanationDetail/explanationDetail'
+import { ExplanationDetail } from 'module/explanationDetail/explanationDetail'
 
 // 调整 Canvas 尺寸来解决 Retina 屏幕下的文字和图片虚边问题
 Component.adaptingRetina()
@@ -58,8 +58,8 @@ var buttonRect = {
 
 // 主界面的刷新帧控制器
 new Controller(
-  Canvas, 
-  function(context, animation) {
+  Canvas,
+  function (context, animation) {
     switch (currentPage) {
       case PageName.home:
         HomePage.draw(context)
@@ -72,7 +72,7 @@ new Controller(
         clickToLoadPage(buttonRect.back, PageName.home)
         break
       case PageName.explanationDetail:
-        ExplanationDetailPage.draw(
+        ExplanationDetail.draw(
           context,
           touchMoveX
         )
@@ -80,7 +80,7 @@ new Controller(
         break
       case PageName.guanYinDetail:
         DestinyDetail.draw(
-          context, 
+          context,
           DestinyDetail.BoxType.guanYin,
           prodHorizontalOffset
         )
@@ -88,7 +88,7 @@ new Controller(
         break
       case PageName.zhouGongDetail:
         DestinyDetail.draw(
-          context, 
+          context,
           DestinyDetail.BoxType.zhouGong,
           prodHorizontalOffset
         )
@@ -100,7 +100,7 @@ new Controller(
         clickToLoadPage(buttonRect.prod, PageName.poemDetail)
         break
       // 古诗的签语界面
-      case PageName.poemDetail: 
+      case PageName.poemDetail:
         PoemDetail.draw(context)
         clickToLoadPage(buttonRect.back, PageName.prodDetail)
         clickToLoadPage(buttonRect.explanation, PageName.explanationDetail)
@@ -123,32 +123,32 @@ new Controller(
         HomePage.draw(context)
     }
   }
-) 
+)
 
 // 监听屏幕上的手指事件用来做点击和滑动的兼容
 Utils.touchPointListener()
 
 // 监听陀螺仪的倾斜角度
-Utils.addCompassListener(function(offset) {
+Utils.addCompassListener(function (offset) {
   prodHorizontalOffset = offset
 })
 
 // 摇晃手机的监听并判断是否处在可以求签的界面触发对应的事件
 Component.isShakingPhone(
   // 持续摇晃的回调
-  function() {
+  function () {
     executeByCurrentPage(
-      function() {
+      function () {
         sound.playShakingProd()
         // 摇晃过程中增加震动来提升用户体验
         wx.vibrateLong()
       },
-      PageName.guanYinDetail, 
+      PageName.guanYinDetail,
       PageName.zhouGongDetail
     )
   },
   // 摇晃结束的回调
-  function() {
+  function () {
     executeByCurrentPage(
       function () {
         // 检查如果有网络才可以进入到签详细界面
@@ -192,10 +192,10 @@ function clickToLoadPage(clickRect, targetPageName) {
 
       // 加载签语网络图片并显示
       if (
-        currentPage == PageName.prodDetail && 
+        currentPage == PageName.prodDetail &&
         targetPageName == PageName.poemDetail
       ) {
-          PoemDetail.getPoemImage()
+        PoemDetail.getPoemImage()
       }
 
       // 点击保存按钮把签语图片保存到本地相册
@@ -237,7 +237,7 @@ function resetGeneralParameters() {
 
 // 滑动屏幕的事件捕捉
 Utils.touchMoveXDistance(
-  function(distance) {
+  function (distance) {
     touchMoveX = distance.x + lastMoveX
     // 边界判断, 累计移动的距离超出了屏幕最大或最小距离就重置
     if (touchMoveX < -Component.ScreenSize.width) {
@@ -246,7 +246,7 @@ Utils.touchMoveXDistance(
       touchMoveX = 0
     }
   },
-  function() {
+  function () {
     // 滑动结束后记录上次移动的距离
     lastMoveX = touchMoveX
   }
@@ -277,6 +277,6 @@ function executeByCurrentPage(callback, ...pageArguments) {
 wx.onShow(
   function () {
     sound.playBackgroundMusic()
-  new Controller(Canvas)
+    new Controller(Canvas)
   }
 )
