@@ -16,6 +16,7 @@ import { DestinyDetail } from 'module/destinyDetail/destinyDetail'
 import { ProdDetail } from 'module/destinyDetail/prodDetail'
 import { PoemDetail } from 'module/destinyDetail/poemDetail'
 import { Interpolator } from 'util/animation'
+import { Api } from 'common/api'
 
 // 调整 Canvas 尺寸来解决 Retina 屏幕下的文字和图片虚边问题
 Component.adaptingRetina()
@@ -54,6 +55,12 @@ var buttonRect = {
 
 // 从服务器获取的冷却时间
 var currentLockTime = 10 * 1000
+wx.getStorage({
+  key: 'cdTime',
+  success: function(result) {
+    currentLockTime = result.data
+  },
+})
 
 // 主界面的刷新帧控制器
 new Controller(
@@ -151,7 +158,7 @@ Component.isShakingPhone(
           resetGeneralParameters()
           currentPage = PageName.prodDetail
           sound.playAmazingSoundEffect()
-          DestinyPage.setLockTimeValue(currentLockTime)
+          DestinyPage.initLockTime(currentLockTime)
         })
       },
       PageName.guanYinDetail,
@@ -160,16 +167,38 @@ Component.isShakingPhone(
   }
 )
 
-wx.login(
-  {
-    success: function(result) {
-      console.log(result.code)
+// 生成用户相关信息 `UserAgent`
+Component.getUserAgent((code) => {
+  NetUtils.getToken(
+    Api.token, 
+    code,
+    (userAgent) => {
+      Component.userAgent = userAgent
+      wx.setStorage({
+        key: 'cdTime',
+        data: userAgent.cd,
+      })
+      console.log(Component.userAgent)
     }
-  }
-)
+  )
+})
 
 // 通过在 Canvas 上面的点击区域来判断点击事件
 function clickToLoadPage(clickRect, targetPageName) {
+
+  const event = {
+    condition: (current, target, callback) => {
+      if (
+        currentPage == current &&
+        targetPageName == target
+      ) {
+        if (typeof callback === 'function') {
+          callback()
+        }
+      }
+    }
+  }
+
   Utils.onClick(
     clickRect,
     function () {
@@ -185,28 +214,21 @@ function clickToLoadPage(clickRect, targetPageName) {
       }
 
       // 加载签语网络图片并显示
-      if (
-        currentPage == PageName.prodDetail && 
-        targetPageName == PageName.poemDetail
-      ) {
-          PoemDetail.getPoemImage()
-      }
+      event.condition(
+        PageName.prodDetail,
+        PageName.poemDetail,
+        () => PoemDetail.getPoemImage()
+      )
 
       // 点击保存按钮把签语图片保存到本地相册
-      if (
-        currentPage == PageName.poemDetail &&
-        targetPageName == PageName.poemDetail
-      ) {
-        PoemDetail.savePoemImageToAlbum()
-      }
+      event.condition(
+        PageName.poemDetail,
+        PageName.poemDetail,
+        () => PoemDetail.savePoemImageToAlbum()
+      )
 
       if (targetPageName == PageName.destiny) {
-        DestinyPage.initLockTime(
-          currentLockTime,
-          function() {
-            currentLockTime = 0
-          }
-        )
+        DestinyPage.initLockTime(currentLockTime)
       }
 
       currentPage = targetPageName

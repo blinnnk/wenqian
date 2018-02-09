@@ -203,6 +203,6 @@ function showCountDownUnlockButton(context) {
   context.fillText(
     '' + currentTime,
     context.canvas.width / 2,
-    timeBackgroundRect.top + 54
+    timeBackgroundRect.top + 56
   )
 }
