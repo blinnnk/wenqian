@@ -72,16 +72,18 @@ const titleRect = {
   top: 80 + Component.adaptingIPhoneXTop
 }
 
-let timeBackgroundWidth = 580 * 0.8
-let timeBackgroundImage = wx.createImage()
+const timeBackgroundWidth = 580 * 0.8
+const timeBackgroundImage = wx.createImage()
 timeBackgroundImage.src = UIKit.imageSrc.timeBackground
-let timeBackgroundRect = {
+const timeBackgroundRect = {
   left: (Component.ScreenSize.width - timeBackgroundWidth) / 2,
   top: Component.ScreenSize.height / 2 - 100,
   width: timeBackgroundWidth,
   height: 170 * 0.8
 }
 
+// 计算倒计时的参数
+var currentTime = ''
 var isBlockStatus = false
 
 export class DestinyPage {
@@ -168,62 +170,27 @@ export class DestinyPage {
     isBlockStatus = false
   }
 
-  static setLockTimeValue(value) {
-    LockTime = value
-    DestinyPage.setBlockStatus()
-  }
-
-  static initLockTime(singleLockTime) {
-    var isSuccess = false
-    wx.showLoading({
-      title: '正在加载'
-    })
-    var time = new Date()
-
-    wx.getStorage({
-      key: 'time',
-      success: function (result) {
-        isSuccess = true
-        if (result.data <= 0) {
-          LockTime = 0
+  static initLockTime(currentLockTime, callback) {
+    var countDown = setInterval(
+      function () {
+        currentLockTime -= 1000
+        if (currentLockTime <= 0) {
+          if (typeof callback === 'function') {
+            callback()
+          }
+          isBlockStatus = false
+          clearInterval(countDown)
         } else {
-          LockTime = singleLockTime - (time.getTime() - result.data)
+          isBlockStatus = true
+          currentTime = Utils.convertTimeWithMillsecond(currentLockTime)
         }
-      },
-      complete: function () {
-        if (isSuccess == true) {
-          wx.hideLoading() 
-        } else {
-          setTimeout(function() {
-            wx.hideLoading()
-          }, 2000)
-        }
-      }
-    })
-
-    setInterval(function () {
-      LockTime -= 1000
-      if (LockTime <= 0) {
-        isBlockStatus = false
-        // 时间倒计时完毕后初始化存入缓存的计时值
-        wx.setStorage({
-          key: 'time',
-          data: 0,
-        })
-      } else {
-        isBlockStatus = true
-      }
-      currentTime = Utils.convertTimeWithMillsecond(LockTime)
-    }, 1000)
-
+      }, 
+     1000
+    )
   }
 }
 
-
-// 这个时间
-export var LockTime = 0
-var currentTime = ''
-
+// 绘制倒计时阻拦按钮
 function showCountDownUnlockButton(context) {
   Utils.drawCustomImage(
     context,
