@@ -43,8 +43,12 @@ let backButtonRect = {
 let backImage = wx.createImage()
 backImage.src = UIKit.imageSrc.back
 
+var userAgent = null
+
 // 通用组件方法
 export class Component { 
+
+  static userAgent = userAgent
 
   static isShakingPhone(isShakingCallback, hasFinishedCallback) {
     wx.onAccelerometerChange(function (value) {
@@ -188,4 +192,46 @@ export class Component {
     context.fillStyle = gradient
     context.fillRect(0, 0, context.canvas.width, context.canvas.height)
   }
+
+  static getUserAgent(holdResponse) {
+    var myTempID = null
+    // 初次设定 TempID
+    var setTempID = (hasRequired) => {
+      if (hasRequired == true) {
+        wx.setStorage({
+          key: 'tempID',
+          data: myTempID,
+        })
+      }
+    }
+    /*
+    * 从微信获取唯一的标识 - 这个 code 是临时的这里通过方
+    * 法制作成唯一的会随着清理缓存而消失.
+    */
+    var initTempID = () => {
+      var hasRequired = false
+      if (myTempID == null) {
+        wx.login({
+          success: (result) => {
+            hasRequired = true
+            myTempID = result.code
+          },
+          complete: () => setTempID(hasRequired)
+        })
+      }
+    }
+
+    // 初次从缓存中获取 ID 如果没有就当成注册生成一个
+    wx.getStorage({
+      key: 'tempID',
+      success: (result) => {
+        myTempID = result.data
+        if (typeof holdResponse === 'function') {
+          holdResponse(myTempID)
+        }
+      },
+      fail: () => initTempID()
+    })
+  }
+  
 }

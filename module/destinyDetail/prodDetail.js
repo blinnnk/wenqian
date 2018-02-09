@@ -65,6 +65,7 @@ export class ProdDetail {
         prodNameImage.src = getCurrentProdTypeImageSrc(info.xj)
       },
       CurrentBoxType,
+      Component.userAgent.token,
       function(isSuccess) {
         if (isSuccess == true) {
           wx.showToast({

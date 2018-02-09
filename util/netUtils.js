@@ -34,7 +34,7 @@ export class NetUtils {
   }
   // 解析 `Api Url` 返回一个可用的 `Json` 值
   // 目前这个方法和问签的业务耦合比较大不适合转移到不同的项目
-  static getApiInfo(url, hold, boxType, complete) {
+  static getApiInfo(url, hold, boxType, token, complete) {
     var isSuccess = false
     wx.request({
       url: url,
@@ -42,6 +42,7 @@ export class NetUtils {
         noncestr: Date.now(),
         type: boxType
       },
+      header: { 'X-Lot-Token': token},
       success: function (result) {
         isSuccess = true
         if (typeof hold === "function") {
@@ -55,6 +56,29 @@ export class NetUtils {
         }
       },
       complete: function() {
+        if (typeof complete === 'function') {
+          complete(isSuccess)
+        }
+      }
+    })
+  }
+
+  static getToken(url, tempCode, holdToken, complete) {
+    var isSuccess = false
+    wx.request({
+      url: url,
+      data: {
+        noncestr: Date.now(),
+        code: tempCode
+      },
+      method: 'post',
+      success: function (response) {
+        isSuccess = true
+        if (typeof holdToken === "function") {
+          holdToken(response.data)
+        }
+      },
+      complete: function () {
         if (typeof complete === 'function') {
           complete(isSuccess)
         }
