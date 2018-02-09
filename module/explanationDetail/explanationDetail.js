@@ -77,10 +77,6 @@ const textChapterRect = {
 var solveSignList = [] // 定义内容数组
 const solveSignListLength = solveSignList.length // 获取数据的长度
 
-
-// 计算页面总高度
-pageHeight = titleMarginTop * (solveSignListLength + 1) + titleHight * solveSignListLength + totalRows * textHeight
-
 export class ExplanationDetail {
   static draw(context) {
     Utils.drawCustomImage(context, signImage, guanYinRect) //灵签
@@ -120,9 +116,11 @@ export class ExplanationDetail {
           // 计算每个详解的行数并添加到rows数组中
           for (var contentIndex = 0; contentIndex < solveSignList.length; contentIndex++) {
             var row = Math.ceil(solveSignList[contentIndex].text.length / eachLineNumber)
-            totalRows += row // text总行数
+            totalRows += row // text总行数    
             rows.push(row)
           }
+          // 计算页面总高度
+          pageHeight = titleMarginTop * (solveSignListLength + 1) + titleHight * solveSignListLength + totalRows * textHeight
         }
       }
     })
