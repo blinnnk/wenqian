@@ -49,8 +49,8 @@ const guanYinRect = {
 const maskImage = wx.createImage()
 maskImage.src = 'sources/image/solveSign/bg.png'
 
-// 背景rect
-const backgroundRect = {
+// 蒙层rect
+const maskRect = {
   top: 0,
   left: 0,
   width: screenWidth,
@@ -101,7 +101,7 @@ export class ExplanationDetail {
       drawText(context, solveSignList[index].text, 150, textTop) // 绘制内容
     }
     
-    Utils.drawCustomImage(context, maskImage, backgroundRect) // 背景图
+    Utils.drawCustomImage(context, maskImage, maskRect) // 背景图
   }
 
   static RequestSignData(signType, signIndex) { // 请求解签数据
