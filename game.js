@@ -19,7 +19,7 @@ import { ProdDetail } from 'module/destinyDetail/prodDetail'
 import { PoemDetail } from 'module/destinyDetail/poemDetail'
 import { Interpolator } from 'util/animation'
 
-// 调整 Canvas 尺寸来解决 Retina 屏幕下的文字和图片虚边问题
+// 调整 `Canvas` 尺寸来解决 `Retina` 屏幕下的文字和图片虚边问题
 Component.adaptingRetina()
 
 // 声音管理器
@@ -28,7 +28,7 @@ const sound = new Music()
 Utils.sequentialExecution({
   // 启动软件的时候更新用户信息
   early: () => Component.updateUserAgent(),
-  // 主界面的刷新帧的控制器
+  // 主界面的刷新帧的控制器, 时机切开是保证界面显示的时候百分百有 `token` 及相关信息
   later: () => new Controller(Component.Canvas, (context) => showPage(currentPage, context))
 })
 
