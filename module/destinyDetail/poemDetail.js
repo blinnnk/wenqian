@@ -4,11 +4,11 @@
 */
 
 import { UIKit } from '../../common/uikit'
+import { Global } from '../../common/global'
 import { Component } from '../../common/component'
 import { Utils } from '../../util/utils'
 import { NetUtils } from '../../util/netUtils'
 import { Api } from '../../common/api'
-import { ProdInfo } from '../../module/destinyDetail/prodDetail'
 
 const destinyImage = wx.createImage()
 const destinyImageRect = {
@@ -46,22 +46,17 @@ export class PoemDetail {
 
   static getPoemImage() {
     // 显示 Loading
-    wx.showLoading({
-      title: '正在生成签语',
-      mask: true
-    })
+    wx.showLoading({ title: '正在生成签语' })
     NetUtils.downloadFile({
-      url: ProdInfo.src,
-      response: (localSrc) => {
-        destinyImage.src = localSrc
-      },
+      url: Global.prodInfo.src,
+      response: (localSrc) => destinyImage.src = localSrc,
       // 调用成功后的回调
       complete: (isSuccsee) => {
         if (isSuccsee == true) wx.hideLoading()
         else wx.showToast({ title: '加载图片失败' })
       },
       // 接口调用失败重新拉取
-      fail: () => PoemDetail.getPoemImage()
+      fail: () => Utils.retry(() => PoemDetail.getPoemImage())
     })
   }
   static draw(context) {
@@ -75,12 +70,12 @@ export class PoemDetail {
       0.02, 30, 20
     )
 
-    Utils.drawText(context,
-      'Police had to trudge through two to three feet /nof debris to get to 94-year-old Robert Libby: soiled /nadult diapers, garbage and thousands of beer cans',
-      UIKit.color.title,
-      destinyImageRect.top + destinyImageRect.height + 100,
-      35
-    )
+    Utils.drawText(context, {
+      text: 'Police had to trudge through two to three feet /nof debris to get to 94-year-old Robert Libby: soiled /nadult diapers, garbage and thousands of beer cans',
+      textColor: UIKit.color.title,
+      centerY: destinyImageRect.top + destinyImageRect.height + 100,
+      lineHeight: 35
+    })
 
     Utils.drawRoundRect(
       context,
