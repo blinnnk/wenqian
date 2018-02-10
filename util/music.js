@@ -51,6 +51,7 @@ export default class Music {
   }
 
   playBells() {
+    this.bellsSoundEffect.seek(0)
     this.bellsSoundEffect.play()
   }
 

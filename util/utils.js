@@ -3,7 +3,6 @@
 * @date 2018-02-01
 */
 
-
 import { Interpolator } from '../util/animation'
 
 var moveX = 0
@@ -25,6 +24,8 @@ var degree = [0]
 var horizontalOffset = 0
 var buttonTextSize = 30
 
+var retryTimes = 3
+
 // 工具
 export class Utils {
 
@@ -34,7 +35,7 @@ export class Utils {
 
     var hour = Math.floor(totalMinute / 60)
     var minute = totalMinute - hour * 60
-    var second = Math.ceil(totalSecond - totalMinute * 60)
+    var second = Math.floor(totalSecond - totalMinute * 60)
 
     if (hour < 10) hour = '0' + hour
     if (minute < 10) minute = '0' + minute
@@ -62,16 +63,16 @@ export class Utils {
     context.strokeStyle = strokeColor
     context.lineWidth = strokeWidth
     context.lineCap = 'round'
-    
+
     var buttonHeight = 0
     if (rect.height > radius * 2) buttonHeight = rect.height - radius * 2
 
     for (var index = 0; index < 4; index++) {
-      
+
       var modulus = 0
       if (index == 1 || index == 2) modulus = 1
       else modulus = 0
-      
+
       var heightModulus = 0
       if (index == 2 || index == 3) heightModulus = 1
       else heightModulus = 0
@@ -87,17 +88,16 @@ export class Utils {
     }
     context.closePath()
     context.stroke()
-    Utils.drawText(
-      context,
-      text,
-      strokeColor,
-      rect.top + (buttonHeight + radius - buttonTextSize) / 2 - strokeWidth,
-      0,
-      '' + buttonTextSize + '',
-      true
-    )
+    Utils.drawText(context, {
+      text: text,
+      textColor: strokeColor,
+      centerY: rect.top + (buttonHeight + radius - buttonTextSize) / 2 - strokeWidth,
+      lineHeight: 0,
+      textSize: '' + buttonTextSize + '',
+      isBold: true
+    })
     context.restore()
-    
+
   }
 
   // 罗盘监听
@@ -130,7 +130,7 @@ export class Utils {
 
     wx.onTouchEnd((event) => {
       if (
-        Math.abs(currentMoveX) < 2 || 
+        Math.abs(currentMoveX) < 2 ||
         Math.abs(currentMoveY) < 2 ||
         currentMoveX == 0 ||
         currentMoveY == 0
@@ -142,7 +142,7 @@ export class Utils {
       currentMoveY = 0
     })
   }
-  
+
   // 通用的画图方法
   static drawCustomImage(context, image, rect) {
     context.drawImage(
@@ -191,7 +191,7 @@ export class Utils {
     maxMoveDistance,
     callback
   ) {
-    var accelerateValue = 
+    var accelerateValue =
       Interpolator.accelerateInterpolator(speed, maxMoveDistance)
     context.drawImage(
       image,
@@ -202,7 +202,7 @@ export class Utils {
     )
     if (accelerateValue == maxMoveDistance) {
       if (typeof callback === 'function') callback()
-    } 
+    }
   }
 
   static drawImageAndMoveToBottomWithAnimation(
@@ -213,7 +213,7 @@ export class Utils {
     maxMoveDistance,
     callback
   ) {
-    var accelerateValue = 
+    var accelerateValue =
       Interpolator.accelerateInterpolator(speed, maxMoveDistance)
     context.drawImage(
       image,
@@ -239,7 +239,7 @@ export class Utils {
     // 这个是速度变化的系数值越大加减速度的程度就越大
     let gearDegree = 0.2
     moveValue += speed
-    gearValue = 2* (1 + gearDegree * Math.sin(moveValue))
+    gearValue = 2 * (1 + gearDegree * Math.sin(moveValue))
     context.drawImage(
       image,
       rect.left + horizontalRadius * Math.cos(gearValue),
@@ -257,41 +257,40 @@ export class Utils {
   }
 
   static eraseTouchEvent(...rectArguments) {
-    for (var index = 0; index < rectArguments.length; index++) {
+    for (var index in rectArguments) {
       checkRectContainsPointOrElse(
         currentTouchX,
         currentTouchY,
         rectArguments[index],
-        () => {
-          currentTouchX = 0
-          currentTouchY = 0
-        }
+        () => { currentTouchX = 0; currentTouchY = 0 }
       )
-    } 
+    }
   }
 
   // 画副标题的文字
-  static drawText(
-    context, 
-    text, 
-    color,
-    centerY,
-    lineHeight,
-    textSize = '24px',
-    isBold = false
-    ) {
-    const bold = value => isBold == true ? 'bold' : value = ''
-
-    context.fillStyle = color
-    context.font = '' + bold() + textSize + ' avenir'
+  static drawText(context, param = {
+    text: String,
+    textColor: String,
+    centerY: 0,
+    lineHeight: 0,
+    textSize: 0,
+    isBold: Boolean
+  }) {
+    param.isBold = param.isBold == true ? 'bold' : ''
+    param.textSize = param.textSize == null ? '24px' : param.textSize
+    param.centerY = param.centerY == null ? 0 : param.centerY
+    param.lineHeight = param.lineHeight == null ? 28 : param.lineHeight
+    
+    context.fillStyle = param.textColor
+    context.font = param.isBold + param.textSize + 'avenir'
     context.textBaseline = 'middle'
     context.textAlign = 'center'
-    let newText = text.split('/n')
+    let newText = param.text.split('/n')
     for (var index = 0; index < newText.length; index++) {
       context.fillText(
         newText[index],
         context.canvas.width / 2,
-        centerY + lineHeight * index
+        param.centerY + param.lineHeight * index
       )
     }
   }
@@ -307,7 +306,7 @@ export class Utils {
     })
   }
 
-  static touchMoveXDistance(param = { onMoving: Function, onEnd: Function}) {
+  static touchMoveXDistance(param = { onMoving: Function, onEnd: Function }) {
     var distance = { x: 0, y: 0 }
     wx.onTouchStart((event) => {
       startX = event.touches[0].clientX
@@ -342,6 +341,29 @@ export class Utils {
     new Promise(step1).then(() => {
       return new Promise(step2)
     })
+  }
+
+  static Image(src) {
+    let image = wx.createImage()
+    image.src = src
+    return image
+  }
+
+  static retry(callback) {
+    let retryInterval = setInterval(() => {
+      retryTimes -= 1
+      if (typeof callback === 'function') callback()
+      if (retryTimes <= 0) {
+        wx.showModal({
+          title: '连接失败',
+          content: '重试 3 次依旧失败请检查网络',
+        })
+        clearInterval(retryInterval)
+        // 恢复常量
+        retryTimes = 3
+        return
+      }
+    }, 3000)
   }
 
 }

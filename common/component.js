@@ -4,6 +4,7 @@
 */
 
 import { UIKit } from 'uikit'
+import { Global } from 'global'
 import { Utils } from '../util/utils'
 import { NetUtils } from '../util/netUtils'
 import { Api } from '../common/api'
@@ -11,10 +12,10 @@ import { Api } from '../common/api'
 // 落叶动画用到的参数
 let leafSrc =
   [
-    UIKit.imageSrc.leaf, 
-    UIKit.imageSrc.leaf1, 
-    UIKit.imageSrc.leaf2, 
-    UIKit.imageSrc.leaf, 
+    UIKit.imageSrc.leaf,
+    UIKit.imageSrc.leaf1,
+    UIKit.imageSrc.leaf2,
+    UIKit.imageSrc.leaf,
     UIKit.imageSrc.leaf1
   ]
 var leafY = 0
@@ -27,7 +28,7 @@ var accelerometerY = [0]
 var accelerometerZ = [0]
 var isShakingPhone = false
 
-export let Canvas = wx.createCanvas()
+const Canvas = wx.createCanvas()
 
 // 适配 iPhoneX 的齐刘海
 var adaptingIPhoneXTop = 0
@@ -35,56 +36,43 @@ Utils.isIPhoneX(function () {
   adaptingIPhoneXTop = 30
 })
 
-let backButtonRect = {
+const backButtonRect = {
   width: UIKit.size.buttonWidth,
   height: UIKit.size.buttonHeight,
   left: Canvas.width * 2 * 0.065,
   top: Canvas.width * 2 * 0.1 + adaptingIPhoneXTop
 }
 
-let backImage = wx.createImage()
-backImage.src = UIKit.imageSrc.back
-
-var userAgent = null
+const backImage = Utils.Image(UIKit.imageSrc.back)
 
 // 通用组件方法
-export class Component { 
+export class Component {
 
-  static userAgent = userAgent
+  static Canvas = Canvas
 
   static isShakingPhone(param = { onShaking: Function, onEnd: Function }) {
-    wx.onAccelerometerChange(function (value) {
-      var accelerMeterXValue = 0
-      var accelerMeterYValue = 0
-      var accelerMeterZValue = 0
-
+    wx.onAccelerometerChange((value) => {
       accelerometerX.push(value.x)
       accelerometerY.push(value.y)
       accelerometerZ.push(value.z)
       if (accelerometerX.length == 3) accelerometerX.splice(0, 1)
       if (accelerometerY.length == 3) accelerometerY.splice(0, 1)
       if (accelerometerZ.length == 3) accelerometerZ.splice(0, 1)
+
       // 判断 X轴方向 用户开始主观加速移动
-      if (
-        accelerometerX[0] != 0 &&
-        Math.abs(accelerometerX[1] - accelerometerX[0]) > 1
-      ) {
-        accelerMeterXValue = accelerometerX[1] - accelerometerX[0]
-      }
+      var accelerMeterXValue =
+        accelerometerX[0] != 0 && Math.abs(accelerometerX[1] - accelerometerX[0]) > 1 ?
+          accelerometerX[1] - accelerometerX[0] : 0
+
       // 判断 X轴方向 用户开始主观加速移动
-      if (
-        accelerometerY[0] != 0 &&
-        Math.abs(accelerometerY[1] - accelerometerY[0]) > 1
-      ) {
-        accelerMeterYValue = accelerometerY[1] - accelerometerY[0]
-      }
+      var accelerMeterYValue =
+        accelerometerY[0] != 0 && Math.abs(accelerometerY[1] - accelerometerY[0]) > 1 ?
+          accelerometerY[1] - accelerometerY[0] : 0
+
       // 判断 X轴方向 用户开始主观加速移动
-      if (
-        accelerometerZ[0] != 0 &&
-        Math.abs(accelerometerZ[1] - accelerometerZ[0]) > 1
-      ) {
-        accelerMeterZValue = accelerometerZ[1] - accelerometerZ[0]
-      }
+      var accelerMeterZValue =
+        accelerometerZ[0] != 0 && Math.abs(accelerometerZ[1] - accelerometerZ[0]) > 1 ?
+          accelerometerZ[1] - accelerometerZ[0] : 0
 
       if (accelerMeterXValue * accelerMeterYValue * accelerMeterZValue != 0) {
         isShakingPhone = true
@@ -113,7 +101,7 @@ export class Component {
   }
 
   static backButtonRect = backButtonRect
-  
+
   static addBackButton(context) {
     Utils.drawCustomImage(context, backImage, backButtonRect)
   }
@@ -166,12 +154,12 @@ export class Component {
       )
     }
 
-    if (leafY >= context.canvas.height * 3 || leafX >= context.canvas.width ) {
+    if (leafY >= context.canvas.height * 3 || leafX >= context.canvas.width) {
       leafY = 0
       leafX = 0
     }
   }
-  
+
   // 画背景的方法
   static drawBackground(context) {
     var gradient =
@@ -188,12 +176,7 @@ export class Component {
     var myTempID = null
     // 初次设定 TempID
     const setTempID = (hasRequired) => {
-      if (hasRequired == true) {
-        wx.setStorage({
-          key: 'tempID',
-          data: myTempID,
-        })
-      }
+      if (hasRequired == true) wx.setStorage({ key: 'tempID', data: myTempID })
     }
     /*
     * 从微信获取唯一的标识 - 这个 code 是临时的这里通过方
@@ -219,7 +202,7 @@ export class Component {
         myTempID = result.data
         if (typeof holdResponse === 'function') holdResponse(myTempID)
       },
-      fail: () => initTempID()
+      fail: () => Utils.retry(() => initTempID())
     })
   }
 
@@ -230,11 +213,11 @@ export class Component {
         url: Api.token,
         tempCode: code,
         response: (userAgent) => {
-          Component.userAgent = userAgent
+          Global.userAgent = userAgent
           if (typeof callback === 'function') callback(userAgent)
         }
       })
     })
   }
-  
+
 }

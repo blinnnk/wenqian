@@ -14,17 +14,11 @@ const boxLeft = Component.ScreenSize.width * 0.05
 const loveBoxLeft = Component.ScreenSize.width * 1.05
 
 var currentLeft = 0
-const shadowImage = wx.createImage()
-shadowImage.src = UIKit.imageSrc.shadow
 
-const boxImage = wx.createImage()
-boxImage.src = UIKit.imageSrc.box
-
-const loveBoxImage = wx.createImage()
-loveBoxImage.src = UIKit.imageSrc.loveBox
-
-const loveShadowImage = wx.createImage()
-loveShadowImage.src = UIKit.imageSrc.shadow
+const shadowImage = Utils.Image(UIKit.imageSrc.shadow)
+const boxImage = Utils.Image(UIKit.imageSrc.box)
+const loveBoxImage = Utils.Image(UIKit.imageSrc.loveBox)
+const loveShadowImage = Utils.Image(UIKit.imageSrc.shadow)
 
 const boxRect = {
   width: boxSize,
@@ -58,11 +52,8 @@ const loveShadowRect = {
 }
 const loveShadowLeft = loveBoxRect.left + Component.ScreenSize.width * 0.35
 
-const zhouGongImage = wx.createImage()
-zhouGongImage.src = UIKit.imageSrc.zhougong
-
-const guanyinImage = wx.createImage()
-guanyinImage.src = UIKit.imageSrc.guanyin
+const zhouGongImage = Utils.Image(UIKit.imageSrc.zhougong)
+const guanyinImage = Utils.Image(UIKit.imageSrc.guanyin)
 
 const titleSize = 240
 const titleRect = {
@@ -73,8 +64,8 @@ const titleRect = {
 }
 
 const timeBackgroundWidth = 580 * 0.8
-const timeBackgroundImage = wx.createImage()
-timeBackgroundImage.src = UIKit.imageSrc.timeBackground
+const timeBackgroundImage = Utils.Image(UIKit.imageSrc.timeBackground)
+
 const timeBackgroundRect = {
   left: (Component.ScreenSize.width - timeBackgroundWidth) / 2,
   top: Component.ScreenSize.height / 2 - 100,
@@ -85,6 +76,7 @@ const timeBackgroundRect = {
 // 计算倒计时的参数
 var currentTime
 var isBlockStatus = false
+var countDownInterval = null
 
 export class DestinyPage {
 
@@ -92,10 +84,9 @@ export class DestinyPage {
   static loveBoxRect = loveBoxRect
 
   static draw(
-    context, 
+    context,
     touchMoveX
-    ) {
-
+  ) {
     // 添加回退按钮
     Component.addBackButton(context)
     // 移动距离赋值
@@ -153,40 +144,49 @@ export class DestinyPage {
     Utils.drawCustomImage(context, loveShadowImage, loveShadowRect)
 
     // 描述文字
-    Utils.drawText(
-      context,
-      "I especially like to eat salmon and put it down. /n So I painted this series of food illustrations. /n This is just one of them. There's more I will /n do as soon as possible",
-      UIKit.color.title,
-      Component.ScreenSize.height - boxRect.top,
-      35
-    )
+    Utils.drawText(context, {
+      text: "I especially like to eat salmon and put it down. /n So I painted this series of food illustrations. /n This is just one of them. There's more I will /n do as soon as possible",
+      textColor: UIKit.color.title,
+      lineHeight: 35,
+      testSize: '96px',
+      centerY: Component.ScreenSize.height - boxRect.top
+    })
   }
 
-  static setBlockStatus() {
-    isBlockStatus = true
-  }
-
-  static setUnlockStatus() {
-    isBlockStatus = false
-  }
-
+  /*
+  * @description 生成倒计时锁的样式和功能, 因为这个倒计时锁的时间计算点
+  * 是服务器时间, 这里面有多种场景的重新校验。例如, 页面切换, 后台到前台等。
+  * 没有使用长连接，所以在每次进入界面前的触发点进行再次校验.
+  */
   static initLockTime(currentLockTime, callback) {
-    var countDown = setInterval(
-      function () {
-        currentLockTime -= 1000
-        if (currentLockTime <= 0) {
-          // 当倒计时结束后从服务器更新本地的冷却时间
-          Component.updateUserAgent()
-          isBlockStatus = false
-          // 关闭 `Interval`
-          clearInterval(countDown)
-        } else {
-          isBlockStatus = true
-          currentTime = Utils.convertTimeWithMillsecond(currentLockTime)
-        }
-      }, 
-     1000
-    )
+    if (currentLockTime <= 0) {
+      isBlockStatus = false
+      if (countDownInterval != null) {
+        clearInterval(countDownInterval)
+        countDownInterval = null
+      }
+      return
+    } else {
+      // 如果再次出发函数的时候还在倒计时状态就不用重新执行下面的内容
+      if (isBlockStatus == true) return
+      // 开始执行倒计时的样式刷新和节点判断
+      countDownInterval = setInterval(
+        () => {
+          if (currentLockTime <= 0) {
+            // 当倒计时结束后从服务器更新本地的冷却时间
+            Component.updateUserAgent()
+            isBlockStatus = false
+            // 关闭 `Interval`
+            clearInterval(countDownInterval)
+          } else {
+            isBlockStatus = true
+            currentTime = Utils.convertTimeWithMillsecond(currentLockTime)
+            currentLockTime -= 1000
+          }
+        },
+        1000
+      )
+    }
   }
 }
 
