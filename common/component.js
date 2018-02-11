@@ -22,6 +22,8 @@ var leafY = 0
 var leafX = 0
 let fallingLeafCount = 5
 
+var myTempID = null
+
 // 摇晃判断
 var accelerometerX = [0]
 var accelerometerY = [0]
@@ -173,7 +175,6 @@ export class Component {
   }
 
   static getUserAgent(holdResponse) {
-    var myTempID = null
     // 初次设定 TempID
     const setTempID = (hasRequired) => {
       if (hasRequired == true) wx.setStorage({ key: 'tempID', data: myTempID })
@@ -220,4 +221,15 @@ export class Component {
     })
   }
 
+  static updateCDTime(callback) {
+    NetUtils.getResultWithApi({
+      url: Api.userInfo,
+      apiParameters: {
+        noncestr: Date.now()
+      },
+      response: (result) => {
+        if (typeof callback === 'function') callback(result.cd)
+      }
+    }) 
+  }
 }

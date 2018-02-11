@@ -57,7 +57,12 @@ export class NetUtils {
     })
   }
 
-  static getToken(param = { url: String, tempCode: String, response: Function, complete: Function}) {
+  static getToken(param = { 
+    url: String, 
+    tempCode: String, 
+    response: Function, 
+    complete: Function
+  }) {
     var isSuccess = false
     wx.request({
       url: param.url,
