@@ -25,6 +25,7 @@ var horizontalOffset = 0
 var buttonTextSize = 30
 
 var retryTimes = 3
+var isRetrying = false
 
 // 工具
 export class Utils {
@@ -350,7 +351,9 @@ export class Utils {
   }
 
   static retry(callback) {
-    let retryInterval = setInterval(() => {
+    if (isRetrying == true) return
+    let retry = setInterval(() => {
+      isRetrying = true
       retryTimes -= 1
       if (typeof callback === 'function') callback()
       if (retryTimes <= 0) {
@@ -358,11 +361,11 @@ export class Utils {
           title: '连接失败',
           content: '重试 3 次依旧失败请检查网络',
         })
-        clearInterval(retryInterval)
-        // 恢复常量
+        clearInterval(retry)
+        isRetrying = false
         retryTimes = 3
-        return
       }
+      console.log(retryTimes + 'retry')
     }, 3000)
   }
 
