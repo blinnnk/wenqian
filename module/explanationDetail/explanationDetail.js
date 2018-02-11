@@ -26,7 +26,8 @@ var pageHeight = 0 // 页面总高度
 var totalRows = 0 // 页面总行数
 var solveSignList = [] // 定义内容数组
 var solveSignListLength = 0 // 获取数据的长度
-var signImage = null // 初始image
+var signImage = wx.createImage() // 初始化image
+signImage.src = UIKit.imageSrc.guanYinSign
 // 计算每行显示多少字
 var contentWidth = screenWidth - 150 - paddingSize
 const eachLineNumber = Math.floor(contentWidth / textWidth) 
