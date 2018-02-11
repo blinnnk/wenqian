@@ -31,6 +31,7 @@ var accelerometerZ = [0]
 var isShakingPhone = false
 
 const Canvas = wx.createCanvas()
+const context = Canvas.getContext('2d')
 
 // 适配 iPhoneX 的齐刘海
 var adaptingIPhoneXTop = 0
@@ -51,6 +52,7 @@ const backImage = Utils.Image(UIKit.imageSrc.back)
 export class Component {
 
   static Canvas = Canvas
+  static context = context
 
   static isShakingPhone(param = { onShaking: Function, onEnd: Function }) {
     wx.onAccelerometerChange((value) => {
@@ -112,27 +114,6 @@ export class Component {
   static adaptingRetina() {
     Canvas.width = Canvas.width * 2
     Canvas.height = Canvas.height * 2
-  }
-
-  // 画副标题的文字
-  static drawDescriptionText(context) {
-    context.fillStyle = UIKit.color.title
-    context.font = '24px avenir'
-    context.textBaseline = 'middle'
-    context.textAlign = 'center'
-    context.fillText(
-      'they determined that Cloyd had ovarian cysts',
-      context.canvas.width / 2,
-      (context.canvas.height + UIKit.size.logo) / 2 - 50,
-      context.canvas.width
-    )
-
-    context.fillText(
-      'gave her pain medications that helped her feel better',
-      context.canvas.width / 2,
-      (context.canvas.height + UIKit.size.logo) / 2 - 50 + 36,
-      context.canvas.width
-    )
   }
 
   // 画落叶的函数

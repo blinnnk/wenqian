@@ -21,6 +21,16 @@ export class UIKit {
     opacity1: 'rgba(255, 255, 255, 0.1)',
   }
 
+  static font = {
+    title: ' Avenir-Black',
+    content: ' Avenir-Heavy'
+  }
+
+  static textSize = {
+    title: 36,
+    content: 28
+  }
+
   static imageSrc = {
     logo: 'sources/image/wenqianLogo.png',
     buttonBackground: 'sources/image/buttonBackground.png',
@@ -42,7 +52,9 @@ export class UIKit {
     prod: 'sources/image/prod.png',
     zhouGongBox: 'sources/image/zhouGongBox.png',
     zhouGongBoxBackground: 'sources/image/zhouGongBoxBackground.png',
-    timeBackground: 'sources/image/timeBackground.png'
+    timeBackground: 'sources/image/timeBackground.png',
+    zhouGongType: 'sources/image/zhouGongType.png',
+    mask: 'sources/image/mask.png'
   }
 
   static prodType = {

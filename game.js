@@ -3,10 +3,10 @@
 * @date 2018-01-30
 */
 
+import 'common/extension.js'
 import Controller from 'util/controller'
 import Music from 'util/music'
-import { PageName } from 'common/uikit'
-import { UIKit } from 'common/uikit'
+import { PageName, UIKit } from 'common/uikit'
 import { Global } from 'common/global'
 import { Component } from 'common/component'
 import { Utils } from 'util/utils'
@@ -29,13 +29,11 @@ var controller
 Utils.sequentialExecution({
   // 启动软件的时候更新用户信息
   early: (hasFinished) => {
-    Component.updateUserAgent((userAgent) => {
-      if (typeof hasFinished === 'function') hasFinished()
-    })
+    Component.updateUserAgent((userAgent) => hasFinished())
   },
   // 主界面的刷新帧的控制器, 时机切开是保证界面显示的时候百分百有 `token` 及相关信息
-  later: () => controller = 
-    new Controller(Component.Canvas, (context) => showPage(currentPage, context))
+  later: () => controller =
+    new Controller((context) => showPage(currentPage, context))
 })
 
 // 监听屏幕上的手指事件用来做点击和滑动的兼容
@@ -62,7 +60,7 @@ Component.isShakingPhone({
         // 顺序执行刷新界面的方式
         Utils.sequentialExecution({
           early: (hasFinished) => {
-            if (typeof hasFinished === 'function') hasFinished()
+            hasFinished()
             resetGeneralParameters()
           },
           later: () => currentPage = PageName.prodDetail
@@ -78,6 +76,10 @@ Component.isShakingPhone({
 var currentPage = PageName.home
 var touchMoveX = 0
 var lastMoveX = 0
+var touchMoveY = 0
+var lastMoveY = 0
+
+var explanationHeight
 
 // 通过在 `Canvas` 上面的点击区域来判断点击事件
 function clickToLoadPage(clickRect, targetPageName) {
@@ -136,27 +138,43 @@ function clickToLoadPage(clickRect, targetPageName) {
 Utils.touchMoveXDistance({
   onMoving: (distance) => {
     touchMoveX = distance.x + lastMoveX
+    touchMoveY = distance.y + lastMoveY
     // 边界判断, 累计移动的距离超出了屏幕最大或最小距离就重置
-    if (touchMoveX < -Component.ScreenSize.width)
+    if (touchMoveX < -Component.ScreenSize.width) {
       touchMoveX = -Component.ScreenSize.width
+    } 
     else if (touchMoveX > 0) touchMoveX = 0
+    if (explanationHeight > Component.ScreenSize.height) {
+      explanationHeight -= Component.ScreenSize.height
+    } 
+    if (touchMoveY < -explanationHeight) {
+      touchMoveY = -explanationHeight
+    }
+    else if (touchMoveY > 0) touchMoveY = 0
   },
   // 滑动结束后记录上次移动的距离
-  onEnd: () => lastMoveX = touchMoveX
+  onEnd: () => {
+    lastMoveX = touchMoveX
+    lastMoveY = touchMoveY
+  }
 })
 
 // 后台到前台后恢复事件
 wx.onShow(() => {
   sound.playBackgroundMusic()
   controller
-  if (Global.userAgent != null) 
+  if (Global.userAgent != null)
     Component.updateCDTime((cdTime) => DestinyPage.initLockTime(cdTime))
 })
 
 // —————— 以下为 `game.js` 页面的私有工具方法 —————————
 
 // 用来做通用常量或变量的参数在更换页面后恢复数值
-const resetGeneralParameters = () => Interpolator.recovery()
+const resetGeneralParameters = () => {
+  Interpolator.recovery()
+  touchMoveX = 0
+  touchMoveY = 0
+}
 
 // 封装的判断当前页面名字的高阶函数
 function executeByCurrentPage(callback, ...pageArguments) {
@@ -195,8 +213,20 @@ function onDestinyDetailPage(callback) {
   )
 }
 
+// 首页各个按钮的点击区域
+const buttonRect = {
+  back: Component.backButtonRect,
+  destiny: HomePage.destinyRect,
+  history: HomePage.historyRect,
+  prod: ProdDetail.buttonRect,
+  explanation: PoemDetail.explanationButtonRect,
+  guanYin: DestinyPage.boxRect,
+  zhouGong: DestinyPage.loveBoxRect,
+  save: PoemDetail.saveButtonRect
+}
+
 /* 
-* 各个页面的绘制函数, PS 使用命令对象代替switch语句
+* 各个页面的绘制函数, PS: 使用命令对象代替switch语句
 * 都知道 `Swith` 不好， 冗长及不安全
 */
 function showPage(name, context) {
@@ -212,18 +242,6 @@ function showPage(name, context) {
   }
   if (typeof names[name] !== 'function') return
   return names[name]()
-}
-
-// 首页各个按钮的点击区域
-const buttonRect = {
-  back: Component.backButtonRect,
-  destiny: HomePage.destinyRect,
-  history: HomePage.historyRect,
-  prod: ProdDetail.buttonRect,
-  explanation: PoemDetail.explanationButtonRect,
-  guanYin: DestinyPage.boxRect,
-  zhouGong: DestinyPage.loveBoxRect,
-  save: PoemDetail.saveButtonRect
 }
 
 const Pages = {
@@ -264,7 +282,9 @@ const Pages = {
     clickToLoadPage(buttonRect.save, PageName.poemDetail)
   },
   explanation: (context) => {
-    Explanation.draw(context)
+    Explanation.draw(context, touchMoveY, (totalHeight) => {
+      explanationHeight = totalHeight
+    })
     clickToLoadPage(buttonRect.back, PageName.poemDetail)
   }
 }
