@@ -28,13 +28,18 @@ const sound = new Music()
 Utils.sequentialExecution({
   // 启动软件的时候更新用户信息
   early: (hasFinished) => {
-    Component.updateUserAgent()
-    if (typeof hasFinished === 'function') hasFinished()
+    Component.updateUserAgent((userAgent) => {
+      if (typeof hasFinished === 'function') hasFinished()
+    })
   },
   // 主界面的刷新帧的控制器, 时机切开是保证界面显示的时候百分百有 `token` 及相关信息
-  later: () => new Controller(Component.Canvas, (context) => showPage(currentPage, context))
+  later: () => initGame()
 })
 
+function initGame() {
+  new Controller(Component.Canvas, (context) => showPage(currentPage, context))
+  Component.updateCDTime()
+}
 // 监听屏幕上的手指事件用来做点击和滑动的兼容
 Utils.touchPointListener()
 
@@ -65,7 +70,7 @@ Component.isShakingPhone({
           later: () => currentPage = PageName.prodDetail
         })
         sound.playAmazingSoundEffect()
-        Component.updateUserAgent()
+        Component.updateCDTime()
       })
     })
   }
@@ -118,9 +123,9 @@ function clickToLoadPage(clickRect, targetPageName) {
       target: PageName.destiny,
       do: () => {
         wx.showLoading({ title: '正在计算冷却时间' })
-        Component.updateUserAgent((userAgent) => {
+        Component.updateCDTime((cdTime) => {
           wx.hideLoading()
-          DestinyPage.initLockTime(userAgent.cd)
+          DestinyPage.initLockTime(cdTime)
         })
       }
     })
@@ -146,7 +151,8 @@ Utils.touchMoveXDistance({
 wx.onShow(() => {
   sound.playBackgroundMusic()
   new Controller(Component.Canvas)
-  Component.updateUserAgent((userAgent) => DestinyPage.initLockTime(userAgent.cd))
+  if (Global.userAgent != null) 
+    Component.updateCDTime((cdTime) => DestinyPage.initLockTime(cdTime))
 })
 
 // —————— 以下为 `game.js` 页面的私有工具方法 —————————

@@ -52,7 +52,7 @@ export class ProdDetail {
       },
       response: (result) => {
         Global.prodInfo = 
-        { src: result.data.image, xj: result.data.xj, prodIndex: result.data.index }
+        { src: result.data.image, xj: result.data.xj, index: result.data.index }
         prodNameImage.src = prodTypeImageSrc(result.data.xj)
       },
       fail: () => Utils.retry(() => ProdDetail.getPoemInfo()) 
