@@ -24,18 +24,12 @@ var lastMoveY = 0 // 记录上次移动的距离
 const paddingSize = 40 // 页面的padding值
 var pageHeight = 0 // 页面总高度
 var totalRows = 0 // 页面总行数
-
+var solveSignList = [] // 定义内容数组
+var solveSignListLength = 0 // 获取数据的长度
+var signImage = null // 初始image
 // 计算每行显示多少字
 var contentWidth = screenWidth - 150 - paddingSize
 const eachLineNumber = Math.floor(contentWidth / textWidth) 
-
-// 根据状态显示周公/观音签
-const signImage = wx.createImage()
-if (signType == 0) {
-  signImage.src = UIKit.imageSrc.guanYinSign
-} else if (signType == 1) {
-  signImage.src = UIKit.imageSrc.zhouGongSign
-}
 
 // 观音灵签rect
 const guanYinRect = {
@@ -74,16 +68,13 @@ const textChapterRect = {
   color: '#6e624c'
 }
 
-var solveSignList = [] // 定义内容数组
-const solveSignListLength = solveSignList.length // 获取数据的长度
-
 export class ExplanationDetail {
   static draw(context) {
     Utils.drawCustomImage(context, signImage, guanYinRect) //灵签
     Utils.drawCircle(context, dotsRect) // 圆点
     Utils.drawVerticalColumnText(context, textChapter, textChapterRect, textColumnNumber) // 第多少签
 
-    //获取每个text的行数
+    // 获取每个text的行数
     for (var index = 0; index < solveSignListLength; index++) {
       
       // 计算这个title上面有多少行text
@@ -105,7 +96,6 @@ export class ExplanationDetail {
   }
 
   static RequestSignData(signType, signIndex) { // 请求解签数据
-    signType = signType // 赋值上面signType
     wx.request({
       url: 'https://lotsapitest.naonaola.com/lot/explain?type=' + signType + '&index=' + signIndex,
       method: 'GET',
@@ -114,6 +104,7 @@ export class ExplanationDetail {
         if (data.statusCode == 200) {
           solveSignList = data.data.content
           // 计算每个详解的行数并添加到rows数组中
+          solveSignListLength = solveSignList.length // 获取数据的长度
           for (var contentIndex = 0; contentIndex < solveSignList.length; contentIndex++) {
             var row = Math.ceil(solveSignList[contentIndex].text.length / eachLineNumber)
             totalRows += row // text总行数    
@@ -124,6 +115,13 @@ export class ExplanationDetail {
         }
       }
     })
+    // 根据状态显示周公/观音签
+    signImage = wx.createImage()
+    if (signType == 0) {
+      signImage.src = UIKit.imageSrc.guanYinSign
+    } else if (signType == 1) {
+      signImage.src = UIKit.imageSrc.zhouGongSign
+    }
   }
 }
 
@@ -135,6 +133,7 @@ function drawTitle(context, text, textLeft, titleTop) {
   context.textBaseline = 'top'
   context.fillText(text, textLeft, titleTop);
 }
+
 // 绘制内容并文字折行
 function drawText(context, text, textLeft, textTop) {
   context.font = "32px 宋体";
