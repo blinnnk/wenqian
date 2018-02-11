@@ -29,8 +29,8 @@ export class Explanation {
       },
       apiParameters: {
         noncestr: Date.now(),
-        boxType: Global.currentBoxType,
-        prodIndex: 1,
+        type: Global.currentBoxType,
+        index: 1,
       },
       fail: () => Utils.retry(() => Explanation.getExplanation())
     })

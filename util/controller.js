@@ -16,10 +16,14 @@ export default class Controller {
     drawDetail()
     function drawDetail() {
       let animation = requestAnimationFrame(drawDetail)
-      
       if (typeof onDraw === 'function') {
         Utils.sequentialExecution({
-          early: () => context.clearRect(0, 0, canvas.width, canvas.height),
+          early: (hasFinished) => {
+            if (typeof hasFinished === 'function') {
+              context.clearRect(0, 0, canvas.width, canvas.height)
+              hasFinished()
+            }
+          },
           later: () => {
             Component.drawBackground(context)
             onDraw(context, animation)

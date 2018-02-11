@@ -330,12 +330,12 @@ export class Utils {
   // 利用 JavaScript ES6 的新特性实现的顺序执行函数
   static sequentialExecution(param = { early: Function, later: Function }) {
     function step1(resolve, reject) {
-      param.early()
-      resolve('finish')
+      if (typeof param.early === 'function') 
+        param.early(hasFinished => resolve('finish'))
     }
 
     function step2(resolve, reject) {
-      param.later()
+      if (typeof param.later === 'function') param.later()
       resolve('finish')
     }
     // 用 `Promise` 函数特性严格切分时机
