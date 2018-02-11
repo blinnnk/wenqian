@@ -54,7 +54,7 @@ export class UIKit {
     zhouGongBoxBackground: 'sources/image/zhouGongBoxBackground.png',
     timeBackground: 'sources/image/timeBackground.png',
     zhouGongType: 'sources/image/zhouGongType.png',
-    mask: 'sources/image/mask.png'
+    guanYinType: 'sources/image/guanYinType.png'
   }
 
   static prodType = {

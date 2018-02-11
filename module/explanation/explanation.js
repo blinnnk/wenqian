@@ -39,6 +39,9 @@ export class Explanation {
 
     Component.addBackButton(context)
     Utils.drawCustomImage(context, typeImage, typeImageRect)
+    if (Global.currentBoxType == Global.BoxType.guanYin) typeImage.src = UIKit.imageSrc.guanYinType
+    else typeImage.src = UIKit.imageSrc.zhouGongType
+    
     Utils.drawRound(context, {
       color: UIKit.color.title,
       rect: { left: dotLeft, top: dotTop },
