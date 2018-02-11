@@ -19,8 +19,7 @@ export class Explanation {
   }
 
   static getExplanation() {
-    console.log("baby" + Global.currentBoxType)
-    // 显示 Loading
+    // 显示 `Loading`
     wx.showLoading({ title: '正在生成签语' })
     NetUtils.getResultWithApi({
       url: Api.explanation,
@@ -33,7 +32,6 @@ export class Explanation {
         boxType: Global.currentBoxType,
         prodIndex: 1,
       },
-      token: Global.userAgent.token,
       fail: () => Utils.retry(() => Explanation.getExplanation())
     })
   }

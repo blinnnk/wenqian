@@ -3,6 +3,7 @@
 * @date 2018-02-08
 */
 
+import { Global } from '../common/global'
 
 export class NetUtils {
 
@@ -33,7 +34,6 @@ export class NetUtils {
       url: String, 
       response: Function, 
       apiParameters: {},
-      token: String,
       fail: Function, 
       complete: Function
     }
@@ -42,7 +42,7 @@ export class NetUtils {
     wx.request({
       url: param.url,
       data: param.apiParameters,
-      header: { 'X-Lot-Token': param.token},
+      header: { 'X-Lot-Token': Global.userAgent.token},
       success: (result) => {
         isSuccess = true
         if (typeof param.response === "function") {

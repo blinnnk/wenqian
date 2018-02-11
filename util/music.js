@@ -7,7 +7,6 @@
 
 let instance
 
-
 export default class Music {
   constructor() {
     if (instance)
