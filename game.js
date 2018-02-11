@@ -24,6 +24,7 @@ Component.adaptingRetina()
 
 // 声音管理器
 const sound = new Music()
+var controller
 
 Utils.sequentialExecution({
   // 启动软件的时候更新用户信息
@@ -33,13 +34,10 @@ Utils.sequentialExecution({
     })
   },
   // 主界面的刷新帧的控制器, 时机切开是保证界面显示的时候百分百有 `token` 及相关信息
-  later: () => initGame()
+  later: () => controller = 
+    new Controller(Component.Canvas, (context) => showPage(currentPage, context))
 })
 
-function initGame() {
-  new Controller(Component.Canvas, (context) => showPage(currentPage, context))
-  Component.updateCDTime()
-}
 // 监听屏幕上的手指事件用来做点击和滑动的兼容
 Utils.touchPointListener()
 
@@ -150,7 +148,7 @@ Utils.touchMoveXDistance({
 // 后台到前台后恢复事件
 wx.onShow(() => {
   sound.playBackgroundMusic()
-  new Controller(Component.Canvas)
+  controller
   if (Global.userAgent != null) 
     Component.updateCDTime((cdTime) => DestinyPage.initLockTime(cdTime))
 })

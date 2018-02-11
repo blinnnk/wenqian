@@ -228,7 +228,8 @@ export class Component {
         noncestr: Date.now()
       },
       response: (result) => {
-        if (typeof callback === 'function') callback(result.cd)
+        Global.userAgent.cd = result.data.cd
+        if (typeof callback === 'function') callback(result.data.cd)
       }
     }) 
   }
