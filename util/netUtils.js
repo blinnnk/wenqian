@@ -48,8 +48,6 @@ export class NetUtils {
         if (typeof param.response === "function") {
           // 这里的 `key` 值暂时写死了 `image`
           param.response(result)
-          // 和 Server 联合调试会持续监测一段时间 这个打印保留 By KaySaith
-          console.info(result)
         }
       },
       complete: () => { if (typeof param.complete === 'function') param.complete(isSuccess) },

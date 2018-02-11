@@ -84,7 +84,12 @@ export class HomePage {
     // 画 Logo 图
     Utils.drawCustomImage(context, logoImage, logoRect)
     // 画副标题
-    Component.drawDescriptionText(context)
+    Utils.drawText(context, {
+      text: 'Police had to trudge through two to three feet /nof debris to get to amazing Robert Libby',
+      textColor: UIKit.color.title,
+      centerY: (context.canvas.height + UIKit.size.logo) / 2 - 50,
+      lineHeight: 35
+    })
     // 画按钮的背景笔墨
     Utils.drawCustomImage(context, buttonBackgroundImage, historyRect)
     // 画寻史按钮
