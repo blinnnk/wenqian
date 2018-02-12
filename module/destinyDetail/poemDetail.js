@@ -56,7 +56,7 @@ export class PoemDetail {
         else wx.showToast({ title: '加载图片失败' })
       },
       // 接口调用失败重新拉取
-      fail: () => Utils.retry(() => PoemDetail.getPoemImage())
+      fail: () => Utils.retry(() => Global.getPoemImage())
     })
   }
   static draw(context) {

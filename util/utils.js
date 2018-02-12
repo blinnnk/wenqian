@@ -143,7 +143,7 @@ export class Utils {
   * @description
   * 这个函数用来监听手指事件并判断是点击事件还是滑动事件
   */
-  static touchPointListener() {
+  static resolveGestureConflict() {
     // 获取点击的 Point 用来处理点击事件
     wx.onTouchStart((event) => {
       currentTouchX = event.touches[0].clientX * 2
@@ -434,7 +434,9 @@ export class Utils {
 
     // 如果在绘制前提前计算好每个字的宽度传对象进这个方法会节省性能
     if (param.textMeasuredWidth == null) {
-      param.textMeasuredWidth = Utils.measureEachText(context, param.text)
+      console.log('hello')
+      param.textMeasuredWidth =  
+        Utils.measureEachText(context, param.text, param.textSize, param.font)
     }
 
     for (var index in param.text) {
@@ -453,8 +455,9 @@ export class Utils {
     }
   }
 
-  static measureEachText(context, text) {
+  static measureEachText(context, text, textSize, font) {
     const array = []
+    context.font = textSize + 'px' + font
     for (var index in text) {
       array.push(context.measureText(text[index]).width)
     }

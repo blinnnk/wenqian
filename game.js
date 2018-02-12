@@ -3,7 +3,8 @@
 * @date 2018-01-30
 */
 
-import 'common/extension.js'
+import 'common/extension'
+import 'common/launch'
 import Controller from 'util/controller'
 import Music from 'util/music'
 import { PageName, UIKit } from 'common/uikit'
@@ -13,18 +14,17 @@ import { Utils } from 'util/utils'
 import { NetUtils } from 'util/netUtils'
 import { HomePage } from 'module/home/home'
 import { DestinyPage } from 'module/destiny/destiny'
-import { Explanation } from 'module/explanation/explanation'
+import { Explanation } from 'module/explanation/view'
 import { DestinyDetail } from 'module/destinyDetail/destinyDetail'
 import { ProdDetail } from 'module/destinyDetail/prodDetail'
 import { PoemDetail } from 'module/destinyDetail/poemDetail'
 import { Interpolator } from 'util/animation'
-
-// 调整 `Canvas` 尺寸来解决 `Retina` 屏幕下的文字和图片虚边问题
-Component.adaptingRetina()
+import { Touch, ProdHorizontalOffset } from 'common/launch'
 
 // 声音管理器
 const sound = new Music()
 var controller
+var currentPage = PageName.home
 
 Utils.sequentialExecution({
   // 启动软件的时候更新用户信息
@@ -35,13 +35,6 @@ Utils.sequentialExecution({
   later: () => controller =
     new Controller((context) => showPage(currentPage, context))
 })
-
-// 监听屏幕上的手指事件用来做点击和滑动的兼容
-Utils.touchPointListener()
-
-// 监听陀螺仪的倾斜角度
-var prodHorizontalOffset = 0
-Utils.addCompassListener((offset) => prodHorizontalOffset = offset)
 
 // 摇晃手机的监听并判断是否处在可以求签的界面触发对应的事件
 Component.isShakingPhone({
@@ -56,12 +49,12 @@ Component.isShakingPhone({
       // 检查如果有网络才可以进入到签详细界面
       NetUtils.checkNetWorkStatus(() => {
         // 摇晃结束后拉取网络数据签子的基础信息
-        ProdDetail.getPoemInfo()
+        ProdDetail.getProdInfo()
         // 顺序执行刷新界面的方式
         Utils.sequentialExecution({
           early: (hasFinished) => {
-            hasFinished()
             resetGeneralParameters()
+            hasFinished()
           },
           later: () => currentPage = PageName.prodDetail
         })
@@ -71,15 +64,6 @@ Component.isShakingPhone({
     })
   }
 })
-
-// 常用的变量
-var currentPage = PageName.home
-var touchMoveX = 0
-var lastMoveX = 0
-var touchMoveY = 0
-var lastMoveY = 0
-
-var explanationHeight
 
 // 通过在 `Canvas` 上面的点击区域来判断点击事件
 function clickToLoadPage(clickRect, targetPageName) {
@@ -104,13 +88,14 @@ function clickToLoadPage(clickRect, targetPageName) {
     event.setClickSoundEffect()
     // 加载签语网络图片并显示
     event.condition({
+      current: PageName.prodDetai,
       target: PageName.poemDetail,
       do: () => PoemDetail.getPoemImage()
     })
     // 拉取解签的内容
     event.condition({
       target: PageName.explanationDetail,
-      do: () => Explanation.getExplanation()
+      do: () => Explanation.updateContent()
     })
     // 点击保存按钮把签语图片保存到本地相册
     event.condition({
@@ -134,31 +119,6 @@ function clickToLoadPage(clickRect, targetPageName) {
   })
 }
 
-// 滑动屏幕的事件捕捉
-Utils.touchMoveXDistance({
-  onMoving: (distance) => {
-    touchMoveX = distance.x + lastMoveX
-    touchMoveY = distance.y + lastMoveY
-    // 边界判断, 累计移动的距离超出了屏幕最大或最小距离就重置
-    if (touchMoveX < -Component.ScreenSize.width) {
-      touchMoveX = -Component.ScreenSize.width
-    } 
-    else if (touchMoveX > 0) touchMoveX = 0
-    if (explanationHeight > Component.ScreenSize.height) {
-      explanationHeight -= Component.ScreenSize.height
-    } 
-    if (touchMoveY < -explanationHeight) {
-      touchMoveY = -explanationHeight
-    }
-    else if (touchMoveY > 0) touchMoveY = 0
-  },
-  // 滑动结束后记录上次移动的距离
-  onEnd: () => {
-    lastMoveX = touchMoveX
-    lastMoveY = touchMoveY
-  }
-})
-
 // 后台到前台后恢复事件
 wx.onShow(() => {
   sound.playBackgroundMusic()
@@ -172,8 +132,8 @@ wx.onShow(() => {
 // 用来做通用常量或变量的参数在更换页面后恢复数值
 const resetGeneralParameters = () => {
   Interpolator.recovery()
-  touchMoveX = 0
-  touchMoveY = 0
+  Touch.moveX = 0
+  Touch.moveY = 0
 }
 
 // 封装的判断当前页面名字的高阶函数
@@ -257,17 +217,17 @@ const Pages = {
   },
   destiny: (context) => {
     setBlockStatus(Global.userAgent.cd > 0)
-    DestinyPage.draw(context, touchMoveX)
+    DestinyPage.draw(context, Touch.moveX)
     clickToLoadPage(buttonRect.back, PageName.home)
     clickToLoadPage(buttonRect.guanYin, PageName.guanYinDetail)
     clickToLoadPage(buttonRect.zhouGong, PageName.zhouGongDetail)
   },
   guanYin: (context) => {
-    DestinyDetail.draw(context, Global.BoxType.guanYin, prodHorizontalOffset)
+    DestinyDetail.draw(context, Global.BoxType.guanYin, ProdHorizontalOffset)
     clickToLoadPage(buttonRect.back, PageName.destiny)
   },
   zhouGong: (context) => {
-    DestinyDetail.draw(context, Global.BoxType.zhouGong, prodHorizontalOffset)
+    DestinyDetail.draw(context, Global.BoxType.zhouGong, ProdHorizontalOffset)
     clickToLoadPage(buttonRect.back, PageName.destiny)
   },
   prod: (context) => {
@@ -282,8 +242,8 @@ const Pages = {
     clickToLoadPage(buttonRect.save, PageName.poemDetail)
   },
   explanation: (context) => {
-    Explanation.draw(context, touchMoveY, (totalHeight) => {
-      explanationHeight = totalHeight
+    Explanation.draw(context, Touch.moveY, (totalHeight) => {
+      Touch.explanationHeight = totalHeight
     })
     clickToLoadPage(buttonRect.back, PageName.poemDetail)
   }

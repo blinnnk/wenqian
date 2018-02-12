@@ -43,7 +43,7 @@ export class ProdDetail {
 
   static buttonRect = buttonRect
 
-  static getPoemInfo() {
+  static getProdInfo() {
     NetUtils.getResultWithApi({
       url: Api.destinyPoem,
       apiParameters: {
@@ -55,7 +55,7 @@ export class ProdDetail {
         { src: result.data.image, xj: result.data.xj, index: result.data.index }
         prodNameImage.src = prodTypeImageSrc(result.data.xj)
       },
-      fail: () => Utils.retry(() => ProdDetail.getPoemInfo()) 
+      fail: () => Utils.retry(() => ProdDetail.getProdInfo()) 
     })
   }
 
