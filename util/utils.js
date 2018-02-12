@@ -27,6 +27,7 @@ var buttonTextSize = 30
 var retryTimes = 3
 var isRetrying = false
 
+
 // 工具
 export class Utils {
 
@@ -98,7 +99,33 @@ export class Utils {
       isBold: true
     })
     context.restore()
+  }
 
+  static drawRound(context, param = {
+    color: String,
+    rect: {},
+    radius: 0,
+    strokeWidth: null
+  }) {
+    context.beginPath()
+    context.strokeStyle = param.color
+    context.fillStyle = param.color
+    context.arc(
+      param.rect.left,
+      param.rect.top,
+      param.radius,
+      convertAngel(0),
+      convertAngel(360),
+      false
+    )
+    context.closePath()
+    param.strokeWidth == null ? context.fill() : 
+    (() => {
+      context.lineCap = 'round'
+      context.lineWidth = param.strokeWidth
+      context.stroke()
+    })()
+    context.restore()
   }
 
   // 罗盘监听
@@ -288,14 +315,14 @@ export class Utils {
     param.isBold = param.isBold == true ? 'bold' : ''
     param.textSize = param.textSize == null ? '24px' : param.textSize
     param.centerY = param.centerY == null ? 0 : param.centerY
-    param.lineHeight = param.lineHeight == null ? 28 : param.lineHeight
+    param.lineHeight = param.lineHeight == null ? 0 : param.lineHeight
     
     context.fillStyle = param.textColor
-    context.font = param.isBold + param.textSize + 'avenir'
+    context.font = param.isBold + param.textSize + ' Avenir-Book'
     context.textBaseline = 'middle'
     context.textAlign = 'center'
     let newText = param.text.split('/n')
-    for (var index = 0; index < newText.length; index++) {
+    for (var index in newText) {
       context.fillText(
         newText[index],
         context.canvas.width / 2,
@@ -359,19 +386,26 @@ export class Utils {
   }
 
   // 利用 JavaScript ES6 的新特性实现的顺序执行函数
-  static sequentialExecution(param = { early: Function, later: Function }) {
+  static sequentialExecution(param = { early: Function, later: Function, final: Function }) {
     function step1(resolve, reject) {
-      param.early()
-      resolve('finish')
+      if (typeof param.early === 'function') 
+        param.early(hasFinished => resolve('finish'))
     }
 
     function step2(resolve, reject) {
-      param.later()
-      resolve('finish')
+      if (typeof param.later === 'function') 
+        param.later(hasFinished => resolve('finish'))
+    }
+
+    function step3(resolve, reject) {
+      if (typeof param.final === 'function') 
+        param.final(hasFinished => resolve('finish'))
     }
     // 用 `Promise` 函数特性严格切分时机
     new Promise(step1).then(() => {
-      return new Promise(step2)
+      return new Promise(step2).then(() => {
+        return new Promise(step3)
+      })
     })
   }
 
@@ -399,6 +433,114 @@ export class Utils {
       console.log(retryTimes + 'retry')
     }, 3000)
   }
+
+  static drawSingleText(
+    context, 
+    param = {
+    text: String,
+    color: String,
+    font: String,
+    lineSpace: null,
+    textSpace: null,
+    textSize: null,
+    maxWidth: null,
+    left: 0,
+    top: 0,
+    textMeasuredWidth: null,
+    getTotalHeight: Function,
+    }
+  ) {
+
+    context.fillStyle = param.color
+    param.textSize = param.textSize == null ? 24 : param.textSize
+    context.font = param.textSize + 'px' + param.font
+    context.textBaseline = 'middle'
+    context.textAlign = 'left'
+    param.maxWidth = param.maxWidth == null ? context.canvas.width : param.maxWidth
+    param.lineSpace = param.lineSpace == null ? 0 : param.lineSpace
+    param.textSpace = param.textSpace == null ? 0 : param.textSpace
+    var currentRowTop = 0
+    var currentRowWidth = 0
+    var unitTextWidth = param.textSize + param.textSpace
+
+    // 如果在绘制前提前计算好每个字的宽度传对象进这个方法会节省性能
+    if (param.textMeasuredWidth == null) {
+      param.textMeasuredWidth = Utils.measureEachText(context, param.text)
+    }
+
+    for (var index in param.text) {
+      context.fillText(param.text[index], param.left + currentRowWidth, param.top + currentRowTop)
+      if (currentRowWidth >= param.maxWidth - param.textSize) {
+        currentRowTop += param.textSize + param.lineSpace
+        currentRowWidth = 0
+      } else {
+        currentRowWidth += param.textMeasuredWidth[index] + param.textSpace
+      }
+      
+      if (index == param.text.length - 1) {
+        if (typeof param.getTotalHeight === 'function') 
+          param.getTotalHeight(currentRowTop + param.textSize)
+      }  
+    }
+  }
+
+  static measureEachText(context, text) {
+    const array = []
+    for (var index in text) {
+      array.push(context.measureText(text[index]).width)
+    }
+    return array
+  }
+
+  static convertNumberToChineseCharacters(numbers) {
+    var chacactersArray = []
+    var stringNumber = Utils.toString(numbers)
+    for (var index in stringNumber) {
+      var current = Utils.convertSingleNumberToChacater(stringNumber[index])
+      if (stringNumber.length >= 2) { 
+        if (stringNumber[index] == 0) current = '零'
+      }
+      chacactersArray.push(current)
+    }
+
+    if (stringNumber.length == 2) {
+      chacactersArray.splice(1, 0, '拾')
+      removeLastZero(stringNumber)
+    }
+
+    if (stringNumber.length == 3) {
+      chacactersArray.splice(1, 0, '佰')
+      if (stringNumber[stringNumber.length - 2] != 0) 
+        chacactersArray.splice(3, 0, '拾')
+      removeLastZero(stringNumber)
+    }
+
+    function removeLastZero(array) {
+      if (array[array.length - 1] == 0)  chacactersArray.pop()
+    }
+
+    return chacactersArray.join('')
+  }
+
+  static convertSingleNumberToChacater(number) {
+    var numbers = {
+      1: '壹',
+      2: '贰',
+      3: '叁',
+      4: '肆',
+      5: '伍',
+      6: '陆',
+      7: '柒',
+      8: '捌',
+      9: '玖',
+      0: '拾'
+    }
+    return numbers[number]
+  }
+
+  static toString(number) {
+    return '' + number
+  }
 }
 
 function checkRectContainsPointOrElse(x, y, rect, callback) {
@@ -417,6 +559,7 @@ function checkRectContainsPointOrElse(x, y, rect, callback) {
       isClickEvent = false
     }
   }
+  
 }
 
 function convertAngel(degrees) {

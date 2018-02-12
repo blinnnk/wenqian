@@ -74,6 +74,7 @@ const textChapterRect = {
 
 export class ExplanationDetailPage {
   static draw(context) {
+    console.log()
     Utils.drawCustomImage(context, signImage, guanYinRect) //灵签
     Utils.drawCircle(context, dotsRect) // 圆点
     Utils.drawVerticalColumnText(context, textChapter, textChapterRect, textColumnNumber) // 第多少签
@@ -125,9 +126,9 @@ export class ExplanationDetailPage {
     // 根据状态显示周公/观音签
     signImage = wx.createImage()
     if (signType == 0) {
-      signImage.src = UIKit.imageSrc.guanYinSign
+      signImage.src = UIKit.imageSrc.guanYinType
     } else if (signType == 1) {
-      signImage.src = UIKit.imageSrc.zhouGongSign
+      signImage.src = UIKit.imageSrc.zhouGongType
     }
   }
 }

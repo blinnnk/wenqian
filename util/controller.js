@@ -7,22 +7,23 @@ import { Component } from '../common/component'
 import { Utils } from '../util/utils'
 
 export default class Controller {
-  constructor(canvas, onDraw) {
-    this.drawFrame(canvas, onDraw)
+  constructor(onDraw) {
+    this.drawFrame(onDraw)
   }
 
-  drawFrame(canvas, onDraw) {
-    let context = canvas.getContext('2d')
+  drawFrame(onDraw) {
     drawDetail()
     function drawDetail() {
       let animation = requestAnimationFrame(drawDetail)
-      
       if (typeof onDraw === 'function') {
         Utils.sequentialExecution({
-          early: () => context.clearRect(0, 0, canvas.width, canvas.height),
+          early: (hasFinished) => {
+            Component.context.clearRect(0, 0, Component.ScreenSize.width, Component.ScreenSize.height)
+            hasFinished()
+          },
           later: () => {
-            Component.drawBackground(context)
-            onDraw(context, animation)
+            Component.drawBackground(Component.context)
+            onDraw(Component.context, animation)
           }
         })
       }

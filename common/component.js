@@ -22,6 +22,8 @@ var leafY = 0
 var leafX = 0
 let fallingLeafCount = 5
 
+var myTempID = null
+
 // 摇晃判断
 var accelerometerX = [0]
 var accelerometerY = [0]
@@ -29,6 +31,7 @@ var accelerometerZ = [0]
 var isShakingPhone = false
 
 const Canvas = wx.createCanvas()
+const context = Canvas.getContext('2d')
 
 // 适配 iPhoneX 的齐刘海
 var adaptingIPhoneXTop = 0
@@ -49,6 +52,7 @@ const backImage = Utils.Image(UIKit.imageSrc.back)
 export class Component {
 
   static Canvas = Canvas
+  static context = context
 
   static isShakingPhone(param = { onShaking: Function, onEnd: Function }) {
     wx.onAccelerometerChange((value) => {
@@ -112,27 +116,6 @@ export class Component {
     Canvas.height = Canvas.height * 2
   }
 
-  // 画副标题的文字
-  static drawDescriptionText(context) {
-    context.fillStyle = UIKit.color.title
-    context.font = '24px avenir'
-    context.textBaseline = 'middle'
-    context.textAlign = 'center'
-    context.fillText(
-      'they determined that Cloyd had ovarian cysts',
-      context.canvas.width / 2,
-      (context.canvas.height + UIKit.size.logo) / 2 - 50,
-      context.canvas.width
-    )
-
-    context.fillText(
-      'gave her pain medications that helped her feel better',
-      context.canvas.width / 2,
-      (context.canvas.height + UIKit.size.logo) / 2 - 50 + 36,
-      context.canvas.width
-    )
-  }
-
   // 画落叶的函数
   static fallingLeaf(context) {
     for (var index = 0; index < fallingLeafCount; index++) {
@@ -173,7 +156,6 @@ export class Component {
   }
 
   static getUserAgent(holdResponse) {
-    var myTempID = null
     // 初次设定 TempID
     const setTempID = (hasRequired) => {
       if (hasRequired == true) wx.setStorage({ key: 'tempID', data: myTempID })
@@ -218,5 +200,18 @@ export class Component {
         }
       })
     })
+  }
+
+  static updateCDTime(callback) {
+    NetUtils.getResultWithApi({
+      url: Api.userInfo,
+      apiParameters: {
+        noncestr: Date.now()
+      },
+      response: (result) => {
+        Global.userAgent.cd = result.data.cd
+        if (typeof callback === 'function') callback(result.data.cd)
+      }
+    }) 
   }
 }

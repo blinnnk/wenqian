@@ -13,7 +13,7 @@ var userAgent = null
 var prodInfo = {
   src: '',
   xj: '',
-  prodIndex: 0
+  index: 0
 }
 
 var BoxType = {

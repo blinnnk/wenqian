@@ -11,8 +11,7 @@ import { NetUtils } from '../../util/netUtils'
 import { Api } from '../../common/api'
 
 const prodImage = Utils.Image(UIKit.imageSrc.prod)
-const prodNameImage = wx.createImage()
-prodNameImage.src = UIKit.prodType.prodName1
+const prodNameImage = Utils.Image(UIKit.prodType.prodName1)
 
 const moveDistance = Component.ScreenSize.height * 2
 
@@ -40,27 +39,6 @@ const buttonRect = {
   height: UIKit.size.roundRectButtonHeight
 }
 
-const prodTypeImageSrc = (name) => {
-  var src = {
-    '上上签': UIKit.prodType.prodName1,
-    '上签': UIKit.prodType.prodName2,
-    '上中签': UIKit.prodType.prodName3,
-    '中签': UIKit.prodType.prodName4,
-    '中上签': UIKit.prodType.prodName5,
-    '中中签': UIKit.prodType.prodName6,
-    '中下签': UIKit.prodType.prodName7,
-    '下签': UIKit.prodType.prodName8,
-    '大吉': UIKit.prodType.prodName9,
-    '上吉': UIKit.prodType.prodName10,
-    '中吉': UIKit.prodType.prodName11,
-    '上平签': UIKit.prodType.prodName12,
-    '中平签': UIKit.prodType.prodName13,
-    '平中签': UIKit.prodType.prodName14,
-    '平平签': UIKit.prodType.prodName15
-  }
-  return src[name]
-}
-
 export class ProdDetail {
 
   static buttonRect = buttonRect
@@ -74,9 +52,8 @@ export class ProdDetail {
       },
       response: (result) => {
         Global.prodInfo = 
-        { src: result.data.image, xj: result.data.xj, prodIndex: result.data.index }
+        { src: result.data.image, xj: result.data.xj, index: result.data.index }
         prodNameImage.src = prodTypeImageSrc(result.data.xj)
-        console.log(prodTypeImageSrc(result.data.xj))
       },
       fail: () => Utils.retry(() => ProdDetail.getPoemInfo()) 
     })
@@ -110,4 +87,25 @@ export class ProdDetail {
       'Check Prod Detail'
     )
   }
+}
+
+const prodTypeImageSrc = (name) => {
+  var src = {
+    '上上签': UIKit.prodType.prodName1,
+    '上签': UIKit.prodType.prodName2,
+    '上中签': UIKit.prodType.prodName3,
+    '中签': UIKit.prodType.prodName4,
+    '中上签': UIKit.prodType.prodName5,
+    '中中签': UIKit.prodType.prodName6,
+    '中下签': UIKit.prodType.prodName7,
+    '下签': UIKit.prodType.prodName8,
+    '大吉': UIKit.prodType.prodName9,
+    '上吉': UIKit.prodType.prodName10,
+    '中吉': UIKit.prodType.prodName11,
+    '上平签': UIKit.prodType.prodName12,
+    '中平签': UIKit.prodType.prodName13,
+    '平中签': UIKit.prodType.prodName14,
+    '平平签': UIKit.prodType.prodName15
+  }
+  return src[name]
 }
