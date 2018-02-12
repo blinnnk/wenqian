@@ -182,6 +182,14 @@ export class Utils {
     )
   }
 
+  // 画圆方法
+  static drawCircle(context, rect) {
+    context.beginPath()
+    context.arc(rect.left, rect.top, rect.radius, 0, 2 * Math.PI, true)
+    context.fillStyle = rect.color
+    context.fill()
+    context.closePath()
+  }
   /*
   * @description
   * 抽象了一个向左移动内容的动画函数, 封装的参数比较多着重介绍
@@ -354,6 +362,29 @@ export class Utils {
       if (typeof param.onEnd === 'function') param.onEnd()
     })
   }
+  
+  // 绘制竖排文字  寻史界面  @shagnqi
+  static drawVerticalColumnText(context, text, textRect, columnNumber) { // columnNumber每列几个字
+    context.fillStyle = textRect.color;
+    context.font = "34px '宋体'";
+    context.textAlign = "center";
+
+    let textHeight = 40 // 文字高度
+    let textWidth = 60 // 文字宽度
+    var column = 0 // 第几列
+    var textLeft = 0 // 每列的left值 从右往左
+    let remainder = 0 // 每一列的第几个
+    var textTop = 0; // 每个文字到顶部的距离
+
+    for (var index = 0; index < text.length; index++) {
+      column = parseInt(index / columnNumber)
+      textLeft = textRect.left - column * textWidth
+      remainder = index % columnNumber
+      textTop = textRect.top + remainder * textHeight
+      context.fillText(text[index], textLeft, textTop);
+    }
+  }
+
   // 利用 JavaScript ES6 的新特性实现的顺序执行函数
   static sequentialExecution(param = { early: Function, later: Function, final: Function }) {
     function step1(resolve, reject) {
@@ -510,7 +541,6 @@ export class Utils {
   static toString(number) {
     return '' + number
   }
-
 }
 
 function checkRectContainsPointOrElse(x, y, rect, callback) {

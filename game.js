@@ -18,6 +18,9 @@ import { DestinyDetail } from 'module/destinyDetail/destinyDetail'
 import { ProdDetail } from 'module/destinyDetail/prodDetail'
 import { PoemDetail } from 'module/destinyDetail/poemDetail'
 import { Interpolator } from 'util/animation'
+import { Api } from 'common/api'
+import { ExplanationDetailPage } from 'module/explanationDetail/explanationDetailPage'
+
 
 // 调整 `Canvas` 尺寸来解决 `Retina` 屏幕下的文字和图片虚边问题
 Component.adaptingRetina()
@@ -239,6 +242,7 @@ function showPage(name, context) {
     'prodDetail': () => Pages.prod(context),
     'poemDetail': () => Pages.poem(context),
     'explanation': () => Pages.explanation(context),
+    'explanationDetailPage': () => Pages.explanationDetailPage(context),
   }
   if (typeof names[name] !== 'function') return
   return names[name]()
@@ -285,6 +289,10 @@ const Pages = {
     Explanation.draw(context, touchMoveY, (totalHeight) => {
       explanationHeight = totalHeight
     })
+    clickToLoadPage(buttonRect.back, PageName.poemDetail)
+  },
+  explanationDetailPage: (context) => {
+    ExplanationDetailPage.draw(context)
     clickToLoadPage(buttonRect.back, PageName.poemDetail)
   }
 }

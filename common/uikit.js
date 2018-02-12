@@ -17,6 +17,7 @@ export class UIKit {
 
   static color = {
     title: '#6f6351',
+    subtitle: '#6e624c',
     opacity5: 'rgba(255, 255, 255, 0.5)',
     opacity1: 'rgba(255, 255, 255, 0.1)',
   }
@@ -89,5 +90,6 @@ export const PageName = {
   zhouGongDetail: 'zhouGong',
   prodDetail: 'prodDetail',
   poemDetail: 'poemDetail',
-  explanationDetail: 'explanation'
+  explanationDetail: 'explanation',
+  explanationDetailPage: 'explanationDetailPage'
 }

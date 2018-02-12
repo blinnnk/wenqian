@@ -9,5 +9,6 @@ export class Api {
   static token = header + '/index/login'
   static explanation = header + '/lot/explain'
   static userInfo = header + '/user/info'
+  static disputeDetails = header + '/lot/explain'
 }
 
