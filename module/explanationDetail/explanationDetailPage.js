@@ -7,6 +7,9 @@ import { Component } from '../../common/component'
 import { Canvas } from '../../common/component'
 import { Utils } from '../../util/utils'
 import { UIKit } from '../../common/uikit'
+import { Global } from '../../common/global'
+import { NetUtils } from '../../util/netUtils'
+import { Api } from '../../common/api'
 
 const screenWidth = Component.ScreenSize.width
 const screenHeight = Component.ScreenSize.height
@@ -57,7 +60,7 @@ const dotsRect = {
   top: 380,
   left: 95,
   radius: 4,
-  color: '#6e624c'
+  color: UIKit.color.subtitle
 }
 
 // 第多少签
@@ -66,15 +69,14 @@ const textColumnNumber = 20
 const textChapterRect = {
   top: 428,
   left: 95,
-  color: '#6e624c'
+  color: UIKit.color.subtitle
 }
 
-export class ExplanationDetail {
+export class ExplanationDetailPage {
   static draw(context) {
     Utils.drawCustomImage(context, signImage, guanYinRect) //灵签
     Utils.drawCircle(context, dotsRect) // 圆点
     Utils.drawVerticalColumnText(context, textChapter, textChapterRect, textColumnNumber) // 第多少签
-
     // 获取每个text的行数
     for (var index = 0; index < solveSignListLength; index++) {
       
@@ -97,13 +99,16 @@ export class ExplanationDetail {
   }
 
   static RequestSignData(signType, signIndex) { // 请求解签数据
-    wx.request({
-      url: 'https://lotsapitest.naonaola.com/lot/explain?type=' + signType + '&index=' + signIndex,
-      method: 'GET',
-      dataType: 'json',
-      success: function (data) {
-        if (data.statusCode == 200) {
-          solveSignList = data.data.content
+    Component.updateUserAgent((userAgent) => {
+      NetUtils.getResultWithApi({
+        url: Api.disputeDetails,
+        apiParameters: {
+          type: signType,
+          index: signIndex
+        },
+        response: (result) => {
+          solveSignList = result.data.content
+          console.log(result.data)
           // 计算每个详解的行数并添加到rows数组中
           solveSignListLength = solveSignList.length // 获取数据的长度
           for (var contentIndex = 0; contentIndex < solveSignList.length; contentIndex++) {
@@ -114,8 +119,9 @@ export class ExplanationDetail {
           // 计算页面总高度
           pageHeight = titleMarginTop * (solveSignListLength + 1) + titleHight * solveSignListLength + totalRows * textHeight
         }
-      }
+      })
     })
+
     // 根据状态显示周公/观音签
     signImage = wx.createImage()
     if (signType == 0) {
@@ -156,23 +162,19 @@ function drawText(context, text, textLeft, textTop) {
 }
 
 // 页面滚动
-Utils.touchMoveXDistance(
-  function (distance) {
+Utils.touchMoveXDistance({
+  onMoving: (distance) => {
     touchMoveY = distance.y + lastMoveY
-    
     // 边界判断, 累计移动的距离超出了屏幕最大或最小距离就重置
-    if (pageHeight > Component.ScreenSize.height){// 当内容页面大于屏幕高度时
+    if (pageHeight > Component.ScreenSize.height) {// 当内容页面大于屏幕高度时
       if (touchMoveY < -(pageHeight - Component.ScreenSize.height)) {
         touchMoveY = -(pageHeight - Component.ScreenSize.height)
       } else if (touchMoveY > 0) {
         touchMoveY = 0
       }
-    }else {
+    } else {
       touchMoveY = 0
     }
   },
-  function () {
-    // 滑动结束后记录上次移动的距离
-    lastMoveY = touchMoveY
-  }
-)
+  onEnd: () => lastMoveY = touchMoveY
+})

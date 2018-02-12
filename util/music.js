@@ -7,7 +7,6 @@
 
 let instance
 
-
 export default class Music {
   constructor() {
     if (instance)
@@ -36,6 +35,10 @@ export default class Music {
     this.amazing = wx.createInnerAudioContext()
     this.amazing.obeyMuteSwitch = false
     this.amazing.src = 'sources/audio/amazing.wav'
+
+    this.unlockSoundEffect = wx.createInnerAudioContext()
+    this.unlockSoundEffect.obeyMuteSwitch = false
+    this.unlockSoundEffect.src = 'sources/audio/unlock.wav'
   }
 
   playBackgroundMusic() {
@@ -47,6 +50,7 @@ export default class Music {
   }
 
   playBells() {
+    this.bellsSoundEffect.seek(0)
     this.bellsSoundEffect.play()
   }
 
@@ -56,6 +60,10 @@ export default class Music {
 
   playAmazingSoundEffect() {
     this.amazing.play()
+  }
+
+  playUnlockSoundEffect() {
+    this.unlockSoundEffect.play()
   }
 
 }

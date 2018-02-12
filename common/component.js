@@ -4,15 +4,18 @@
 */
 
 import { UIKit } from 'uikit'
+import { Global } from 'global'
 import { Utils } from '../util/utils'
+import { NetUtils } from '../util/netUtils'
+import { Api } from '../common/api'
 
 // 落叶动画用到的参数
 let leafSrc =
   [
-    UIKit.imageSrc.leaf, 
-    UIKit.imageSrc.leaf1, 
-    UIKit.imageSrc.leaf2, 
-    UIKit.imageSrc.leaf, 
+    UIKit.imageSrc.leaf,
+    UIKit.imageSrc.leaf1,
+    UIKit.imageSrc.leaf2,
+    UIKit.imageSrc.leaf,
     UIKit.imageSrc.leaf1
   ]
 var leafY = 0
@@ -25,7 +28,7 @@ var accelerometerY = [0]
 var accelerometerZ = [0]
 var isShakingPhone = false
 
-export let Canvas = wx.createCanvas()
+const Canvas = wx.createCanvas()
 
 // 适配 iPhoneX 的齐刘海
 var adaptingIPhoneXTop = 0
@@ -33,72 +36,55 @@ Utils.isIPhoneX(function () {
   adaptingIPhoneXTop = 30
 })
 
-let backButtonRect = {
+const backButtonRect = {
   width: UIKit.size.buttonWidth,
   height: UIKit.size.buttonHeight,
   left: Canvas.width * 2 * 0.065,
   top: Canvas.width * 2 * 0.1 + adaptingIPhoneXTop
 }
 
-let backImage = wx.createImage()
-backImage.src = UIKit.imageSrc.back
+const backImage = Utils.Image(UIKit.imageSrc.back)
 
 // 通用组件方法
-export class Component { 
+export class Component {
 
-  static isShakingPhone(isShakingCallback, hasFinishedCallback) {
-    wx.onAccelerometerChange(function (value) {
-      var accelerMeterXValue = 0
-      var accelerMeterYValue = 0
-      var accelerMeterZValue = 0
+  static Canvas = Canvas
 
+  static isShakingPhone(param = { onShaking: Function, onEnd: Function }) {
+    wx.onAccelerometerChange((value) => {
       accelerometerX.push(value.x)
       accelerometerY.push(value.y)
       accelerometerZ.push(value.z)
-      if (accelerometerX.length == 3) {
-        accelerometerX.splice(0, 1)
-      }
-      if (accelerometerY.length == 3) {
-        accelerometerY.splice(0, 1)
-      }
-      if (accelerometerZ.length == 3) {
-        accelerometerZ.splice(0, 1)
-      }
+      if (accelerometerX.length == 3) accelerometerX.splice(0, 1)
+      if (accelerometerY.length == 3) accelerometerY.splice(0, 1)
+      if (accelerometerZ.length == 3) accelerometerZ.splice(0, 1)
+
       // 判断 X轴方向 用户开始主观加速移动
-      if (
-        accelerometerX[0] != 0 &&
-        Math.abs(accelerometerX[1] - accelerometerX[0]) > 1
-      ) {
-        accelerMeterXValue = accelerometerX[1] - accelerometerX[0]
-      }
+      var accelerMeterXValue =
+        accelerometerX[0] != 0 && Math.abs(accelerometerX[1] - accelerometerX[0]) > 1 ?
+          accelerometerX[1] - accelerometerX[0] : 0
+
       // 判断 X轴方向 用户开始主观加速移动
-      if (
-        accelerometerY[0] != 0 &&
-        Math.abs(accelerometerY[1] - accelerometerY[0]) > 1
-      ) {
-        accelerMeterYValue = accelerometerY[1] - accelerometerY[0]
-      }
+      var accelerMeterYValue =
+        accelerometerY[0] != 0 && Math.abs(accelerometerY[1] - accelerometerY[0]) > 1 ?
+          accelerometerY[1] - accelerometerY[0] : 0
+
       // 判断 X轴方向 用户开始主观加速移动
-      if (
-        accelerometerZ[0] != 0 &&
-        Math.abs(accelerometerZ[1] - accelerometerZ[0]) > 1
-      ) {
-        accelerMeterZValue = accelerometerZ[1] - accelerometerZ[0]
-      }
+      var accelerMeterZValue =
+        accelerometerZ[0] != 0 && Math.abs(accelerometerZ[1] - accelerometerZ[0]) > 1 ?
+          accelerometerZ[1] - accelerometerZ[0] : 0
 
       if (accelerMeterXValue * accelerMeterYValue * accelerMeterZValue != 0) {
         isShakingPhone = true
-        if (typeof isShakingCallback === 'function') {
-          isShakingCallback()
-        }
+        if (typeof param.onShaking === 'function') param.onShaking()
       } else {
         if (
           isShakingPhone == true &&
           Math.abs(value.x) + Math.abs(value.y) + Math.abs(value.z) < 1.5
         ) {
-          if (typeof hasFinishedCallback === 'function') {
-           hasFinishedCallback()
-           isShakingPhone = false
+          if (typeof param.onEnd === 'function') {
+            param.onEnd()
+            isShakingPhone = false
           }
         }
       }
@@ -115,7 +101,7 @@ export class Component {
   }
 
   static backButtonRect = backButtonRect
-  
+
   static addBackButton(context) {
     Utils.drawCustomImage(context, backImage, backButtonRect)
   }
@@ -150,7 +136,7 @@ export class Component {
   // 画落叶的函数
   static fallingLeaf(context) {
     for (var index = 0; index < fallingLeafCount; index++) {
-      let leafImage = wx.createImage()
+      const leafImage = wx.createImage()
       leafY += 1
       // X轴的动画算法
       leafX = context.canvas.width / 2 * (1.75 - index % 2) *
@@ -168,15 +154,12 @@ export class Component {
       )
     }
 
-    if (
-      leafY >= context.canvas.height * 3 || 
-      leafX >= context.canvas.width
-      ) {
+    if (leafY >= context.canvas.height * 3 || leafX >= context.canvas.width) {
       leafY = 0
       leafX = 0
     }
   }
-  
+
   // 画背景的方法
   static drawBackground(context) {
     var gradient =
@@ -187,5 +170,53 @@ export class Component {
 
     context.fillStyle = gradient
     context.fillRect(0, 0, context.canvas.width, context.canvas.height)
+  }
+
+  static getUserAgent(holdResponse) {
+    var myTempID = null
+    // 初次设定 TempID
+    const setTempID = (hasRequired) => {
+      if (hasRequired == true) wx.setStorage({ key: 'tempID', data: myTempID })
+    }
+    /*
+    * 从微信获取唯一的标识 - 这个 code 是临时的这里通过方
+    * 法制作成唯一的会随着清理缓存而消失.
+    */
+    var initTempID = () => {
+      var hasRequired = false
+      if (myTempID == null) {
+        wx.login({
+          success: (result) => {
+            hasRequired = true
+            myTempID = result.code
+          },
+          complete: () => setTempID(hasRequired)
+        })
+      }
+    }
+
+    // 初次从缓存中获取 ID 如果没有就当成注册生成一个
+    wx.getStorage({
+      key: 'tempID',
+      success: (result) => {
+        myTempID = result.data
+        if (typeof holdResponse === 'function') holdResponse(myTempID)
+      },
+      fail: () => Utils.retry(() => initTempID())
+    })
+  }
+
+  static updateUserAgent(callback) {
+    // 生成用户相关信息 `UserAgent`
+    Component.getUserAgent((code) => {
+      NetUtils.getToken({
+        url: Api.token,
+        tempCode: code,
+        response: (userAgent) => {
+          Global.userAgent = userAgent
+          if (typeof callback === 'function') callback(userAgent)
+        }
+      })
+    })
   }
 }

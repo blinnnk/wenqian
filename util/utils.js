@@ -3,7 +3,6 @@
 * @date 2018-02-01
 */
 
-
 import { Interpolator } from '../util/animation'
 
 var moveX = 0
@@ -25,6 +24,9 @@ var degree = [0]
 var horizontalOffset = 0
 var buttonTextSize = 30
 
+var retryTimes = 3
+var isRetrying = false
+
 // 工具
 export class Utils {
 
@@ -34,32 +36,20 @@ export class Utils {
 
     var hour = Math.floor(totalMinute / 60)
     var minute = totalMinute - hour * 60
-    var second = Math.ceil(totalSecond - totalMinute * 60)
-    if (hour < 10) {
-      hour = '0' + hour
-    }
-    if (minute < 10) {
-      minute = '0' + minute
-    }
-    if (second < 10) {
-      second = '0' + second
-    }
+    var second = Math.floor(totalSecond - totalMinute * 60)
+
+    if (hour < 10) hour = '0' + hour
+    if (minute < 10) minute = '0' + minute
+    if (second < 10) second = '0' + second
+
     return '' + hour + ' : ' + minute + ' : ' + second
   }
 
   static saveImageToAlbum(localSrc) {
     wx.saveImageToPhotosAlbum({
       filePath: localSrc,
-      success: function() {
-        wx.showToast({
-          title: '正在保存',
-        })
-      },
-      complete: function() {
-        wx.showToast({
-          title: '保存相册成功',
-        })
-      }
+      success: () => wx.showToast({ title: '正在保存' }),
+      complete: () => wx.showToast({ title: '保存相册成功' })
     })
   }
 
@@ -74,25 +64,20 @@ export class Utils {
     context.strokeStyle = strokeColor
     context.lineWidth = strokeWidth
     context.lineCap = 'round'
-    
+
     var buttonHeight = 0
-    if (rect.height > radius * 2) {
-      buttonHeight = rect.height - radius * 2
-    }
+    if (rect.height > radius * 2) buttonHeight = rect.height - radius * 2
 
     for (var index = 0; index < 4; index++) {
+
       var modulus = 0
-      if (index == 1 || index == 2) {
-        modulus = 1
-      } else {
-        modulus = 0
-      }
+      if (index == 1 || index == 2) modulus = 1
+      else modulus = 0
+
       var heightModulus = 0
-      if (index == 2 || index == 3) {
-        heightModulus = 1
-      } else {
-        heightModulus = 0
-      }
+      if (index == 2 || index == 3) heightModulus = 1
+      else heightModulus = 0
+
       context.arc(
         rect.left + rect.width * modulus,
         rect.top + buttonHeight * heightModulus,
@@ -104,33 +89,26 @@ export class Utils {
     }
     context.closePath()
     context.stroke()
-    Utils.drawText(
-      context,
-      text,
-      strokeColor,
-      rect.top + (buttonHeight + radius - buttonTextSize) / 2 - strokeWidth,
-      0,
-      '' + buttonTextSize + '',
-      true
-    )
+    Utils.drawText(context, {
+      text: text,
+      textColor: strokeColor,
+      centerY: rect.top + (buttonHeight + radius - buttonTextSize) / 2 - strokeWidth,
+      lineHeight: 0,
+      textSize: '' + buttonTextSize + '',
+      isBold: true
+    })
     context.restore()
-    
+
   }
 
   // 罗盘监听
   static addCompassListener(callback) {
-    wx.onCompassChange(function (value) {
+    wx.onCompassChange((value) => {
       degree.push(value.direction)
-      if (degree.length == 3) {
-        degree.splice(0, 1)
-      }
+      if (degree.length == 3) degree.splice(0, 1)
       var calculateValue = degree[1] - degree[0]
-      if (degree[0] != 0) {
-        horizontalOffset += calculateValue
-      }
-      if (typeof callback === 'function') {
-        callback(horizontalOffset)
-      }
+      if (degree[0] != 0) horizontalOffset += calculateValue
+      if (typeof callback === 'function') callback(horizontalOffset)
     })
   }
 
@@ -140,34 +118,32 @@ export class Utils {
   */
   static touchPointListener() {
     // 获取点击的 Point 用来处理点击事件
-    wx.onTouchStart(function (event) {
+    wx.onTouchStart((event) => {
       currentTouchX = event.touches[0].clientX * 2
       currentTouchY = event.touches[0].clientY * 2
     })
 
     // 获取点击的 Point 用来处理点击事件
-    wx.onTouchMove(function (event) {
+    wx.onTouchMove((event) => {
       currentMoveX = event.touches[0].clientX * 2 - currentTouchX
       currentMoveY = event.touches[0].clientY * 2 - currentTouchY
     })
 
-    wx.onTouchEnd(
-      function (event) {
-        if (
-          Math.abs(currentMoveX) < 2 || 
-          Math.abs(currentMoveY) < 2 ||
-          currentMoveX == 0 ||
-          currentMoveY == 0
-        ) {
-          isClickEvent = true
-        }
-        // 初始化用来判断是点击还是滑动的值
-        currentMoveX = 0
-        currentMoveY = 0
+    wx.onTouchEnd((event) => {
+      if (
+        Math.abs(currentMoveX) < 2 ||
+        Math.abs(currentMoveY) < 2 ||
+        currentMoveX == 0 ||
+        currentMoveY == 0
+      ) {
+        isClickEvent = true
       }
-    )
+      // 初始化用来判断是点击还是滑动的值
+      currentMoveX = 0
+      currentMoveY = 0
+    })
   }
-  
+
   // 通用的画图方法
   static drawCustomImage(context, image, rect) {
     context.drawImage(
@@ -212,9 +188,7 @@ export class Utils {
       rect.height)
     if (moveX >= maxMoveDistance) {
       moveX = maxMoveDistance
-      if (typeof callback === 'function') {
-        callback()
-      }
+      if (typeof callback === 'function') callback()
     }
   }
 
@@ -226,7 +200,7 @@ export class Utils {
     maxMoveDistance,
     callback
   ) {
-    var accelerateValue = 
+    var accelerateValue =
       Interpolator.accelerateInterpolator(speed, maxMoveDistance)
     context.drawImage(
       image,
@@ -236,10 +210,8 @@ export class Utils {
       rect.height
     )
     if (accelerateValue == maxMoveDistance) {
-      if (typeof callback === 'function') {
-        callback()
-      }
-    } 
+      if (typeof callback === 'function') callback()
+    }
   }
 
   static drawImageAndMoveToBottomWithAnimation(
@@ -250,7 +222,7 @@ export class Utils {
     maxMoveDistance,
     callback
   ) {
-    var accelerateValue = 
+    var accelerateValue =
       Interpolator.accelerateInterpolator(speed, maxMoveDistance)
     context.drawImage(
       image,
@@ -260,9 +232,7 @@ export class Utils {
       rect.height
     )
     if (accelerateValue == maxMoveDistance) {
-      if (typeof callback === 'function') {
-        callback()
-      }
+      if (typeof callback === 'function') callback()
     }
   }
 
@@ -283,12 +253,10 @@ export class Utils {
       image,
       rect.left + horizontalRadius * Math.cos(gearValue),
       rect.top + verticalRadius * Math.sin(gearValue),
-      rect.width + 10 * gearValue,
-      rect.height + 10 * gearValue)
+      rect.width + 12 * gearValue,
+      rect.height + 12 * gearValue)
 
-    if (typeof callback === 'function') {
-      callback()
-    }
+    if (typeof callback === 'function') callback()
   }
 
   // Canvas 点击事件
@@ -298,43 +266,40 @@ export class Utils {
   }
 
   static eraseTouchEvent(...rectArguments) {
-    for (var index = 0; index < rectArguments.length; index++) {
+    for (var index in rectArguments) {
       checkRectContainsPointOrElse(
         currentTouchX,
         currentTouchY,
         rectArguments[index],
-        function () {
-          currentTouchX = 0
-          currentTouchY = 0
-        }
+        () => { currentTouchX = 0; currentTouchY = 0 }
       )
-    } 
+    }
   }
 
   // 画副标题的文字
-  static drawText(
-    context, 
-    text, 
-    color,
-    centerY,
-    lineHeight,
-    textSize = '24px',
-    isBold = false
-    ) {
-    var bold = ''
-    if (isBold == true) {
-      bold = 'bold'
-    }
-    context.fillStyle = color
-    context.font = '' + bold + textSize + ' avenir'
+  static drawText(context, param = {
+    text: String,
+    textColor: String,
+    centerY: 0,
+    lineHeight: 0,
+    textSize: 0,
+    isBold: Boolean
+  }) {
+    param.isBold = param.isBold == true ? 'bold' : ''
+    param.textSize = param.textSize == null ? '24px' : param.textSize
+    param.centerY = param.centerY == null ? 0 : param.centerY
+    param.lineHeight = param.lineHeight == null ? 28 : param.lineHeight
+    
+    context.fillStyle = param.textColor
+    context.font = param.isBold + param.textSize + 'avenir'
     context.textBaseline = 'middle'
     context.textAlign = 'center'
-    let newText = text.split('/n')
+    let newText = param.text.split('/n')
     for (var index = 0; index < newText.length; index++) {
       context.fillText(
         newText[index],
         context.canvas.width / 2,
-        centerY + lineHeight * index
+        param.centerY + param.lineHeight * index
       )
     }
   }
@@ -342,41 +307,32 @@ export class Utils {
   static isIPhoneX(callback) {
     var isIPhoneX = false
     wx.getSystemInfo({
-      success: function (res) {
+      success: (res) => {
         if (res.model.indexOf('iPhone X') != -1) {
-          if (typeof callback === 'function') {
-            callback()
-          }
+          if (typeof callback === 'function') callback()
         }
       }
     })
   }
 
-  static touchMoveXDistance(movingCallback, endCallback) {
-    var distance = {
-      x: 0,
-      y: 0
-    }
-    wx.onTouchStart(function (event) {
+  static touchMoveXDistance(param = { onMoving: Function, onEnd: Function }) {
+    var distance = { x: 0, y: 0 }
+    wx.onTouchStart((event) => {
       startX = event.touches[0].clientX
       startY = event.touches[0].clientY
     })
 
-    wx.onTouchMove(function (event) {
+    wx.onTouchMove((event) => {
       distance.x = (event.touches[0].clientX - startX) * 2
       distance.y = (event.touches[0].clientY - startY) * 2
-      if (typeof movingCallback === 'function') {
-        movingCallback(distance)
-      }
+      if (typeof param.onMoving === 'function') param.onMoving(distance)
     })
 
-    wx.onTouchEnd(function (event) {
+    wx.onTouchEnd((event) => {
       // 松手后归位
       startX = 0
       startY = 0
-      if (typeof endCallback === 'function') {
-        endCallback()
-      }
+      if (typeof param.onEnd === 'function') param.onEnd()
     })
   }
   
@@ -400,6 +356,48 @@ export class Utils {
       textTop = textRect.top + remainder * textHeight
       context.fillText(text[index], textLeft, textTop);
     }
+  }
+
+  // 利用 JavaScript ES6 的新特性实现的顺序执行函数
+  static sequentialExecution(param = { early: Function, later: Function }) {
+    function step1(resolve, reject) {
+      param.early()
+      resolve('finish')
+    }
+
+    function step2(resolve, reject) {
+      param.later()
+      resolve('finish')
+    }
+    // 用 `Promise` 函数特性严格切分时机
+    new Promise(step1).then(() => {
+      return new Promise(step2)
+    })
+  }
+
+  static Image(src) {
+    let image = wx.createImage()
+    image.src = src
+    return image
+  }
+
+  static retry(callback) {
+    if (isRetrying == true) return
+    let retry = setInterval(() => {
+      isRetrying = true
+      retryTimes -= 1
+      if (typeof callback === 'function') callback()
+      if (retryTimes <= 0) {
+        wx.showModal({
+          title: '连接失败',
+          content: '重试 3 次依旧失败请检查网络',
+        })
+        clearInterval(retry)
+        isRetrying = false
+        retryTimes = 3
+      }
+      console.log(retryTimes + 'retry')
+    }, 3000)
   }
 }
 
