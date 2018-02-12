@@ -18,6 +18,7 @@ import { Explanation } from 'module/explanation/view'
 import { DestinyDetail } from 'module/destinyDetail/destinyDetail'
 import { ProdDetail } from 'module/destinyDetail/prodDetail'
 import { PoemDetail } from 'module/destinyDetail/poemDetail'
+import { History } from 'module/history/view'
 import { Interpolator } from 'util/animation'
 import { Touch, ProdHorizontalOffset } from 'common/launch'
 
@@ -211,8 +212,7 @@ const Pages = {
     clickToLoadPage(buttonRect.history, PageName.history)
   },
   history: (context) => {
-    context.fillStyle = "blue"
-    context.fillRect(0, 0, 200, 200)
+    History.draw(context, Touch.moveX)
     clickToLoadPage(buttonRect.back, PageName.home)
   },
   destiny: (context) => {

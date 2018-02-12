@@ -430,11 +430,9 @@ export class Utils {
     param.textSpace = param.textSpace == null ? 0 : param.textSpace
     var currentRowTop = 0
     var currentRowWidth = 0
-    var unitTextWidth = param.textSize + param.textSpace
 
     // 如果在绘制前提前计算好每个字的宽度传对象进这个方法会节省性能
     if (param.textMeasuredWidth == null) {
-      console.log('hello')
       param.textMeasuredWidth =  
         Utils.measureEachText(context, param.text, param.textSize, param.font)
     }
@@ -452,6 +450,50 @@ export class Utils {
         if (typeof param.getTotalHeight === 'function') 
           param.getTotalHeight(currentRowTop + param.textSize)
       }  
+    }
+  }
+
+  static drawVerticalText(
+    context,
+    param = {
+      text: String,
+      color: String,
+      font: String,
+      lineSpace: null,
+      textSpace: null,
+      textSize: null,
+      maxHeight: null,
+      left: 0,
+      top: 0,
+      textMeasuredWidth: null
+    }
+  ) {
+
+    context.fillStyle = param.color
+    param.textSize = param.textSize == null ? 24 : param.textSize
+    context.font = param.textSize + 'px' + param.font
+    context.textBaseline = 'middle'
+    context.textAlign = 'left'
+    param.maxHeight = param.maxHeight == null ? context.canvas.width : param.maxHeight
+    param.lineSpace = param.lineSpace == null ? 0 : param.lineSpace
+    param.textSpace = param.textSpace == null ? 0 : param.textSpace
+    var currentRowTop = 0
+    var currentRowWidth = 0
+
+    // 如果在绘制前提前计算好每个字的宽度传对象进这个方法会节省性能
+    if (param.textMeasuredWidth == null) {
+      param.textMeasuredWidth =
+        Utils.measureEachText(context, param.text, param.textSize, param.font)
+    }
+
+    for (var index in param.text) {
+      context.fillText(param.text[index], param.left + currentRowWidth, param.top + currentRowTop)
+      if (currentRowTop >= param.maxHeight - param.textSize) {
+        currentRowWidth += param.textMeasuredWidth[index] + param.textSpace
+        currentRowTop = 0
+      } else {
+        currentRowTop += param.textSize + param.lineSpace
+      }
     }
   }
 

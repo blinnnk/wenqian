@@ -32,47 +32,52 @@ export class UIKit {
   }
 
   static imageSrc = {
-    logo: 'sources/image/wenqianLogo.png',
+    logo: 'sources/image/home/wenqianLogo.png',
     buttonBackground: 'sources/image/buttonBackground.png',
-    history: 'sources/image/watchHistory.png',
-    destiny: 'sources/image/requireDestiny.png',
-    redDot: 'sources/image/redDot.png',
-    branch: 'sources/image/branch.png',
-    leaf1: 'sources/image/leaf1.png',
-    leaf2: 'sources/image/leaf2.png',
-    leaf: 'sources/image/leaf.png',
-    box: 'sources/image/box.png',
-    shadow: 'sources/image/shadow.png',
+    history: 'sources/image/home/watchHistory.png',
+    destiny: 'sources/image/home/requireDestiny.png',
+    redDot: 'sources/image/home/redDot.png',
+    branch: 'sources/image/home/branch.png',
+    leaf1: 'sources/image/home/leaf1.png',
+    leaf2: 'sources/image/home/leaf2.png',
+    leaf: 'sources/image/home/leaf.png',
+    box: 'sources/image/destiny/box.png',
+    shadow: 'sources/image/destiny/shadow.png',
     back: 'sources/image/backArrow.png',
-    loveBox: 'sources/image/loveBox.png',
-    zhougong: 'sources/image/zhougong.png',
-    guanyin: 'sources/image/guanyin.png',
-    guanYinBox: 'sources/image/guanYinBox.png',
-    guanYinBoxBackground: 'sources/image/guanYinBoxBackground.png',
-    prod: 'sources/image/prod.png',
-    zhouGongBox: 'sources/image/zhouGongBox.png',
-    zhouGongBoxBackground: 'sources/image/zhouGongBoxBackground.png',
-    timeBackground: 'sources/image/timeBackground.png',
+    loveBox: 'sources/image/destiny/loveBox.png',
+    zhougong: 'sources/image/destiny/zhougong.png',
+    guanyin: 'sources/image/destiny/guanyin.png',
+    guanYinBox: 'sources/image/destinyDetail/guanYinBox.png',
+    guanYinBoxBackground: 'sources/image/destinyDetail/guanYinBoxBackground.png',
+    prod: 'sources/image/destinyDetail/prod.png',
+    zhouGongBox: 'sources/image/destinyDetail/zhouGongBox.png',
+    zhouGongBoxBackground: 'sources/image/destinyDetail/zhouGongBoxBackground.png',
+    timeBackground: 'sources/image/destiny/timeBackground.png',
     zhouGongType: 'sources/image/zhouGongType.png',
     guanYinType: 'sources/image/guanYinType.png'
   }
 
+  static history = {
+    people: 'sources/image/history/people.png',
+    godness: 'sources/image/history/godness.png'
+  }
+
   static prodType = {
-    prodName1: 'sources/image/prodName1.png',
-    prodName2: 'sources/image/prodName2.png',
-    prodName3: 'sources/image/prodName3.png',
-    prodName4: 'sources/image/prodName4.png',
-    prodName5: 'sources/image/prodName5.png',
-    prodName6: 'sources/image/prodName6.png',
-    prodName7: 'sources/image/prodName7.png',
-    prodName8: 'sources/image/prodName8.png',
-    prodName9: 'sources/image/prodName9.png',
-    prodName10: 'sources/image/prodName10.png',
-    prodName11: 'sources/image/prodName11.png',
-    prodName12: 'sources/image/prodName12.png',
-    prodName13: 'sources/image/prodName13.png',
-    prodName14: 'sources/image/prodName14.png',
-    prodName15: 'sources/image/prodName15.png'
+    prodName1: 'sources/image/prodNames/prodName1.png',
+    prodName2: 'sources/image/prodNames/prodName2.png',
+    prodName3: 'sources/image/prodNames/prodName3.png',
+    prodName4: 'sources/image/prodNames/prodName4.png',
+    prodName5: 'sources/image/prodNames/prodName5.png',
+    prodName6: 'sources/image/prodNames/prodName6.png',
+    prodName7: 'sources/image/prodNames/prodName7.png',
+    prodName8: 'sources/image/prodNames/prodName8.png',
+    prodName9: 'sources/image/prodNames/prodName9.png',
+    prodName10: 'sources/image/prodNames/prodName10.png',
+    prodName11: 'sources/image/prodNames/prodName11.png',
+    prodName12: 'sources/image/prodNames/prodName12.png',
+    prodName13: 'sources/image/prodNames/prodName13.png',
+    prodName14: 'sources/image/prodNames/prodName14.png',
+    prodName15: 'sources/image/prodNames/prodName15.png'
   }
 
   static direction = {
