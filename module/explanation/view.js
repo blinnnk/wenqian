@@ -6,9 +6,9 @@
 import { UIKit } from '../../common/uikit'
 import { Component } from '../../common/component'
 import { Utils } from '../../util/utils'
-import { NetUtils } from '../../util/netUtils'
-import { Api } from '../../common/api'
 import { Global } from '../../common/global'
+import { Presenter } from 'presenter'
+import { Model } from 'model'
 
 const typeImage = Utils.Image(UIKit.imageSrc.zhouGongType)
 const typeImageRect = {
@@ -17,7 +17,6 @@ const typeImageRect = {
   width: 60,
   height: 240
 }
-
 const maxWidth = 
   Component.ScreenSize.width - (typeImageRect.left * 2 + typeImageRect.width + 70)
 const contentTop = 200
@@ -26,12 +25,9 @@ const spaceBetweenTitleAndContent = 20
 
 const dotTop = typeImageRect.top + typeImageRect.height + 30
 const dotLeft = typeImageRect.left + typeImageRect.width / 2
-
 const prodIndexLeft = typeImageRect.left + (typeImageRect.width - UIKit.textSize.title) / 2
 
-var content = null
-var eachTitleTextWidth = []
-var eachContentTextWidth = []
+var model
 
 export class Explanation {
 
@@ -39,9 +35,10 @@ export class Explanation {
 
     Component.addBackButton(context)
     Utils.drawCustomImage(context, typeImage, typeImageRect)
-    if (Global.currentBoxType == Global.BoxType.guanYin) typeImage.src = UIKit.imageSrc.guanYinType
+    if (Global.currentBoxType == Global.BoxType.guanYin) 
+      typeImage.src = UIKit.imageSrc.guanYinType
     else typeImage.src = UIKit.imageSrc.zhouGongType
-    
+
     Utils.drawRound(context, {
       color: UIKit.color.title,
       rect: { left: dotLeft, top: dotTop },
@@ -60,12 +57,14 @@ export class Explanation {
       top: dotTop + 50
     }) 
 
-    if (content == null) return
+    if (Presenter.content == null) return
     var contentTotalHeight = contentTop
-    for (var index in content) {
-
+    // 画所有段落
+    for (var index in Presenter.content) {
+      model = Model(Presenter.content[index])
+      // 画标题
       Utils.drawSingleText(context, {
-        text: content[index].title,
+        text: model.title,
         color: UIKit.color.title,
         font: UIKit.font.title,
         maxWidth: maxWidth,
@@ -74,58 +73,37 @@ export class Explanation {
         textSpace: 5,
         left: contentLeft,
         top: contentTotalHeight + touchMoveY,
-        textMeasuredWidth: eachTitleTextWidth[index],
+        textMeasuredWidth: model.eachTitleTextWidth,
         getTotalHeight: (totalHeight) => {
           contentTotalHeight += totalHeight + spaceBetweenTitleAndContent
         }
       })
+      // 画正文
       Utils.drawSingleText(context, {
-        text: content[index].text,
+        text: model.text,
         color: UIKit.color.title,
         font: UIKit.font.content,
         maxWidth: maxWidth,
         textSize: UIKit.textSize.content,
         lineSpace: 8,
-        textSpace: -8,
+        textSpace: 0,
         left: contentLeft,
         top: contentTotalHeight + touchMoveY,
-        textMeasuredWidth: eachContentTextWidth[index],
+        textMeasuredWidth: model.eachContentTextWidth,
         getTotalHeight: (totalHeight) => {
           contentTotalHeight += totalHeight + 50
         }
       }) 
 
-      if (index == content.lastIndex()) {
+      if (index == Presenter.content.lastIndex()) {
         // 这个值传出去用来控制手指上下滚动事件边界的限制
         if (typeof getContentHeight === 'function') 
           getContentHeight(contentTotalHeight)
       }
     }
   }
-
-  static getExplanation() {
-    wx.showLoading({ title: '正在生成签语' })
-    NetUtils.getResultWithApi({
-      url: Api.explanation,
-      response: (result) => {
-        wx.hideLoading()
-        content = result.data.content
-        // 在这里提前计算好每个文字的宽度较少绘制时计算的压力
-        for (var index in content) {
-          eachTitleTextWidth.push(
-            Utils.measureEachText(Component.context, content[index].title)
-          )
-          eachContentTextWidth.push(
-            Utils.measureEachText(Component.context, content[index].text)
-          )
-        }
-      },
-      apiParameters: {
-        noncestr: Date.now(),
-        type: Global.currentBoxType,
-        index: Global.prodInfo.index,
-      },
-      fail: () => Utils.retry(() => Explanation.getExplanation())
-    })
+  // 更新数据内容
+  static updateContent() {
+    Presenter.getExplanation()
   }
 }

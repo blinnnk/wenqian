@@ -116,6 +116,7 @@ export class Component {
     Canvas.height = Canvas.height * 2
   }
 
+
   // 画落叶的函数
   static fallingLeaf(context) {
     for (var index = 0; index < fallingLeafCount; index++) {
