@@ -5,6 +5,7 @@
 */
 
 (() => {
+
   /*—————— Array Extension ——————*/
 
   Array.prototype.lastIndex = function () {

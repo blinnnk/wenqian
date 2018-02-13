@@ -12,7 +12,7 @@ export var Touch = {
   lastX: 0,
   moveY: 0,
   lastY: 0,
-  explanationHeight: 0
+  maxVerticalOffset: 0
 }
 
 export var ProdHorizontalOffset = 0
@@ -28,11 +28,11 @@ function addGestureListener() {
         Touch.moveX = -Component.ScreenSize.width
       }
       else if (Touch.moveX > 0) Touch.moveX = 0
-      if (Touch.explanationHeight > Component.ScreenSize.height) {
-        Touch.explanationHeight -= Component.ScreenSize.height
+      if (Touch.maxVerticalOffset > Component.ScreenSize.height) {
+        Touch.maxVerticalOffset -= Component.ScreenSize.height
       }
-      if (Touch.moveY < -Touch.explanationHeight) {
-        Touch.moveY = -Touch.explanationHeight
+      if (Touch.moveY < -Touch.maxVerticalOffset) {
+        Touch.moveY = -Touch.maxVerticalOffset
       }
       else if (Touch.moveY > 0) Touch.moveY = 0
     },

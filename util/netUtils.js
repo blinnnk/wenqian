@@ -4,6 +4,8 @@
 */
 
 import { Global } from '../common/global'
+import { Api } from '../common/api'
+import { Utils } from '../util/utils'
 
 export class NetUtils {
 
@@ -78,33 +80,115 @@ export class NetUtils {
   }
 
   // 通过网络地址把文件下载到本地的 `tempFilePath`
-  static downloadFile(param = { url: String, response: Function, complete: Function, fail: Function}) {
+  static downloadFile(param = { 
+    url: String, 
+    response: Function, 
+    complete: Function, 
+    fail: Function,
+    taskStatus: Function
+  }) {
     var isSuccess = false
-    wx.downloadFile({
+    const downloadTask = wx.downloadFile({
       url: param.url,
       success: (result) => {
         isSuccess = true
-        if (typeof param.response === 'function') param.response(result.tempFilePath)
+        if (typeof param.response === 'function') 
+          param.response(result.tempFilePath)
       },
       fail: () => { if (typeof param.fail === 'function') param.fail() },
       complete: () => { if (typeof param.complete === 'function') param.complete(isSuccess) }
     })
+
+    downloadTask.onProgressUpdate((result) => {
+      /*
+      * @param result
+      * [progress] 进度
+      * [totalBytesExpectedToWrite] 总大小
+      * [totalBytesWritten] 当前下载大小
+      */
+      if (typeof param.taskStatus === 'function') param.taskStatus(result)
+    })
   }
 
-  // 通过 `Api Url` 获取 文件的网络地址并保存本地 返回本地的 `tempPathFile` 路径
-  static getLocalPathByDownloadingFile(param = { api: String, response: response, type: 0, complete: Function, fail: Function }) {
-    NetUtils.getResultWithApi({
-      url: param.api,
-      // 解析返回网络地址
-      response: (src) => { NetUtils.downloadFile (
-        src,
-        // 解析返回本地文件临时路径
-        (tempFileSrc) => { if (typeof param.response === 'function') param.response(tempFileSrc) },
-        // 调用结束后的回调
-        (isSuccess) => { if (typeof param.complete === 'function') param.complete(isSuccess) },
-        () => { if (typeof param.fail === 'function') param.fail() }
-      )},
-      boxType: param.type
-    })
+  static getLocalImageFromServer(parameters = {
+    holdImages: Function, 
+    downloadListener: Function,
+  }) {
+    
+    // 先检查本地缓存中是否存在该图片
+    requestFromServer() 
+    var allImageSize = 0
+    var finishedSize = 0
+    var images = {}
+    // 如果没有就会请求这个网络函数
+    function requestFromServer() {
+      // 访问接口获取图片地址
+      NetUtils.getResultWithApi({
+        url: Api.serverImage,
+        response: (result) => {
+          // 先获取全部图片的尺寸
+          for (var objectKey in result.data.images) {
+            allImageSize += result.data.images[objectKey].size
+            finishedSize = allImageSize
+          }
+          var count = 0
+          // 下载图片并存储图片的名字地址到数组对象里面
+          for (var objectKey in result.data.images) {
+            downloadFile(
+              objectKey, 
+              result.data.images[objectKey].url, 
+              (element) => {
+                count += 1
+                if (count == Object.keys(result.data.images).length) {
+                  // 在循环完毕后回调传出全部的对象
+                  if (typeof parameters.holdImages === 'function')
+                    parameters.holdImages(images)
+                }
+              }
+            )
+          }
+        }
+      })
+    }
+
+    function downloadFile(key, imagePath, getElement) {
+      // 检查本地是否已经有存储的对应的 `Key` 值得图片
+      checkLocalFileByKey(key, (isSuccess) => {
+        if (isSuccess == false) {
+          var currentSize = 0
+          NetUtils.downloadFile({
+            url: imagePath,
+            response: (tempFilePath) => {
+              wx.setStorage({
+                key: key,
+                data: tempFilePath,
+              })
+            },
+            complete: (isSuccess) => { if (isSuccess == true) checkLocalFileByKey(key) },
+            taskStatus: (status) => {
+              finishedSize -= status.totalBytesWritten - currentSize
+              currentSize = status.totalBytesWritten
+              var percent = (((allImageSize - finishedSize) / allImageSize) * 100).toFixed(2) + '%'
+              if (typeof parameters.downloadListener === 'function')
+                parameters.downloadListener(percent)
+            }
+          })
+        } else {
+          if (typeof parameters.downloadListener === 'function') parameters.downloadListener('100.00%')
+        }
+      })
+
+      function checkLocalFileByKey(key, callback) {
+        var isSuccess = false
+        wx.getStorage({
+          key: key,
+          success: function (result) {
+            isSuccess = true
+            if (typeof getElement === 'function') getElement(images[key] = result.data)
+          },
+          complete: () => { if (typeof callback === 'function') callback(isSuccess) }
+        })
+      }
+    }
   }
 }

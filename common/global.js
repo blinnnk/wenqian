@@ -28,4 +28,5 @@ export class Global {
   static userAgent = userAgent
   static prodInfo = prodInfo
   static currentBoxType = currentBoxType 
+  static serverImages = {}
 }

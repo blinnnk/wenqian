@@ -10,8 +10,8 @@ import { Utils } from '../../util/utils'
 import { NetUtils } from '../../util/netUtils'
 import { Api } from '../../common/api'
 
-const prodImage = Utils.Image(UIKit.imageSrc.prod)
-const prodNameImage = Utils.Image(UIKit.prodType.prodName1)
+const prodImage = wx.createImage()
+const prodNameImage = wx.createImage()
 
 const moveDistance = Component.ScreenSize.height * 2
 
@@ -60,6 +60,9 @@ export class ProdDetail {
   }
 
   static draw(context) {
+
+    prodImage.src = Global.serverImages.prod
+
     Utils.drawImageAndMoveToTopWithAnimation(
       context,
       prodImage,
