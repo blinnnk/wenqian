@@ -4,20 +4,22 @@
 */
 
 import { UIKit } from '../../common/uikit'
+import { Global } from '../../common/global'
 import { Utils } from '../../util/utils'
 import { Component } from '../../common/component'
+import { Touch } from '../../common/launch'
 
-const peopleImage = Utils.Image(UIKit.history.people)
-const peopleImageLeft = 350
-const peopleImageRect = {
-  left: peopleImageLeft,
+const godnessHeaderImage = wx.createImage()
+const godnessHeaderImageLeft = 350
+const godnessHeaderImageRect = {
+  left: godnessHeaderImageLeft,
   top: Component.ScreenSize.height - 1024,
   width: 1024,
   height: 1024
 }
 
-const godnessImage = Utils.Image(UIKit.history.godness)
-const godnessImageLeft = peopleImageLeft + 800
+const godnessImage = wx.createImage()
+const godnessImageLeft = godnessHeaderImageLeft + 800
 const godnessImageRect = {
   left: godnessImageLeft,
   top: 0,
@@ -30,16 +32,18 @@ const textTop = Component.ScreenSize.height * 0.15
 
 export class History {
   static draw(context, touchMoveX) {
-    
+
     Component.addBackButton(context)
 
-    peopleImageRect.left = touchMoveX * 0.55
+    godnessHeaderImage.src = Global.serverImages.godnessHeader
+    godnessHeaderImageRect.left = touchMoveX * 0.55
     Utils.drawCustomImage(
       context,
-      peopleImage,
-      peopleImageRect
+      godnessHeaderImage,
+      godnessHeaderImageRect
     ) 
 
+    godnessImage.src = Global.serverImages.godness
     godnessImageRect.left = godnessImageLeft + touchMoveX * 1.2 - 100
     Utils.drawCustomImage(
       context,
@@ -70,5 +74,7 @@ export class History {
       left: Component.ScreenSize.width * 0.9 + touchMoveX * 0.74,
       top: textTop,
     })
+
+    Touch.maxHorizontalOffset = 100
   }
 }

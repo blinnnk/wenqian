@@ -33,6 +33,8 @@ var isShakingPhone = false
 const Canvas = wx.createCanvas()
 const context = Canvas.getContext('2d')
 
+var isDone = false
+
 // 适配 iPhoneX 的齐刘海
 var adaptingIPhoneXTop = 0
 Utils.isIPhoneX(function () {
@@ -214,5 +216,34 @@ export class Component {
         if (typeof callback === 'function') callback(result.data.cd)
       }
     }) 
+  }
+
+  static drawWaitting(param = {
+    percent: String, 
+    complete: Function
+  }) {
+    if (isDone == true) return
+    // 画进度
+    context.clearRect(0, 0, Component.ScreenSize.width, Component.ScreenSize.height)
+    Utils.drawText(context, {
+      text: 'downloading files ' + param.percent + ' %',
+      textColor: UIKit.color.title,
+      centerY: Component.ScreenSize.height / 2
+    })
+
+    if (param.percent == '100.00%') {
+      isDone = true
+      if (typeof param.complete === 'function') param.complete()
+    }
+  }
+
+  static drawLaunchScreen(context) {
+    Component.drawBackground(context)
+    Utils.drawText(context, {
+      text: 'LAUNCHING',
+      textSize: '42px',
+      textColor: UIKit.color.title,
+      centerY: Component.ScreenSize.height / 2
+    })
   }
 }

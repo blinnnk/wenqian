@@ -512,15 +512,15 @@ export class Utils {
     for (var index in stringNumber) {
       var current = Utils.convertSingleNumberToChacater(stringNumber[index])
       if (stringNumber.length >= 2) { 
-        if (stringNumber[index] == 0) current = '零'
+        if (stringNumber[index] == 0) {
+          if (index != stringNumber.length - 1) current = '零'
+          else current = '拾'
+        }
       }
       chacactersArray.push(current)
     }
 
-    if (stringNumber.length == 2) {
-      chacactersArray.splice(1, 0, '拾')
-      removeLastZero(stringNumber)
-    }
+    if (stringNumber.length == 2) chacactersArray.splice(1, 0, '拾')
 
     if (stringNumber.length == 3) {
       chacactersArray.splice(1, 0, '佰')

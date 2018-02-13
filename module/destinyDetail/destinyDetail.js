@@ -8,9 +8,9 @@ import { Global } from '../../common/global'
 import { Component } from '../../common/component'
 import { Utils } from '../../util/utils'
 
-const guanYinBox = Utils.Image(UIKit.imageSrc.guanYinBox)
+const guanYinBox = wx.createImage()
 const guanYinBoxBackground = Utils.Image(UIKit.imageSrc.guanYinBoxBackground)
-const zhouGongBox = Utils.Image(UIKit.imageSrc.zhouGongBox)
+const zhouGongBox = wx.createImage()
 const zhouGongBoxBackground = Utils.Image(UIKit.imageSrc.zhouGongBoxBackground)
 
 const boxRect = {
@@ -60,11 +60,13 @@ export class DestinyDetail {
 
   static draw(context, boxType, prodHorizontalOffset) {
     var image = guanYinBox
+    image.src = Global.serverImages.guanYinBox
     var background = guanYinBoxBackground
     // 用来记录当前签筒类型的变量, 用来从服务端获取签语的类型判断
     Global.currentBoxType = boxType
     if (boxType == Global.BoxType.zhouGong) {
       image = zhouGongBox
+      image.src = Global.serverImages.zhouGongBox
       background = zhouGongBoxBackground
     }
 
@@ -97,14 +99,14 @@ export class DestinyDetail {
   }
 }
 
-function drawProds(context, offset) {
+function drawProds(context, offset, imageSrc) {
   if (Math.abs(offset) > 20) {
     if (offset > 0) offset = 20
     else if (offset < 0) offset = -20
   }
   for (var index = 0; index < 10; index++) {
     const prodImage = wx.createImage()
-    prodImage.src = UIKit.imageSrc.prod
+    prodImage.src = Global.serverImages.prod
     prodRect.left = randomLeft[index] - offset
 
     Utils.drawImageAndMoveToBottomWithAnimation(

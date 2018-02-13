@@ -5,15 +5,15 @@
 
 import 'common/extension'
 import 'common/launch'
-import Controller from 'util/controller'
 import Music from 'util/music'
+import { Controller } from 'util/controller'
 import { PageName, UIKit } from 'common/uikit'
 import { Global } from 'common/global'
 import { Component } from 'common/component'
 import { Utils } from 'util/utils'
 import { NetUtils } from 'util/netUtils'
-import { HomePage } from 'module/home/home'
-import { DestinyPage } from 'module/destiny/destiny'
+import { HomePage } from 'module/home/view'
+import { DestinyPage } from 'module/destiny/view'
 import { Explanation } from 'module/explanation/view'
 import { DestinyDetail } from 'module/destinyDetail/destinyDetail'
 import { ProdDetail } from 'module/destinyDetail/prodDetail'
@@ -22,19 +22,40 @@ import { History } from 'module/history/view'
 import { Interpolator } from 'util/animation'
 import { Touch, ProdHorizontalOffset } from 'common/launch'
 
+import { Api } from 'common/api'
+
 // 声音管理器
 const sound = new Music()
 var controller
-var currentPage = PageName.home
+var currentPage
 
 Utils.sequentialExecution({
   // 启动软件的时候更新用户信息
   early: (hasFinished) => {
+    Component.drawLaunchScreen(Component.context)
     Component.updateUserAgent((userAgent) => hasFinished())
   },
   // 主界面的刷新帧的控制器, 时机切开是保证界面显示的时候百分百有 `token` 及相关信息
-  later: () => controller =
-    new Controller((context) => showPage(currentPage, context))
+  later: () => {
+    NetUtils.getLocalImageFromServer({
+      localObject: History.images,
+      holdImages: (images) => Global.serverImages = images,
+      downloadListener: (percent) => {
+        // 更新网络资源的进度
+        Component.drawWaitting({
+          percent: percent,
+          complete: () => { 
+            currentPage = PageName.home
+            launchPage() 
+          }
+        })
+      }
+    })
+
+    function launchPage() {
+      controller = Controller((context) => showPage(currentPage, context))
+    }
+  } 
 })
 
 // 摇晃手机的监听并判断是否处在可以求签的界面触发对应的事件
@@ -133,7 +154,6 @@ wx.onShow(() => {
 // 用来做通用常量或变量的参数在更换页面后恢复数值
 const resetGeneralParameters = () => {
   Interpolator.recovery()
-  Touch.moveX = 0
   Touch.moveY = 0
 }
 
@@ -191,6 +211,7 @@ const buttonRect = {
 * 都知道 `Swith` 不好， 冗长及不安全
 */
 function showPage(name, context) {
+  if (name == null) return
   const names = {
     'home': () => Pages.home(context),
     'history': () => Pages.history(context),
@@ -243,7 +264,7 @@ const Pages = {
   },
   explanation: (context) => {
     Explanation.draw(context, Touch.moveY, (totalHeight) => {
-      Touch.explanationHeight = totalHeight
+      Touch.maxVerticalOffset = totalHeight
     })
     clickToLoadPage(buttonRect.back, PageName.poemDetail)
   }

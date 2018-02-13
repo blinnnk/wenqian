@@ -6,6 +6,8 @@
 import { UIKit } from '../../common/uikit'
 import { Component } from '../../common/component'
 import { Utils } from '../../util/utils'
+import { Touch } from '../../common/launch'
+import { Global } from '../../common/global'
 
 const boxSize = Component.ScreenSize.width * 0.9
 const shadowSize = Component.ScreenSize.width * 0.5
@@ -16,8 +18,8 @@ const loveBoxLeft = Component.ScreenSize.width * 1.05
 var currentLeft = 0
 
 const shadowImage = Utils.Image(UIKit.imageSrc.shadow)
-const boxImage = Utils.Image(UIKit.imageSrc.box)
-const loveBoxImage = Utils.Image(UIKit.imageSrc.loveBox)
+const boxImage = wx.createImage()
+const loveBoxImage = wx.createImage()
 const loveShadowImage = Utils.Image(UIKit.imageSrc.shadow)
 
 const boxRect = {
@@ -100,7 +102,9 @@ export class DestinyPage {
     } else {
       Utils.drawCustomImage(context, guanyinImage, titleRect)
     }
-
+    
+    boxImage.src = Global.serverImages.box
+    loveBoxImage.src = Global.serverImages.loveBox
     // 不同的解锁状态签筒有不同的动画样式
     if (isBlockStatus == false) {
       // 观音签筒
@@ -151,6 +155,8 @@ export class DestinyPage {
       testSize: '96px',
       centerY: Component.ScreenSize.height - boxRect.top
     })
+
+    Touch.maxVerticalOffset = Component.ScreenSize.width
   }
 
   /*

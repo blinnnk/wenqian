@@ -41,16 +41,11 @@ export class UIKit {
     leaf1: 'sources/image/home/leaf1.png',
     leaf2: 'sources/image/home/leaf2.png',
     leaf: 'sources/image/home/leaf.png',
-    box: 'sources/image/destiny/box.png',
     shadow: 'sources/image/destiny/shadow.png',
     back: 'sources/image/backArrow.png',
-    loveBox: 'sources/image/destiny/loveBox.png',
     zhougong: 'sources/image/destiny/zhougong.png',
     guanyin: 'sources/image/destiny/guanyin.png',
-    guanYinBox: 'sources/image/destinyDetail/guanYinBox.png',
     guanYinBoxBackground: 'sources/image/destinyDetail/guanYinBoxBackground.png',
-    prod: 'sources/image/destinyDetail/prod.png',
-    zhouGongBox: 'sources/image/destinyDetail/zhouGongBox.png',
     zhouGongBoxBackground: 'sources/image/destinyDetail/zhouGongBoxBackground.png',
     timeBackground: 'sources/image/destiny/timeBackground.png',
     zhouGongType: 'sources/image/zhouGongType.png',
@@ -58,7 +53,7 @@ export class UIKit {
   }
 
   static history = {
-    people: 'sources/image/history/people.png',
+    godnessHeader: 'sources/image/history/godnessHeader.png',
     godness: 'sources/image/history/godness.png'
   }
 
