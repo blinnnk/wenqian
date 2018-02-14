@@ -32,16 +32,20 @@ var currentPage
 Utils.sequentialExecution({
   // 启动软件的时候更新用户信息
   early: (hasFinished) => {
-    Component.drawLaunchScreen(Component.context)
-    Component.updateUserAgent((userAgent) => hasFinished())
+    Component.drawLaunchScreen(Component.context) // 启动屏
+    Component.updateUserAgent((userAgent) => hasFinished()) // 更新用户的 `token` 信息
   },
   // 主界面的刷新帧的控制器, 时机切开是保证界面显示的时候百分百有 `token` 及相关信息
   later: () => {
+    /*
+    * 刷新界面签先判断是否需要更新网络图片. 因为小游戏的大小限制, 把占空间的图片都挪到了网上
+    * 为了好的体验，如判断需要更新图片后, 这步会模仿游戏使用阻断式强制更新.
+    */
     NetUtils.getLocalImageFromServer({
       localObject: History.images,
       holdImages: (images) => Global.serverImages = images,
       downloadListener: (percent) => {
-        // 更新网络资源的进度
+        // 更新网络资源并在界面显示当前下载的进度
         Component.drawWaitting({
           percent: percent,
           complete: () => { 
