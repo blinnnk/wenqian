@@ -90,6 +90,8 @@ export class Utils {
     }
     context.closePath()
     context.stroke()
+    context.restore()
+    
     Utils.drawText(context, {
       text: text,
       textColor: strokeColor,
@@ -98,7 +100,6 @@ export class Utils {
       textSize: '' + buttonTextSize + '',
       isBold: true
     })
-    context.restore()
   }
 
   static drawRound(context, param = {

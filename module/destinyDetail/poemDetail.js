@@ -45,19 +45,41 @@ export class PoemDetail {
   }
 
   static getPoemImage() {
-    // 显示 Loading
-    wx.showLoading({ title: '正在生成签语' })
-    NetUtils.downloadFile({
-      url: Global.prodInfo.src,
-      response: (localSrc) => destinyImage.src = localSrc,
-      // 调用成功后的回调
-      complete: (isSuccsee) => {
-        if (isSuccsee == true) wx.hideLoading()
-        else wx.showToast({ title: '加载图片失败' })
+    // 先校验本地是否有缓存
+    wx.getStorage({
+      key: 'prodImage',
+      success: function(result) {
+        console.log('fuck shit' + result.data)
+        // 如果有本地缓存文件就校验是否是我们需要取的那一只
+        if (result.data.boxType == Global.currentBoxType && result.data.prodIndex == Global.prodInfo.index) 
+          destinyImage.src = result.data.localPath
+        // 如果不是就从新拉取并保存在本地
+        else getLocalImageFromServer()
       },
-      // 接口调用失败重新拉取
-      fail: () => Utils.retry(() => Global.getPoemImage())
+      fail: () => getLocalImageFromServer()
     })
+    function getLocalImageFromServer() {
+      console.log('hey baby')
+      // 显示 Loading
+      wx.showLoading({ title: '正在生成签语' })
+      NetUtils.downloadFile({
+        url: Global.prodInfo.src,
+        response: (localSrc) => {
+          wx.setStorage({
+            key: 'prodImage',
+            data: { boxType: Global.currentBoxType, prodIndex: Global.prodInfo.index, localPath: localSrc },
+          })
+          destinyImage.src = localSrc
+        },
+        // 调用成功后的回调
+        complete: (isSuccsee) => {
+          if (isSuccsee == true) wx.hideLoading()
+          else wx.showToast({ title: '加载图片失败' })
+        },
+        // 接口调用失败重新拉取
+        fail: () => Utils.retry(() => Global.getPoemImage())
+      })
+    }
   }
   static draw(context) {
 

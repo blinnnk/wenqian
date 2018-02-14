@@ -115,18 +115,18 @@ export class NetUtils {
     downloadListener: Function,
   }) {
     
-    // 先检查本地缓存中是否存在该图片
     requestFromServer() 
+    
     var allImageSize = 0
     var finishedSize = 0
     var images = {}
-    // 如果没有就会请求这个网络函数
+
     function requestFromServer() {
       // 访问接口获取图片地址
       NetUtils.getResultWithApi({
         url: Api.serverImage,
         response: (result) => {
-          // 先获取全部图片的尺寸
+          // 先获取全部图片的尺寸及字典的 `key` 值
           for (var objectKey in result.data.images) {
             allImageSize += result.data.images[objectKey].size
             finishedSize = allImageSize
@@ -135,6 +135,7 @@ export class NetUtils {
           // 下载图片并存储图片的名字地址到数组对象里面
           for (var objectKey in result.data.images) {
             downloadFile(
+              // 这个函数内部会判断是否需要下载的逻辑
               objectKey, 
               result.data.images[objectKey].url, 
               (element) => {
@@ -166,9 +167,11 @@ export class NetUtils {
             },
             complete: (isSuccess) => { if (isSuccess == true) checkLocalFileByKey(key) },
             taskStatus: (status) => {
+              // 计算当前总下载进度的百分比
               finishedSize -= status.totalBytesWritten - currentSize
               currentSize = status.totalBytesWritten
               var percent = (((allImageSize - finishedSize) / allImageSize) * 100).toFixed(2) + '%'
+              // 绑定回调函数事件
               if (typeof parameters.downloadListener === 'function')
                 parameters.downloadListener(percent)
             }
@@ -179,6 +182,7 @@ export class NetUtils {
       })
 
       function checkLocalFileByKey(key, callback) {
+        // 先检查本地缓存中是否存在该图片如果没有再释放回调函数
         var isSuccess = false
         wx.getStorage({
           key: key,
