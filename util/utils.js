@@ -69,6 +69,10 @@ export class Utils {
     var buttonHeight = 0
     if (rect.height > radius * 2) buttonHeight = rect.height - radius * 2
 
+    /*
+    * 这里重新修订了距离顶部的距离修复点击区域问题, 因为 `Radius` 偏移出去的高度不会
+    * 计算为高度. 在 `Canvas` 里面接受区域预定的时候回出现偏移.
+    */
     var arcTop = rect.top - radius
     for (var index = 0; index < 4; index++) {
 
