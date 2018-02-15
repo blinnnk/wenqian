@@ -48,15 +48,13 @@ Utils.sequentialExecution({
         // 更新网络资源并在界面显示当前下载的进度
         Component.drawWaitting({
           percent: percent,
-          complete: () => { 
-            currentPage = PageName.home
-            launchPage() 
-          }
+          complete: launchPage
         })
       }
     })
 
     function launchPage() {
+      currentPage = PageName.home
       controller = Controller((context) => showPage(currentPage, context))
     }
   } 
