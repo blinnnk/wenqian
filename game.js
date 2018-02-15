@@ -75,12 +75,15 @@ Component.isShakingPhone({
       // 检查如果有网络才可以进入到签详细界面
       NetUtils.checkNetWorkStatus(() => {
         // 摇晃结束后拉取网络数据签子的基础信息
-        ProdDetail.getProdInfo()
         // 顺序执行刷新界面的方式
         Utils.sequentialExecution({
           early: (hasFinished) => {
-            resetGeneralParameters()
-            hasFinished()
+            ProdDetail.getProdInfo(() => {
+              // 这个打印正在排查一个罕见的数据拉取问题暂时保留 - @KaySaith
+              console.log('hi finish get prod info')
+              resetGeneralParameters()
+              hasFinished()
+            })
           },
           later: () => currentPage = PageName.prodDetail
         })

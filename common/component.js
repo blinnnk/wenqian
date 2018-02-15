@@ -187,7 +187,7 @@ export class Component {
         myTempID = result.data
         if (typeof holdResponse === 'function') holdResponse(myTempID)
       },
-      fail: () => Utils.retry(() => initTempID())
+      fail: () => Utils.retry(initTempID)
     })
   }
 

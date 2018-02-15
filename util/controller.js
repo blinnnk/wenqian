@@ -10,19 +10,12 @@ export const Controller = (onDraw) => {
   (function drawDetail() {
     let animation = requestAnimationFrame(drawDetail)
     if (typeof onDraw === 'function')
-      Utils.sequentialExecution({
-        early: (hasFinished) => {
-          Component.context.clearRect(
-            0, 0,
-            Component.ScreenSize.width,
-            Component.ScreenSize.height
-          )
-          hasFinished()
-        },
-        later: () => {
-          Component.drawBackground(Component.context)
-          onDraw(Component.context, animation)
-        }
-      })
+      Component.context.clearRect(
+        0, 0,
+        Component.ScreenSize.width,
+        Component.ScreenSize.height
+      )
+      Component.drawBackground(Component.context)
+      onDraw(Component.context, animation)
   })()
 }

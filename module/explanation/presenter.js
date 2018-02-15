@@ -26,7 +26,7 @@ export class Presenter {
         type: Global.currentBoxType,
         index: Global.prodInfo.index,
       },
-      fail: () => Utils.retry(() => Presenter.getExplanation())
+      fail: () => Utils.retry(Presenter.getExplanation)
     })
   }
 }
