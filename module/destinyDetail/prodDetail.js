@@ -43,7 +43,7 @@ export class ProdDetail {
 
   static buttonRect = buttonRect
 
-  static getProdInfo() {
+  static getProdInfo(callback) {
     NetUtils.getResultWithApi({
       url: Api.destinyPoem,
       apiParameters: {
@@ -55,7 +55,12 @@ export class ProdDetail {
         { src: result.data.image, xj: result.data.xj, index: result.data.index }
         prodNameImage.src = prodTypeImageSrc(result.data.xj)
       },
-      fail: () => Utils.retry(() => ProdDetail.getProdInfo()) 
+      complete: (isSuccess) => {
+        if (isSuccess == true) {
+          if (typeof callback === 'function') callback() 
+        } else Utils.retry(ProdDetail.getProdInfo) 
+      },
+      fail: () => Utils.retry(ProdDetail.getProdInfo) 
     })
   }
 
