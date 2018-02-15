@@ -81,6 +81,7 @@ export class HomePage {
 
   // 画首页的布局和动画
   static draw(context) {
+    
     // 画 Logo 图
     Utils.drawCustomImage(context, logoImage, logoRect)
     // 画副标题

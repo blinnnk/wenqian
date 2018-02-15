@@ -23,7 +23,7 @@ export class NetUtils {
         } 
         else { if (typeof callback === 'function') callback() }
       },
-      complete: () => { if (isSuccess == true) wx.hideLoading() }
+      complete: () => { if (isSuccess) wx.hideLoading() }
     })
   }
 
@@ -131,7 +131,7 @@ export class NetUtils {
             allImageSize += result.data.images[objectKey].size
             finishedSize = allImageSize
           }
-          var count = 0
+          let count = 0
           // 下载图片并存储图片的名字地址到数组对象里面
           for (var objectKey in result.data.images) {
             downloadFile(
@@ -155,7 +155,7 @@ export class NetUtils {
     function downloadFile(key, imagePath, getElement) {
       // 检查本地是否已经有存储的对应的 `Key` 值得图片
       checkLocalFileByKey(key, (isSuccess) => {
-        if (isSuccess == false) {
+        if (!isSuccess) {
           var currentSize = 0
           NetUtils.downloadFile({
             url: imagePath,
@@ -165,7 +165,7 @@ export class NetUtils {
                 data: tempFilePath,
               })
             },
-            complete: (isSuccess) => { if (isSuccess == true) checkLocalFileByKey(key) },
+            complete: (isSuccess) => { if (isSuccess) checkLocalFileByKey(key) },
             taskStatus: (status) => {
               // 计算当前总下载进度的百分比
               finishedSize -= status.totalBytesWritten - currentSize

@@ -63,7 +63,7 @@ Component.isShakingPhone({
     wx.vibrateLong() // 摇晃过程中增加震动来提升用户体验
   }),
   onEnd: () => {
-    // 摇晃结束后停止监听加速度
+    // 关闭加速度监听
     wx.stopAccelerometer()
     onDestinyDetailPage(showProdDetail)
     function showProdDetail() {
@@ -98,9 +98,10 @@ function clickToLoadPage(clickRect, targetPageName) {
       }
     },
     setClickSoundEffect: () => {
-      targetPageName == PageName.guanYinDetail ||
-        targetPageName == PageName.zhouGongDetail ?
-        sound.playBells() : sound.playClickSoundEffect()
+      targetPageName == PageName.guanYinDetail 
+      || targetPageName == PageName.zhouGongDetail 
+      ? sound.playBells() 
+      : sound.playClickSoundEffect()
     }
   }
   // 点击事件

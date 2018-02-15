@@ -174,7 +174,7 @@ export class DestinyPage {
       return
     } else {
       // 如果再次出发函数的时候还在倒计时状态就不用重新执行下面的内容
-      if (isBlockStatus == true) return
+      if (isBlockStatus) return
       // 开始执行倒计时的样式刷新和节点判断
       countDownInterval = setInterval(
         () => {

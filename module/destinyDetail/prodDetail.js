@@ -34,7 +34,7 @@ const prodNameRect = {
 const buttonLeft = (Component.ScreenSize.width - UIKit.size.roundRectButtonWidth) / 2
 const buttonRect = {
   left: buttonLeft,
-  top: adaptingTop - 80,
+  top: adaptingTop - 130,
   width: UIKit.size.roundRectButtonWidth,
   height: UIKit.size.roundRectButtonHeight
 }
@@ -56,7 +56,7 @@ export class ProdDetail {
         prodNameImage.src = prodTypeImageSrc(result.data.xj)
       },
       complete: (isSuccess) => {
-        if (isSuccess == true) {
+        if (isSuccess) {
           if (typeof callback === 'function') callback() 
         } else Utils.retry(ProdDetail.getProdInfo) 
       },

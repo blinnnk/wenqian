@@ -57,6 +57,8 @@ export class Component {
   static context = context
 
   static isShakingPhone(param = { onShaking: Function, onEnd: Function }) {
+    // 默认关闭加速监听, 使用前需要打开一次
+    wx.stopAccelerometer()
     wx.onAccelerometerChange((value) => {
       accelerometerX.push(value.x)
       accelerometerY.push(value.y)
@@ -85,8 +87,8 @@ export class Component {
         if (typeof param.onShaking === 'function') param.onShaking()
       } else {
         if (
-          isShakingPhone == true &&
-          Math.abs(value.x) + Math.abs(value.y) + Math.abs(value.z) < 1.5
+          isShakingPhone 
+          && Math.abs(value.x) + Math.abs(value.y) + Math.abs(value.z) < 1.5
         ) {
           if (typeof param.onEnd === 'function') {
             param.onEnd()
@@ -161,7 +163,7 @@ export class Component {
   static getUserAgent(holdResponse) {
     // 初次设定 TempID
     const setTempID = (hasRequired) => {
-      if (hasRequired == true) wx.setStorage({ key: 'tempID', data: myTempID })
+      if (hasRequired) wx.setStorage({ key: 'tempID', data: myTempID })
     }
     /*
     * 从微信获取唯一的标识 - 这个 code 是临时的这里通过方
@@ -222,7 +224,7 @@ export class Component {
     percent: String, 
     complete: Function
   }) {
-    if (isDone == true) return
+    if (isDone) return
     // 画进度
     context.clearRect(0, 0, Component.ScreenSize.width, Component.ScreenSize.height)
     Utils.drawText(context, {

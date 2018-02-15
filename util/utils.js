@@ -27,6 +27,13 @@ var buttonTextSize = 30
 var retryTimes = 3
 var isRetrying = false
 
+const corner = {
+  topLeft: 1,
+  topRight: 2,
+  bottomLeft: 3,
+  bottomRight: 4
+}
+
 
 // 工具
 export class Utils {
@@ -66,33 +73,39 @@ export class Utils {
     context.lineWidth = strokeWidth
     context.lineCap = 'round'
 
-    var buttonHeight = 0
-    if (rect.height > radius * 2) buttonHeight = rect.height - radius * 2
+    let buttonHeight = 0
+    if (rect.height > radius * 2) buttonHeight = rect.height - radius * 2;
 
     /*
     * 这里重新修订了距离顶部的距离修复点击区域问题, 因为 `Radius` 偏移出去的高度不会
     * 计算为高度. 在 `Canvas` 里面接受区域预定的时候回出现偏移.
     */
-    var arcTop = rect.top - radius
-    for (var index = 0; index < 4; index++) {
+    
+    [
+      corner.topLeft, 
+      corner.topRight, 
+      corner.bottomLeft, 
+      corner.bottomRight
+    ].forEach(it => {
 
-      var modulus = 0
-      if (index == 1 || index == 2) modulus = 1
+      let modulus = 0
+      if (it == corner.topLeft || it == corner.topRight) modulus = 1
       else modulus = 0
 
-      var heightModulus = 0
-      if (index == 2 || index == 3) heightModulus = 1
+      let heightModulus = 0
+      if (it == corner.topRight || it == corner.bottomLeft) heightModulus = 1
       else heightModulus = 0
 
       context.arc(
         rect.left + rect.width * modulus,
-        arcTop + buttonHeight * heightModulus + radius,
+        rect.top + buttonHeight * heightModulus + radius,
         radius,
-        convertAngel(180 + 90 * index),
-        convertAngel(180 + 90 * (index + 1)),
+        convertAngel(180 + 90 * it),
+        convertAngel(180 + 90 * (it + 1)),
         false
       )
-    }
+    })
+
     context.closePath()
     context.stroke()
     context.restore()
@@ -100,7 +113,8 @@ export class Utils {
     Utils.drawText(context, {
       text: text,
       textColor: strokeColor,
-      centerY: rect.top + (buttonHeight + radius - buttonTextSize) / 2 - strokeWidth,
+      centerY: 
+        rect.top + (buttonHeight + radius - buttonTextSize) / 2 - strokeWidth + radius,
       lineHeight: 0,
       textSize: '' + buttonTextSize + '',
       isBold: true
@@ -164,10 +178,10 @@ export class Utils {
 
     wx.onTouchEnd((event) => {
       if (
-        Math.abs(currentMoveX) < 2 ||
-        Math.abs(currentMoveY) < 2 ||
-        currentMoveX == 0 ||
-        currentMoveY == 0
+        Math.abs(currentMoveX) < 2 
+        || Math.abs(currentMoveY) < 2 
+        || currentMoveX == 0 
+        || currentMoveY == 0
       ) {
         isClickEvent = true
       }
@@ -305,12 +319,12 @@ export class Utils {
   static drawText(context, param = {
     text: String,
     textColor: String,
-    centerY: 0,
-    lineHeight: 0,
-    textSize: 0,
+    centerY: null,
+    lineHeight: null,
+    textSize: null,
     isBold: Boolean
   }) {
-    param.isBold = param.isBold == true ? 'bold' : ''
+    param.isBold = param.isBold ? 'bold' : ''
     param.textSize = param.textSize == null ? '24px' : param.textSize
     param.centerY = param.centerY == null ? 0 : param.centerY
     param.lineHeight = param.lineHeight == null ? 0 : param.lineHeight
@@ -391,7 +405,7 @@ export class Utils {
   }
 
   static retry(callback) {
-    if (isRetrying == true) return
+    if (isRetrying) return
     let retry = setInterval(() => {
       isRetrying = true
       retryTimes -= 1
@@ -443,19 +457,25 @@ export class Utils {
         Utils.measureEachText(context, param.text, param.textSize, param.font)
     }
 
-    for (var index in param.text) {
-      context.fillText(param.text[index], param.left + currentRowWidth, param.top + currentRowTop)
-      if (currentRowWidth >= param.maxWidth - param.textSize) {
-        currentRowTop += param.textSize + param.lineSpace
-        currentRowWidth = 0
-      } else {
-        currentRowWidth += param.textMeasuredWidth[index] + param.textSpace
+    for (var item in param.text) {
+      if (param.text.hasOwnProperty(item)) {  
+        context.fillText(
+          param.text[item], 
+          param.left + currentRowWidth, 
+          param.top + currentRowTop
+        )
+        if (currentRowWidth >= param.maxWidth - param.textSize) {
+          currentRowTop += param.textSize + param.lineSpace
+          currentRowWidth = 0
+        } else {
+          currentRowWidth += param.textMeasuredWidth[item] + param.textSpace
+        }
+
+        if (item == param.text.lastIndex()) {
+          if (typeof param.getTotalHeight === 'function')
+            param.getTotalHeight(currentRowTop + param.textSize)
+        }  
       }
-      
-      if (index == param.text.length - 1) {
-        if (typeof param.getTotalHeight === 'function') 
-          param.getTotalHeight(currentRowTop + param.textSize)
-      }  
     }
   }
 
@@ -492,14 +512,21 @@ export class Utils {
         Utils.measureEachText(context, param.text, param.textSize, param.font)
     }
 
-    for (var index in param.text) {
-      context.fillText(param.text[index], param.left + currentRowWidth, param.top + currentRowTop)
-      if (currentRowTop >= param.maxHeight - param.textSize) {
-        currentRowWidth += param.textMeasuredWidth[index] + param.textSpace
-        currentRowTop = 0
-      } else {
-        currentRowTop += param.textSize + param.lineSpace
+    for (var item in param.text) {
+      if (param.text.hasOwnProperty(item)) {  
+        context.fillText(
+          param.text[item], 
+          param.left + currentRowWidth, 
+          param.top + currentRowTop
+        )
+        if (currentRowTop >= param.maxHeight - param.textSize) {
+          currentRowWidth += param.textMeasuredWidth[item] + param.textSpace
+          currentRowTop = 0
+        } else {
+          currentRowTop += param.textSize + param.lineSpace
+        }  
       }
+      
     }
   }
 
@@ -519,7 +546,7 @@ export class Utils {
       var current = Utils.convertSingleNumberToChacater(stringNumber[index])
       if (stringNumber.length >= 2) { 
         if (stringNumber[index] == 0) {
-          if (index != stringNumber.length - 1) current = '零'
+          if (index != stringNumber.lastIndex()) current = '零'
           else current = '拾'
         }
       }
@@ -536,7 +563,7 @@ export class Utils {
     }
 
     function removeLastZero(array) {
-      if (array[array.length - 1] == 0)  chacactersArray.pop()
+      if (array.last() == 0)  chacactersArray.pop()
     }
 
     return chacactersArray.join('')
@@ -566,10 +593,10 @@ export class Utils {
 
 function checkRectContainsPointOrElse(x, y, rect, callback) {
   if (
-    x > rect.left &&
-    x < rect.left + rect.width &&
-    y > rect.top &&
-    y < rect.top + rect.height
+    x > rect.left 
+    && x < rect.left + rect.width 
+    && y > rect.top 
+    && y < rect.top + rect.height
   ) {
     // 回调事件
     if (typeof callback === 'function') {

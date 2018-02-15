@@ -6,6 +6,18 @@
 
 (() => {
 
+  /*—————— String Extension ——————*/
+
+  String.prototype.lastIndex = function () {
+    if (this.length < 0) return
+    return this.length - 1
+  }
+
+  String.prototype.last = function () {
+    if (this.length < 0) return
+    return this[this.length - 1]
+  }
+
   /*—————— Array Extension ——————*/
 
   Array.prototype.lastIndex = function () {

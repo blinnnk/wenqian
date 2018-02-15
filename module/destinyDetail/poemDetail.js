@@ -22,14 +22,14 @@ const buttonLeft =
   (Component.ScreenSize.width - UIKit.size.roundRectButtonWidth) / 2
 const buttonRect = {
   left: buttonLeft,
-  top: Component.ScreenSize.height * 0.9 - 50 - 128,
+  top: Component.ScreenSize.height * 0.9 - 50 - 178,
   width: UIKit.size.roundRectButtonWidth,
   height: UIKit.size.roundRectButtonHeight
 }
 
 const saveButtonRect = {
   left: buttonLeft,
-  top: Component.ScreenSize.height * 0.9 - 50,
+  top: Component.ScreenSize.height * 0.9 - 50 - 50,
   width: UIKit.size.roundRectButtonWidth,
   height: UIKit.size.roundRectButtonHeight
 }
@@ -73,7 +73,7 @@ export class PoemDetail {
         },
         // 调用成功后的回调
         complete: (isSuccsee) => {
-          if (isSuccsee == true) wx.hideLoading()
+          if (isSuccsee) wx.hideLoading()
           else wx.showToast({ title: '加载图片失败' })
         },
         // 接口调用失败重新拉取
