@@ -33,7 +33,7 @@ Utils.sequentialExecution({
   // 启动软件的时候更新用户信息
   early: (hasFinished) => {
     Component.drawLaunchScreen(Component.context) // 启动屏
-    Component.updateUserAgent((userAgent) => hasFinished()) // 更新用户的 `token` 信息
+    Component.updateUserAgent(hasFinished) // 更新用户的 `token` 信息
   },
   // 主界面的刷新帧的控制器, 时机切开是保证界面显示的时候百分百有 `token` 及相关信息
   later: () => {
@@ -44,13 +44,9 @@ Utils.sequentialExecution({
     NetUtils.getLocalImageFromServer({
       localObject: History.images,
       holdImages: (images) => Global.serverImages = images,
-      downloadListener: (percent) => {
-        // 更新网络资源并在界面显示当前下载的进度
-        Component.drawWaitting({
-          percent: percent,
-          complete: launchPage
-        })
-      }
+      // 更新网络资源并在界面显示当前下载的进度
+      downloadListener: (percent) => 
+        Component.drawWaitting({ percent: percent, complete: launchPage })
     })
 
     function launchPage() {
@@ -62,33 +58,32 @@ Utils.sequentialExecution({
 
 // 摇晃手机的监听并判断是否处在可以求签的界面触发对应的事件
 Component.isShakingPhone({
-  onShaking: () => {
-    onDestinyDetailPage(() => {
-      sound.playShakingProd()
-      wx.vibrateLong() // 摇晃过程中增加震动来提升用户体验
-    })
-  },
+  onShaking: () => onDestinyDetailPage(() => {
+    sound.playShakingProd()
+    wx.vibrateLong() // 摇晃过程中增加震动来提升用户体验
+  }),
   onEnd: () => {
-    onDestinyDetailPage(() => {
+    // 摇晃结束后停止监听加速度
+    wx.stopAccelerometer()
+    onDestinyDetailPage(showProdDetail)
+    function showProdDetail() {
       // 检查如果有网络才可以进入到签详细界面
       NetUtils.checkNetWorkStatus(() => {
         // 摇晃结束后拉取网络数据签子的基础信息
         // 顺序执行刷新界面的方式
         Utils.sequentialExecution({
-          early: (hasFinished) => {
-            ProdDetail.getProdInfo(() => {
-              // 这个打印正在排查一个罕见的数据拉取问题暂时保留 - @KaySaith
-              console.log('hi finish get prod info')
-              resetGeneralParameters()
-              hasFinished()
-            })
-          },
+          early: (hasFinished) => ProdDetail.getProdInfo(() => {
+            // 这个打印正在排查一个罕见的数据拉取问题暂时保留 - @KaySaith
+            console.log('hi finish get prod info')
+            resetGeneralParameters()
+            hasFinished()
+          }),
           later: () => currentPage = PageName.prodDetail
         })
         sound.playAmazingSoundEffect()
         Component.updateCDTime()
       })
-    })
+    }
   }
 })
 
@@ -113,11 +108,19 @@ function clickToLoadPage(clickRect, targetPageName) {
     resetGeneralParameters()
     // 不同点击事件设定不同的点击音效
     event.setClickSoundEffect()
+    
+    // 如果目标页面是摇签界面就打开加速度监听
+    executeByPageName(
+      wx.startAccelerometer,
+      targetPageName,
+      PageName.guanYinDetail,
+      PageName.zhouGongDetail
+    )
     // 加载签语网络图片并显示
     event.condition({
       current: PageName.prodDetai,
       target: PageName.poemDetail,
-      do: () => PoemDetail.getPoemImage()
+      do: PoemDetail.getPoemImage
     })
     // 拉取解签的内容
     event.condition({
@@ -159,13 +162,13 @@ wx.onShow(() => {
 // 用来做通用常量或变量的参数在更换页面后恢复数值
 const resetGeneralParameters = () => {
   Interpolator.recovery()
-  Touch.moveY = 0
+  Touch.resetMoveY()
 }
 
 // 封装的判断当前页面名字的高阶函数
-function executeByCurrentPage(callback, ...pageArguments) {
+function executeByPageName(callback, pageName, ...pageArguments) {
   for (var index in pageArguments) {
-    if (currentPage == pageArguments[index]) {
+    if (pageName == pageArguments[index]) {
       if (typeof callback === 'function') callback()
     }
   }
@@ -192,8 +195,9 @@ function setBlockStatus(isBlocking) {
 }
 
 function onDestinyDetailPage(callback) {
-  executeByCurrentPage(
+  executeByPageName(
     () => { if (typeof callback === 'function') callback() },
+    currentPage,
     PageName.guanYinDetail,
     PageName.zhouGongDetail
   )
@@ -217,6 +221,9 @@ const buttonRect = {
 */
 function showPage(name, context) {
   if (name == null) return
+  // 当前页面不是摇签界面关闭加速监听
+
+
   const names = {
     'home': () => Pages.home(context),
     'history': () => Pages.history(context),

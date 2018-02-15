@@ -170,14 +170,16 @@ export class NetUtils {
               // 计算当前总下载进度的百分比
               finishedSize -= status.totalBytesWritten - currentSize
               currentSize = status.totalBytesWritten
-              var percent = (((allImageSize - finishedSize) / allImageSize) * 100).toFixed(2) + '%'
+              var percent = 
+                (((allImageSize - finishedSize) / allImageSize) * 100).toFixed(2) + '%'
               // 绑定回调函数事件
               if (typeof parameters.downloadListener === 'function')
                 parameters.downloadListener(percent)
             }
           })
         } else {
-          if (typeof parameters.downloadListener === 'function') parameters.downloadListener('100.00%')
+          if (typeof parameters.downloadListener === 'function') 
+            parameters.downloadListener('100.00%')
         }
       })
 
