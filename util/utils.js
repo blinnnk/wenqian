@@ -69,6 +69,7 @@ export class Utils {
     var buttonHeight = 0
     if (rect.height > radius * 2) buttonHeight = rect.height - radius * 2
 
+    var arcTop = rect.top - radius
     for (var index = 0; index < 4; index++) {
 
       var modulus = 0
@@ -81,7 +82,7 @@ export class Utils {
 
       context.arc(
         rect.left + rect.width * modulus,
-        rect.top + buttonHeight * heightModulus,
+        arcTop + buttonHeight * heightModulus + radius,
         radius,
         convertAngel(180 + 90 * index),
         convertAngel(180 + 90 * (index + 1)),
