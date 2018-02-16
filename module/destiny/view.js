@@ -15,8 +15,6 @@ const boxTop = (Component.ScreenSize.height - boxSize) / 2.6
 const boxLeft = Component.ScreenSize.width * 0.05
 const loveBoxLeft = Component.ScreenSize.width * 1.05
 
-var currentLeft = 0
-
 const shadowImage = Utils.Image(UIKit.imageSrc.shadow)
 const boxImage = wx.createImage()
 const loveBoxImage = wx.createImage()
@@ -31,13 +29,13 @@ const boxRect = {
 
 const shadowTop = boxRect.top + boxRect.height - Component.ScreenSize.height * 0.08
 
+const shadowLeft = boxRect.left + Component.ScreenSize.width * 0.35
 const shadowRect = {
   width: shadowSize,
   height: shadowSize,
   left: shadowLeft,
   top: shadowTop
 }
-const shadowLeft = boxRect.left + Component.ScreenSize.width * 0.35
 
 const loveBoxRect = {
   width: boxSize,
@@ -46,13 +44,13 @@ const loveBoxRect = {
   top: boxTop,
 }
 
+const loveShadowLeft = loveBoxRect.left + Component.ScreenSize.width * 0.35
 const loveShadowRect = {
   width: shadowSize,
   height: shadowSize,
   left: loveShadowLeft,
   top: shadowTop
 }
-const loveShadowLeft = loveBoxRect.left + Component.ScreenSize.width * 0.35
 
 const zhouGongImage = Utils.Image(UIKit.imageSrc.zhougong)
 const guanyinImage = Utils.Image(UIKit.imageSrc.guanyin)
@@ -76,9 +74,9 @@ const timeBackgroundRect = {
 }
 
 // 计算倒计时的参数
-var currentTime
-var isBlockStatus = false
-var countDownInterval = null
+let currentTime
+let isBlockStatus = false
+let countDownInterval = null
 
 export class DestinyPage {
 
@@ -106,7 +104,7 @@ export class DestinyPage {
     boxImage.src = Global.serverImages.box
     loveBoxImage.src = Global.serverImages.loveBox
     // 不同的解锁状态签筒有不同的动画样式
-    if (isBlockStatus == false) {
+    if (isBlockStatus === false) {
       // 观音签筒
       Utils.drawImageAndMoveOvalPathWithAnimation(
         context,
@@ -171,7 +169,7 @@ export class DestinyPage {
         clearInterval(countDownInterval)
         countDownInterval = null
       }
-      return
+
     } else {
       // 如果再次出发函数的时候还在倒计时状态就不用重新执行下面的内容
       if (isBlockStatus) return

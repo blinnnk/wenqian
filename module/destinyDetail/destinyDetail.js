@@ -59,19 +59,19 @@ const randomTop =
 export class DestinyDetail {
 
   static draw(context, boxType, prodHorizontalOffset) {
-    var image = guanYinBox
+    let image = guanYinBox
     image.src = Global.serverImages.guanYinBox
-    var background = guanYinBoxBackground
+    let background = guanYinBoxBackground
     // 用来记录当前签筒类型的变量, 用来从服务端获取签语的类型判断
     Global.currentBoxType = boxType
-    if (boxType == Global.BoxType.zhouGong) {
+    if (boxType === Global.BoxType.zhouGong) {
       image = zhouGongBox
       image.src = Global.serverImages.zhouGongBox
       background = zhouGongBoxBackground
     }
 
     Utils.drawText(context, {
-      text: "Condensate heart eyes closed for 10 seconds /nand then focus myself in my heart you want to come up /nwith one's content, and then shake the mobile /nphone can begin to pray",
+      text: "Condensate heart eyes closed for 10 seconds /n and then focus myself in my heart you want to come up /n with one's content, and then shake the mobile /n phone can begin to pray",
       textColor: UIKit.color.title,
       centerY: Component.ScreenSize.height * 0.15,
       lineHeight: 35
@@ -104,7 +104,7 @@ function drawProds(context, offset, imageSrc) {
     if (offset > 0) offset = 20
     else if (offset < 0) offset = -20
   }
-  for (var index = 0; index < 10; index++) {
+  for (let index = 0; index < 10; index++) {
     const prodImage = wx.createImage()
     prodImage.src = Global.serverImages.prod
     prodRect.left = randomLeft[index] - offset

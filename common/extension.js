@@ -1,7 +1,7 @@
 /*
 * @author KaySaith
 * @date 2018-02-12
-* @description 挂在到全局的函数, 这里主要放置扩展类函数为主
+* @description 挂载到全局的函数, 这里主要放置扩展类函数为主
 */
 
 (() => {

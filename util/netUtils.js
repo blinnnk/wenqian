@@ -5,17 +5,17 @@
 
 import { Global } from '../common/global'
 import { Api } from '../common/api'
-import { Utils } from '../util/utils'
 
 export class NetUtils {
+  networkType
 
   static checkNetWorkStatus(callback) {
-    var isSuccess = false
+    let isSuccess = false
     wx.showLoading({ title: '正在生成' })
     wx.getNetworkType({
       success: (result) => {
         isSuccess = true
-        if (result.networkType == 'none') {
+        if (result.networkType === 'none') {
           wx.showModal({
             title: '检查网络连接',
             content: '目前查找不到网络, 请检查当前网络是否可用',
@@ -40,7 +40,7 @@ export class NetUtils {
       complete: Function
     }
   ) {
-    var isSuccess = false
+    let isSuccess = false
     wx.request({
       url: param.url,
       data: param.apiParameters,
@@ -63,7 +63,7 @@ export class NetUtils {
     response: Function, 
     complete: Function
   }) {
-    var isSuccess = false
+    let isSuccess = false
     wx.request({
       url: param.url,
       data: {
@@ -87,7 +87,7 @@ export class NetUtils {
     fail: Function,
     taskStatus: Function
   }) {
-    var isSuccess = false
+    let isSuccess = false
     const downloadTask = wx.downloadFile({
       url: param.url,
       success: (result) => {
@@ -115,32 +115,33 @@ export class NetUtils {
     downloadListener: Function,
   }) {
     
-    requestFromServer() 
-    
-    var allImageSize = 0
-    var finishedSize = 0
-    var images = {}
+    requestFromServer()
+
+    let allImageSize = 0
+    let finishedSize = 0
+    const images = {}
 
     function requestFromServer() {
       // 访问接口获取图片地址
       NetUtils.getResultWithApi({
         url: Api.serverImage,
         response: (result) => {
+          let objectKey
           // 先获取全部图片的尺寸及字典的 `key` 值
-          for (var objectKey in result.data.images) {
+          for (objectKey in result.data.images) {
             allImageSize += result.data.images[objectKey].size
             finishedSize = allImageSize
           }
           let count = 0
           // 下载图片并存储图片的名字地址到数组对象里面
-          for (var objectKey in result.data.images) {
+          for (objectKey in result.data.images) {
             downloadFile(
               // 这个函数内部会判断是否需要下载的逻辑
               objectKey, 
               result.data.images[objectKey].url, 
-              (element) => {
+              () => {
                 count += 1
-                if (count == Object.keys(result.data.images).length) {
+                if (count === Object.keys(result.data.images).length) {
                   // 在循环完毕后回调传出全部的对象
                   if (typeof parameters.holdImages === 'function')
                     parameters.holdImages(images)
@@ -156,7 +157,7 @@ export class NetUtils {
       // 检查本地是否已经有存储的对应的 `Key` 值得图片
       checkLocalFileByKey(key, (isSuccess) => {
         if (!isSuccess) {
-          var currentSize = 0
+          let currentSize = 0
           NetUtils.downloadFile({
             url: imagePath,
             response: (tempFilePath) => {
@@ -170,7 +171,7 @@ export class NetUtils {
               // 计算当前总下载进度的百分比
               finishedSize -= status.totalBytesWritten - currentSize
               currentSize = status.totalBytesWritten
-              var percent = 
+              const percent =
                 (((allImageSize - finishedSize) / allImageSize) * 100).toFixed(2) + '%'
               // 绑定回调函数事件
               if (typeof parameters.downloadListener === 'function')
@@ -185,7 +186,7 @@ export class NetUtils {
 
       function checkLocalFileByKey(key, callback) {
         // 先检查本地缓存中是否存在该图片如果没有再释放回调函数
-        var isSuccess = false
+        let isSuccess = false
         wx.getStorage({
           key: key,
           success: function (result) {

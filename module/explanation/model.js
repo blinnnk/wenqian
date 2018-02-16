@@ -9,7 +9,7 @@ import { Component } from '../../common/component'
 import { UIKit } from '../../common/uikit'
 
 export function Model(data) {
-  var model = {
+  const model = {
     title: data.title,
     text: data.text,
     eachTitleTextWidth: [],

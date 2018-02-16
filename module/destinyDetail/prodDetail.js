@@ -80,7 +80,7 @@ export class ProdDetail {
     Component.addBackButton(context)
 
     Utils.drawText(context,{
-      text: 'Police had to trudge through two to three feet /nof debris to get to 94-year-old Robert Libby: soiled /nadult diapers, garbage and thousands of beer cans',
+      text: 'Police had to trudge through two to three feet /nof debris to get to 94-year-old Robert Libby: soiled /n adult diapers, garbage and thousands of beer cans',
       textColor: UIKit.color.title,
       centerY: Component.ScreenSize.height * 0.15,
       lineHeight: 35
@@ -98,7 +98,7 @@ export class ProdDetail {
 }
 
 const prodTypeImageSrc = (name) => {
-  var src = {
+  const src = {
     '上上签': UIKit.prodType.prodName1,
     '上签': UIKit.prodType.prodName2,
     '上中签': UIKit.prodType.prodName3,
@@ -109,7 +109,7 @@ const prodTypeImageSrc = (name) => {
     '下签': UIKit.prodType.prodName8,
     '大吉': UIKit.prodType.prodName9,
     '上吉': UIKit.prodType.prodName10,
-    '中吉': UIKit.prodType.prodName11,
+    '中吉签': UIKit.prodType.prodName11,
     '上平签': UIKit.prodType.prodName12,
     '中平签': UIKit.prodType.prodName13,
     '平中签': UIKit.prodType.prodName14,

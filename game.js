@@ -7,7 +7,7 @@ import 'common/extension'
 import 'common/launch'
 import Music from 'util/music'
 import { Controller } from 'util/controller'
-import { PageName, UIKit } from 'common/uikit'
+import { PageName} from 'common/uikit'
 import { Global } from 'common/global'
 import { Component } from 'common/component'
 import { Utils } from 'util/utils'
@@ -22,12 +22,11 @@ import { History } from 'module/history/view'
 import { Interpolator } from 'util/animation'
 import { Touch, ProdHorizontalOffset } from 'common/launch'
 
-import { Api } from 'common/api'
 
 // 声音管理器
 const sound = new Music()
-var controller
-var currentPage
+let controller
+let currentPage
 
 Utils.sequentialExecution({
   // 启动软件的时候更新用户信息
@@ -46,7 +45,7 @@ Utils.sequentialExecution({
       holdImages: (images) => Global.serverImages = images,
       // 更新网络资源并在界面显示当前下载的进度
       downloadListener: (percent) => 
-        Component.drawWaitting({ percent: percent, complete: launchPage })
+        Component.drawWaiting({ percent: percent, complete: launchPage })
     })
 
     function launchPage() {
@@ -93,13 +92,13 @@ function clickToLoadPage(clickRect, targetPageName) {
   const event = {
     condition: (param = { current: null, target: String, do: Function }) => {
       param.current = param.current == null ? currentPage : param.current
-      if (currentPage == param.current && targetPageName == param.target) {
+      if (currentPage === param.current && targetPageName === param.target) {
         if (typeof param.do === 'function') param.do()
       }
     },
     setClickSoundEffect: () => {
-      targetPageName == PageName.guanYinDetail 
-      || targetPageName == PageName.zhouGongDetail 
+      targetPageName === PageName.guanYinDetail
+      || targetPageName === PageName.zhouGongDetail
       ? sound.playBells() 
       : sound.playClickSoundEffect()
     }
@@ -168,24 +167,25 @@ const resetGeneralParameters = () => {
 
 // 封装的判断当前页面名字的高阶函数
 function executeByPageName(callback, pageName, ...pageArguments) {
-  for (var index in pageArguments) {
-    if (pageName == pageArguments[index]) {
+  for (let index in pageArguments) {
+    if (pageName === pageArguments[index]) {
       if (typeof callback === 'function') callback()
     }
   }
 }
 
-var hasPlayedUnlockSound = false
+let hasPlayedUnlockSound = false
+
 // 使用限制设定开关点击事件
 function setBlockStatus(isBlocking) {
-  if (isBlocking == true) {
+  if (isBlocking === true) {
     hasPlayedUnlockSound = false
     // 关闭点击事件的区域
     buttonRect.guanYin = 0
     buttonRect.zhouGong = 0
     Utils.eraseTouchEvent(DestinyPage.boxRect, DestinyPage.loveBoxRect)
   } else {
-    if (Global.userAgent.cd == 0 && hasPlayedUnlockSound == false) {
+    if (Global.userAgent.cd === 0 && hasPlayedUnlockSound === false) {
       sound.playUnlockSoundEffect()
       hasPlayedUnlockSound = true
     }
@@ -218,7 +218,7 @@ const buttonRect = {
 
 /* 
 * 各个页面的绘制函数, PS: 使用命令对象代替switch语句
-* 都知道 `Swith` 不好， 冗长及不安全
+* 都知道 `Switch` 不好， 冗长及不安全
 */
 function showPage(name, context) {
   if (name == null) return
