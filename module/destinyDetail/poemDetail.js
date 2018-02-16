@@ -22,14 +22,14 @@ const buttonLeft =
   (Component.ScreenSize.width - UIKit.size.roundRectButtonWidth) / 2
 const buttonRect = {
   left: buttonLeft,
-  top: Component.ScreenSize.height * 0.9 - 50 - 128,
+  top: Component.ScreenSize.height * 0.9 - 50 - 178,
   width: UIKit.size.roundRectButtonWidth,
   height: UIKit.size.roundRectButtonHeight
 }
 
 const saveButtonRect = {
   left: buttonLeft,
-  top: Component.ScreenSize.height * 0.9 - 50,
+  top: Component.ScreenSize.height * 0.9 - 50 - 50,
   width: UIKit.size.roundRectButtonWidth,
   height: UIKit.size.roundRectButtonHeight
 }
@@ -40,7 +40,7 @@ export class PoemDetail {
   static saveButtonRect = saveButtonRect
 
   static savePoemImageToAlbum() {
-    if (destinyImage.src == '') wx.showToast({ title: '还没有生成图片' })
+    if (destinyImage.src === '') wx.showToast({ title: '还没有生成图片' })
     else Utils.saveImageToAlbum(destinyImage.src)
   }
 
@@ -51,7 +51,7 @@ export class PoemDetail {
       success: function(result) {
         console.log('fuck shit' + result.data)
         // 如果有本地缓存文件就校验是否是我们需要取的那一只
-        if (result.data.boxType == Global.currentBoxType && result.data.prodIndex == Global.prodInfo.index) 
+        if (result.data.boxType === Global.currentBoxType && result.data.prodIndex === Global.prodInfo.index)
           destinyImage.src = result.data.localPath
         // 如果不是就从新拉取并保存在本地
         else getLocalImageFromServer()
@@ -72,8 +72,8 @@ export class PoemDetail {
           destinyImage.src = localSrc
         },
         // 调用成功后的回调
-        complete: (isSuccsee) => {
-          if (isSuccsee == true) wx.hideLoading()
+        complete: (isSuccess) => {
+          if (isSuccess) wx.hideLoading()
           else wx.showToast({ title: '加载图片失败' })
         },
         // 接口调用失败重新拉取
@@ -93,7 +93,7 @@ export class PoemDetail {
     )
 
     Utils.drawText(context, {
-      text: 'Police had to trudge through two to three feet /nof debris to get to 94-year-old Robert Libby: soiled /nadult diapers, garbage and thousands of beer cans',
+      text: 'Police had to trudge through two to three feet /nof debris to get to 94-year-old Robert Libby: soiled /n adult diapers, garbage and thousands of beer cans',
       textColor: UIKit.color.title,
       centerY: destinyImageRect.top + destinyImageRect.height + 100,
       lineHeight: 35

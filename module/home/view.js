@@ -8,27 +8,27 @@ import { UIColor } from '../../common/uikit'
 import { Component } from '../../common/component'
 import { Utils } from '../../util/utils'
 
-let ScaneenSize = Component.ScreenSize
+let ScreenSize = Component.ScreenSize
 
 // UI 的参数
 let logoRect = {
-  left: (ScaneenSize.width - UIKit.size.logo) / 2,
-  top: (ScaneenSize.height - UIKit.size.logo) / 2 - 100,
+  left: (ScreenSize.width - UIKit.size.logo) / 2,
+  top: (ScreenSize.height - UIKit.size.logo) / 2 - 100,
   width: UIKit.size.logo,
   height: UIKit.size.logo
 }
 
-let buttonLeft = ScaneenSize.width * 0.2
-let buttonTop = ScaneenSize.height - 200
+let buttonLeft = ScreenSize.width * 0.2
+let buttonTop = ScreenSize.height - 200
 
 let redDotRect = {
   width: UIKit.size.redDot,
   height: UIKit.size.redDot,
-  left: (ScaneenSize.width - UIKit.size.redDot) / 2,
-  top: ScaneenSize.height - 175
+  left: (ScreenSize.width - UIKit.size.redDot) / 2,
+  top: ScreenSize.height - 175
 }
 
-var adaptingIPhoneXTop = 0
+let adaptingIPhoneXTop = 0
 // 适配 iPhoneX 的齐刘海
 Utils.isIPhoneX(function () {
   adaptingIPhoneXTop = 30
@@ -37,7 +37,7 @@ Utils.isIPhoneX(function () {
 let branchRect = {
   width: UIKit.size.branch,
   height: UIKit.size.branch,
-  left: ScaneenSize.width,
+  left: ScreenSize.width,
   top: 30 + adaptingIPhoneXTop
 }
 
@@ -50,7 +50,7 @@ let historyRect = {
 
 let destinyRect = {
   top: buttonTop,
-  left: ScaneenSize.width - buttonLeft - UIKit.size.buttonWidth,
+  left: ScreenSize.width - buttonLeft - UIKit.size.buttonWidth,
   width: UIKit.size.buttonWidth,
   height: UIKit.size.buttonHeight
 }
@@ -81,6 +81,7 @@ export class HomePage {
 
   // 画首页的布局和动画
   static draw(context) {
+    
     // 画 Logo 图
     Utils.drawCustomImage(context, logoImage, logoRect)
     // 画副标题

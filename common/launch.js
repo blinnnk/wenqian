@@ -13,7 +13,7 @@ export var Touch = {
   moveY: 0,
   lastY: 0,
   maxVerticalOffset: 0,
-  resetMoveY: () => { Touch.moveY = 0 }
+  resetMoveY() { Touch.moveY = 0 }
 }
 
 export var ProdHorizontalOffset = 0

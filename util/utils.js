@@ -5,39 +5,46 @@
 
 import { Interpolator } from '../util/animation'
 
-var moveX = 0
-var moveY = 0
-var moveValue = 0
-var gearValue = 0
 
-var startX = 0
-var startY = 0
+let moveX = 0
+let moveValue = 0
+let gearValue = 0
 
-var currentTouchX = 0
-var currentTouchY = 0
-var currentMoveX = 0
-var currentMoveY = 0
-var isClickEvent = false
+let startX = 0
+let startY = 0
 
-var degree = [0]
+let currentTouchX = 0
+let currentTouchY = 0
+let currentMoveX = 0
+let currentMoveY = 0
+let isClickEvent = false
+
+const degree = [0]
 // 陀螺仪的水平偏移度数
-var horizontalOffset = 0
-var buttonTextSize = 30
+let horizontalOffset = 0
+const buttonTextSize = 30
 
-var retryTimes = 3
-var isRetrying = false
+let retryTimes = 3
+let isRetrying = false
+
+const corner = {
+  topLeft: 1,
+  topRight: 2,
+  bottomLeft: 3,
+  bottomRight: 4
+}
 
 
 // 工具
 export class Utils {
 
   static convertTimeWithMillsecond(millsecond) {
-    var totalSecond = millsecond / 1000
-    var totalMinute = Math.floor(totalSecond / 60)
+    const totalSecond = millsecond / 1000
+    const totalMinute = Math.floor(totalSecond / 60)
 
-    var hour = Math.floor(totalMinute / 60)
-    var minute = totalMinute - hour * 60
-    var second = Math.floor(totalSecond - totalMinute * 60)
+    let hour = Math.floor(totalMinute / 60)
+    let minute = totalMinute - hour * 60
+    let second = Math.floor(totalSecond - totalMinute * 60)
 
     if (hour < 10) hour = '0' + hour
     if (minute < 10) minute = '0' + minute
@@ -66,41 +73,48 @@ export class Utils {
     context.lineWidth = strokeWidth
     context.lineCap = 'round'
 
-    var buttonHeight = 0
-    if (rect.height > radius * 2) buttonHeight = rect.height - radius * 2
+    let buttonHeight = 0
+    if (rect.height > radius * 2) buttonHeight = rect.height - radius * 2;
 
     /*
     * 这里重新修订了距离顶部的距离修复点击区域问题, 因为 `Radius` 偏移出去的高度不会
     * 计算为高度. 在 `Canvas` 里面接受区域预定的时候回出现偏移.
     */
-    var arcTop = rect.top - radius
-    for (var index = 0; index < 4; index++) {
 
-      var modulus = 0
-      if (index == 1 || index == 2) modulus = 1
+    [
+      corner.topLeft,
+      corner.topRight,
+      corner.bottomLeft,
+      corner.bottomRight
+    ].forEach(it => {
+
+      let modulus = 0
+      if (it === corner.topLeft || it === corner.topRight) modulus = 1
       else modulus = 0
 
-      var heightModulus = 0
-      if (index == 2 || index == 3) heightModulus = 1
+      let heightModulus = 0
+      if (it === corner.topRight || it === corner.bottomLeft) heightModulus = 1
       else heightModulus = 0
 
       context.arc(
         rect.left + rect.width * modulus,
-        arcTop + buttonHeight * heightModulus + radius,
+        rect.top + buttonHeight * heightModulus + radius,
         radius,
-        convertAngel(180 + 90 * index),
-        convertAngel(180 + 90 * (index + 1)),
+        convertAngel(180 + 90 * it),
+        convertAngel(180 + 90 * (it + 1)),
         false
       )
-    }
+    })
+
     context.closePath()
     context.stroke()
     context.restore()
-    
+
     Utils.drawText(context, {
       text: text,
       textColor: strokeColor,
-      centerY: rect.top + (buttonHeight + radius - buttonTextSize) / 2 - strokeWidth,
+      centerY:
+        rect.top + (buttonHeight + radius - buttonTextSize) / 2 - strokeWidth + radius,
       lineHeight: 0,
       textSize: '' + buttonTextSize + '',
       isBold: true
@@ -125,7 +139,7 @@ export class Utils {
       false
     )
     context.closePath()
-    param.strokeWidth == null ? context.fill() : 
+    param.strokeWidth == null ? context.fill() :
     (() => {
       context.lineCap = 'round'
       context.lineWidth = param.strokeWidth
@@ -138,9 +152,9 @@ export class Utils {
   static addCompassListener(callback) {
     wx.onCompassChange((value) => {
       degree.push(value.direction)
-      if (degree.length == 3) degree.splice(0, 1)
-      var calculateValue = degree[1] - degree[0]
-      if (degree[0] != 0) horizontalOffset += calculateValue
+      if (degree.length === 3) degree.splice(0, 1)
+      const calculateValue = degree[1] - degree[0]
+      if (degree[0] !== 0) horizontalOffset += calculateValue
       if (typeof callback === 'function') callback(horizontalOffset)
     })
   }
@@ -164,10 +178,10 @@ export class Utils {
 
     wx.onTouchEnd((event) => {
       if (
-        Math.abs(currentMoveX) < 2 ||
-        Math.abs(currentMoveY) < 2 ||
-        currentMoveX == 0 ||
-        currentMoveY == 0
+        Math.abs(currentMoveX) < 2
+        || Math.abs(currentMoveY) < 2
+        || currentMoveX === 0
+        || currentMoveY === 0
       ) {
         isClickEvent = true
       }
@@ -225,7 +239,7 @@ export class Utils {
     maxMoveDistance,
     callback
   ) {
-    var accelerateValue =
+    const accelerateValue =
       Interpolator.accelerateInterpolator(speed, maxMoveDistance)
     context.drawImage(
       image,
@@ -234,7 +248,7 @@ export class Utils {
       rect.width,
       rect.height
     )
-    if (accelerateValue == maxMoveDistance) {
+    if (accelerateValue === maxMoveDistance) {
       if (typeof callback === 'function') callback()
     }
   }
@@ -247,7 +261,7 @@ export class Utils {
     maxMoveDistance,
     callback
   ) {
-    var accelerateValue =
+    const accelerateValue =
       Interpolator.accelerateInterpolator(speed, maxMoveDistance)
     context.drawImage(
       image,
@@ -256,7 +270,7 @@ export class Utils {
       rect.width,
       rect.height
     )
-    if (accelerateValue == maxMoveDistance) {
+    if (accelerateValue === maxMoveDistance) {
       if (typeof callback === 'function') callback()
     }
   }
@@ -286,12 +300,12 @@ export class Utils {
 
   // Canvas 点击事件
   static onClick(rect, callback) {
-    if (isClickEvent == false) return
+    if (isClickEvent === false) return
     checkRectContainsPointOrElse(currentTouchX, currentTouchY, rect, callback)
   }
 
   static eraseTouchEvent(...rectArguments) {
-    for (var index in rectArguments) {
+    for (let index in rectArguments) {
       checkRectContainsPointOrElse(
         currentTouchX,
         currentTouchY,
@@ -305,22 +319,22 @@ export class Utils {
   static drawText(context, param = {
     text: String,
     textColor: String,
-    centerY: 0,
-    lineHeight: 0,
-    textSize: 0,
+    centerY: null,
+    lineHeight: null,
+    textSize: null,
     isBold: Boolean
   }) {
-    param.isBold = param.isBold == true ? 'bold' : ''
+    param.isBold = param.isBold ? 'bold' : ''
     param.textSize = param.textSize == null ? '24px' : param.textSize
     param.centerY = param.centerY == null ? 0 : param.centerY
     param.lineHeight = param.lineHeight == null ? 0 : param.lineHeight
-    
+
     context.fillStyle = param.textColor
     context.font = param.isBold + param.textSize + ' Avenir-Book'
     context.textBaseline = 'middle'
     context.textAlign = 'center'
     let newText = param.text.split('/n')
-    for (var index in newText) {
+    for (const index in newText) {
       context.fillText(
         newText[index],
         context.canvas.width / 2,
@@ -330,10 +344,9 @@ export class Utils {
   }
 
   static isIPhoneX(callback) {
-    var isIPhoneX = false
     wx.getSystemInfo({
       success: (res) => {
-        if (res.model.indexOf('iPhone X') != -1) {
+        if (res.model.indexOf('iPhone X') !== -1) {
           if (typeof callback === 'function') callback()
         }
       }
@@ -341,7 +354,7 @@ export class Utils {
   }
 
   static touchMoveXDistance(param = { onMoving: Function, onEnd: Function }) {
-    var distance = { x: 0, y: 0 }
+    const distance = {x: 0, y: 0}
     wx.onTouchStart((event) => {
       startX = event.touches[0].clientX
       startY = event.touches[0].clientY
@@ -363,17 +376,17 @@ export class Utils {
   // 利用 JavaScript ES6 的新特性实现的顺序执行函数
   static sequentialExecution(param = { early: Function, later: Function, final: Function }) {
     function step1(resolve, reject) {
-      if (typeof param.early === 'function') 
+      if (typeof param.early === 'function')
         param.early(hasFinished => resolve('finish'))
     }
 
     function step2(resolve, reject) {
-      if (typeof param.later === 'function') 
+      if (typeof param.later === 'function')
         param.later(hasFinished => resolve('finish'))
     }
 
     function step3(resolve, reject) {
-      if (typeof param.final === 'function') 
+      if (typeof param.final === 'function')
         param.final(hasFinished => resolve('finish'))
     }
     // 用 `Promise` 函数特性严格切分时机
@@ -391,7 +404,7 @@ export class Utils {
   }
 
   static retry(callback) {
-    if (isRetrying == true) return
+    if (isRetrying) return
     let retry = setInterval(() => {
       isRetrying = true
       retryTimes -= 1
@@ -410,7 +423,7 @@ export class Utils {
   }
 
   static drawSingleText(
-    context, 
+    context,
     param = {
     text: String,
     color: String,
@@ -434,28 +447,34 @@ export class Utils {
     param.maxWidth = param.maxWidth == null ? context.canvas.width : param.maxWidth
     param.lineSpace = param.lineSpace == null ? 0 : param.lineSpace
     param.textSpace = param.textSpace == null ? 0 : param.textSpace
-    var currentRowTop = 0
-    var currentRowWidth = 0
+    let currentRowTop = 0
+    let currentRowWidth = 0
 
     // 如果在绘制前提前计算好每个字的宽度传对象进这个方法会节省性能
     if (param.textMeasuredWidth == null) {
-      param.textMeasuredWidth =  
+      param.textMeasuredWidth =
         Utils.measureEachText(context, param.text, param.textSize, param.font)
     }
 
-    for (var index in param.text) {
-      context.fillText(param.text[index], param.left + currentRowWidth, param.top + currentRowTop)
-      if (currentRowWidth >= param.maxWidth - param.textSize) {
-        currentRowTop += param.textSize + param.lineSpace
-        currentRowWidth = 0
-      } else {
-        currentRowWidth += param.textMeasuredWidth[index] + param.textSpace
+    for (let item in param.text) {
+      if (param.text.hasOwnProperty(item)) {
+        context.fillText(
+          param.text[item],
+          param.left + currentRowWidth,
+          param.top + currentRowTop
+        )
+        if (currentRowWidth >= param.maxWidth - param.textSize) {
+          currentRowTop += param.textSize + param.lineSpace
+          currentRowWidth = 0
+        } else {
+          currentRowWidth += param.textMeasuredWidth[item] + param.textSpace
+        }
+
+        if (item == param.text.lastIndex()) {
+          if (typeof param.getTotalHeight === 'function')
+            param.getTotalHeight(currentRowTop + param.textSize)
+        }
       }
-      
-      if (index == param.text.length - 1) {
-        if (typeof param.getTotalHeight === 'function') 
-          param.getTotalHeight(currentRowTop + param.textSize)
-      }  
     }
   }
 
@@ -483,8 +502,8 @@ export class Utils {
     param.maxHeight = param.maxHeight == null ? context.canvas.width : param.maxHeight
     param.lineSpace = param.lineSpace == null ? 0 : param.lineSpace
     param.textSpace = param.textSpace == null ? 0 : param.textSpace
-    var currentRowTop = 0
-    var currentRowWidth = 0
+    let currentRowTop = 0
+    let currentRowWidth = 0
 
     // 如果在绘制前提前计算好每个字的宽度传对象进这个方法会节省性能
     if (param.textMeasuredWidth == null) {
@@ -492,58 +511,65 @@ export class Utils {
         Utils.measureEachText(context, param.text, param.textSize, param.font)
     }
 
-    for (var index in param.text) {
-      context.fillText(param.text[index], param.left + currentRowWidth, param.top + currentRowTop)
-      if (currentRowTop >= param.maxHeight - param.textSize) {
-        currentRowWidth += param.textMeasuredWidth[index] + param.textSpace
-        currentRowTop = 0
-      } else {
-        currentRowTop += param.textSize + param.lineSpace
+    for (const item in param.text) {
+      if (param.text.hasOwnProperty(item)) {
+        context.fillText(
+          param.text[item],
+          param.left + currentRowWidth,
+          param.top + currentRowTop
+        )
+        if (currentRowTop >= param.maxHeight - param.textSize) {
+          currentRowWidth += param.textMeasuredWidth[item] + param.textSpace
+          currentRowTop = 0
+        } else {
+          currentRowTop += param.textSize + param.lineSpace
+        }
       }
+
     }
   }
 
   static measureEachText(context, text, textSize, font) {
     const array = []
     context.font = textSize + 'px' + font
-    for (var index in text) {
+    for (const index in text) {
       array.push(context.measureText(text[index]).width)
     }
     return array
   }
 
   static convertNumberToChineseCharacters(numbers) {
-    var chacactersArray = []
-    var stringNumber = Utils.toString(numbers)
-    for (var index in stringNumber) {
-      var current = Utils.convertSingleNumberToChacater(stringNumber[index])
-      if (stringNumber.length >= 2) { 
-        if (stringNumber[index] == 0) {
-          if (index != stringNumber.length - 1) current = '零'
+    const charactersArray = []
+    const stringNumber = Utils.toString(numbers)
+    for (let index in stringNumber) {
+      let current = Utils.convertSingleNumberToCharacter(stringNumber[index])
+      if (stringNumber.length >= 2) {
+        if (stringNumber[index] === 0) {
+          if (index !== stringNumber.lastIndex()) current = '零'
           else current = '拾'
         }
       }
-      chacactersArray.push(current)
+      charactersArray.push(current)
     }
 
-    if (stringNumber.length == 2) chacactersArray.splice(1, 0, '拾')
+    if (stringNumber.length === 2) charactersArray.splice(1, 0, '拾')
 
-    if (stringNumber.length == 3) {
-      chacactersArray.splice(1, 0, '佰')
-      if (stringNumber[stringNumber.length - 2] != 0) 
-        chacactersArray.splice(3, 0, '拾')
+    if (stringNumber.length === 3) {
+      charactersArray.splice(1, 0, '佰')
+      if (stringNumber[stringNumber.length - 2] !== 0)
+        charactersArray.splice(3, 0, '拾')
       removeLastZero(stringNumber)
     }
 
     function removeLastZero(array) {
-      if (array[array.length - 1] == 0)  chacactersArray.pop()
+      if (array.last() === 0)  charactersArray.pop()
     }
 
-    return chacactersArray.join('')
+    return charactersArray.join('')
   }
 
-  static convertSingleNumberToChacater(number) {
-    var numbers = {
+  static convertSingleNumberToCharacter(number) {
+    const numbers = {
       1: '壹',
       2: '贰',
       3: '叁',
@@ -566,10 +592,10 @@ export class Utils {
 
 function checkRectContainsPointOrElse(x, y, rect, callback) {
   if (
-    x > rect.left &&
-    x < rect.left + rect.width &&
-    y > rect.top &&
-    y < rect.top + rect.height
+    x > rect.left
+    && x < rect.left + rect.width
+    && y > rect.top
+    && y < rect.top + rect.height
   ) {
     // 回调事件
     if (typeof callback === 'function') {
@@ -580,7 +606,7 @@ function checkRectContainsPointOrElse(x, y, rect, callback) {
       isClickEvent = false
     }
   }
-  
+
 }
 
 function convertAngel(degrees) {

@@ -18,25 +18,25 @@ let leafSrc =
     UIKit.imageSrc.leaf,
     UIKit.imageSrc.leaf1
   ]
-var leafY = 0
-var leafX = 0
+let leafY = 0
+let leafX = 0
 let fallingLeafCount = 5
 
-var myTempID = null
+let myTempID = null
 
 // 摇晃判断
-var accelerometerX = [0]
-var accelerometerY = [0]
-var accelerometerZ = [0]
-var isShakingPhone = false
+const accelerometerX = [0]
+const accelerometerY = [0]
+const accelerometerZ = [0]
+let isShakingPhone = false
 
 const Canvas = wx.createCanvas()
 const context = Canvas.getContext('2d')
 
-var isDone = false
+let isDone = false
 
 // 适配 iPhoneX 的齐刘海
-var adaptingIPhoneXTop = 0
+let adaptingIPhoneXTop = 0
 Utils.isIPhoneX(function () {
   adaptingIPhoneXTop = 30
 })
@@ -53,40 +53,38 @@ const backImage = Utils.Image(UIKit.imageSrc.back)
 // 通用组件方法
 export class Component {
 
-  static Canvas = Canvas
   static context = context
 
   static isShakingPhone(param = { onShaking: Function, onEnd: Function }) {
+    // 默认关闭加速监听, 使用前需要打开一次
+    wx.stopAccelerometer()
     wx.onAccelerometerChange((value) => {
       accelerometerX.push(value.x)
       accelerometerY.push(value.y)
       accelerometerZ.push(value.z)
-      if (accelerometerX.length == 3) accelerometerX.splice(0, 1)
-      if (accelerometerY.length == 3) accelerometerY.splice(0, 1)
-      if (accelerometerZ.length == 3) accelerometerZ.splice(0, 1)
+      if (accelerometerX.length === 3) accelerometerX.splice(0, 1)
+      if (accelerometerY.length === 3) accelerometerY.splice(0, 1)
+      if (accelerometerZ.length === 3) accelerometerZ.splice(0, 1)
 
       // 判断 X轴方向 用户开始主观加速移动
-      var accelerMeterXValue =
-        accelerometerX[0] != 0 && Math.abs(accelerometerX[1] - accelerometerX[0]) > 1 ?
-          accelerometerX[1] - accelerometerX[0] : 0
+      const accelerateMeterXValue =
+        accelerometerX[0] !== 0 && Math.abs(accelerometerX[1] - accelerometerX[0]) > 1 ? accelerometerX[1] - accelerometerX[0] : 0
 
       // 判断 X轴方向 用户开始主观加速移动
-      var accelerMeterYValue =
-        accelerometerY[0] != 0 && Math.abs(accelerometerY[1] - accelerometerY[0]) > 1 ?
-          accelerometerY[1] - accelerometerY[0] : 0
+      const accelerateMeterYValue =
+        accelerometerY[0] !== 0 && Math.abs(accelerometerY[1] - accelerometerY[0]) > 1 ? accelerometerY[1] - accelerometerY[0] : 0
 
       // 判断 X轴方向 用户开始主观加速移动
-      var accelerMeterZValue =
-        accelerometerZ[0] != 0 && Math.abs(accelerometerZ[1] - accelerometerZ[0]) > 1 ?
-          accelerometerZ[1] - accelerometerZ[0] : 0
+      const accelerateMeterZValue =
+        accelerometerZ[0] !== 0 && Math.abs(accelerometerZ[1] - accelerometerZ[0]) > 1 ? accelerometerZ[1] - accelerometerZ[0] : 0
 
-      if (accelerMeterXValue * accelerMeterYValue * accelerMeterZValue != 0) {
+      if (accelerateMeterXValue * accelerateMeterYValue * accelerateMeterZValue !== 0) {
         isShakingPhone = true
         if (typeof param.onShaking === 'function') param.onShaking()
       } else {
         if (
-          isShakingPhone == true &&
-          Math.abs(value.x) + Math.abs(value.y) + Math.abs(value.z) < 1.5
+          isShakingPhone 
+          && Math.abs(value.x) + Math.abs(value.y) + Math.abs(value.z) < 1.5
         ) {
           if (typeof param.onEnd === 'function') {
             param.onEnd()
@@ -121,7 +119,7 @@ export class Component {
 
   // 画落叶的函数
   static fallingLeaf(context) {
-    for (var index = 0; index < fallingLeafCount; index++) {
+    for (let index = 0; index < fallingLeafCount; index++) {
       const leafImage = wx.createImage()
       leafY += 1
       // X轴的动画算法
@@ -148,7 +146,7 @@ export class Component {
 
   // 画背景的方法
   static drawBackground(context) {
-    var gradient =
+    const gradient =
       context.createLinearGradient(0, 0, context.canvas.width, context.canvas.height)
     gradient.addColorStop(0, '#d8cec5')
     gradient.addColorStop(0.5, '#faf7f3')
@@ -161,14 +159,14 @@ export class Component {
   static getUserAgent(holdResponse) {
     // 初次设定 TempID
     const setTempID = (hasRequired) => {
-      if (hasRequired == true) wx.setStorage({ key: 'tempID', data: myTempID })
+      if (hasRequired) wx.setStorage({ key: 'tempID', data: myTempID })
     }
     /*
     * 从微信获取唯一的标识 - 这个 code 是临时的这里通过方
     * 法制作成唯一的会随着清理缓存而消失.
     */
-    var initTempID = () => {
-      var hasRequired = false
+    const initTempID = () => {
+      let hasRequired = false
       if (myTempID == null) {
         wx.login({
           success: (result) => {
@@ -218,11 +216,11 @@ export class Component {
     }) 
   }
 
-  static drawWaitting(param = {
+  static drawWaiting(param = {
     percent: String, 
     complete: Function
   }) {
-    if (isDone == true) return
+    if (isDone) return
     // 画进度
     context.clearRect(0, 0, Component.ScreenSize.width, Component.ScreenSize.height)
     Utils.drawText(context, {
@@ -231,7 +229,7 @@ export class Component {
       centerY: Component.ScreenSize.height / 2
     })
 
-    if (param.percent == '100.00%') {
+    if (param.percent === '100.00%') {
       isDone = true
       if (typeof param.complete === 'function') param.complete()
     }

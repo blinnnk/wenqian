@@ -1,10 +1,22 @@
 /*
 * @author KaySaith
 * @date 2018-02-12
-* @description 挂在到全局的函数, 这里主要放置扩展类函数为主
+* @description 挂载到全局的函数, 这里主要放置扩展类函数为主
 */
 
 (() => {
+
+  /*—————— String Extension ——————*/
+
+  String.prototype.lastIndex = function () {
+    if (this.length < 0) return
+    return this.length - 1
+  }
+
+  String.prototype.last = function () {
+    if (this.length < 0) return
+    return this[this.length - 1]
+  }
 
   /*—————— Array Extension ——————*/
 

@@ -3,8 +3,8 @@
 * @date 2018-02-05
 */
 
-var accelerateValue = 0
-var speedValue = 0
+let accelerateValue = 0
+let speedValue = 0
 
 export class Interpolator {
   // 初始化数值

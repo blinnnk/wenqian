@@ -1,3 +1,5 @@
+
+
 /*
 * @author KaySaith
 * @date 2018-02-11
@@ -27,7 +29,7 @@ const dotTop = typeImageRect.top + typeImageRect.height + 30
 const dotLeft = typeImageRect.left + typeImageRect.width / 2
 const prodIndexLeft = typeImageRect.left + (typeImageRect.width - UIKit.textSize.title) / 2
 
-var model
+let model
 
 export class Explanation {
 
@@ -35,7 +37,7 @@ export class Explanation {
 
     Component.addBackButton(context)
     Utils.drawCustomImage(context, typeImage, typeImageRect)
-    if (Global.currentBoxType == Global.BoxType.guanYin) 
+    if (Global.currentBoxType === Global.BoxType.guanYin)
       typeImage.src = UIKit.imageSrc.guanYinType
     else typeImage.src = UIKit.imageSrc.zhouGongType
 
@@ -58,10 +60,10 @@ export class Explanation {
     }) 
 
     if (Presenter.content == null) return
-    var contentTotalHeight = contentTop
+    let contentTotalHeight = contentTop
     // 画所有段落
-    for (var index in Presenter.content) {
-      model = Model(Presenter.content[index])
+    Presenter.content.forEach (item => {
+      model = Model(item)
       // 画标题
       Utils.drawSingleText(context, {
         text: model.title,
@@ -95,12 +97,12 @@ export class Explanation {
         }
       }) 
 
-      if (index == Presenter.content.lastIndex()) {
+      if (item === Presenter.content.last()) {
         // 这个值传出去用来控制手指上下滚动事件边界的限制
         if (typeof getContentHeight === 'function') 
           getContentHeight(contentTotalHeight)
       }
-    }
+    })
   }
   // 更新数据内容
   static updateContent() {
