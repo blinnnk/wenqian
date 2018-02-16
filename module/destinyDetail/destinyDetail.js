@@ -7,10 +7,12 @@ import { UIKit } from '../../common/uikit'
 import { Global } from '../../common/global'
 import { Component } from '../../common/component'
 import { Utils } from '../../util/utils'
+import { Image } from '../../common/element'
 
-const guanYinBox = wx.createImage()
+
+const guanYinBox = Image()
 const guanYinBoxBackground = Utils.Image(UIKit.imageSrc.guanYinBoxBackground)
-const zhouGongBox = wx.createImage()
+const zhouGongBox = Image()
 const zhouGongBoxBackground = Utils.Image(UIKit.imageSrc.zhouGongBoxBackground)
 
 const boxRect = {
@@ -99,13 +101,13 @@ export class DestinyDetail {
   }
 }
 
-function drawProds(context, offset, imageSrc) {
+function drawProds(context, offset) {
   if (Math.abs(offset) > 20) {
     if (offset > 0) offset = 20
     else if (offset < 0) offset = -20
   }
   for (let index = 0; index < 10; index++) {
-    const prodImage = wx.createImage()
+    const prodImage = Image()
     prodImage.src = Global.serverImages.prod
     prodRect.left = randomLeft[index] - offset
 

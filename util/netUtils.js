@@ -31,15 +31,13 @@ export class NetUtils {
   * 解析 `Api Url` 返回一个可用的 `Json` 值
   * 目前这个方法和问签的业务耦合比较大不适合转移到不同的项目
   */
-  static getResultWithApi(
-    param = { 
-      url: String, 
-      response: Function, 
-      apiParameters: Object,
-      fail: Function, 
-      complete: Function
-    }
-  ) {
+  static getResultWithApi(param = {
+    url: String,
+    response: Function,
+    apiParameters: Object,
+    fail: Function,
+    complete: Function
+  }) {
     let isSuccess = false
     wx.request({
       url: param.url,
@@ -47,10 +45,8 @@ export class NetUtils {
       header: { 'X-Lot-Token': Global.userAgent.token},
       success: (result) => {
         isSuccess = true
-        if (typeof param.response === "function") {
-          // 这里的 `key` 值暂时写死了 `image`
-          param.response(result)
-        }
+        // 这里的 `key` 值暂时写死了 `image`
+        if (typeof param.response === "function") param.response(result)
       },
       complete: () => { if (typeof param.complete === 'function') param.complete(isSuccess) },
       fail: () => { if (typeof param.fail === 'function') param.fail() }

@@ -8,8 +8,10 @@ import { Global } from '../../common/global'
 import { Utils } from '../../util/utils'
 import { Component } from '../../common/component'
 import { Touch } from '../../common/launch'
+import { Image } from '../../common/element'
 
-const godnessHeaderImage = wx.createImage()
+
+const godnessHeaderImage = Image()
 const godnessHeaderImageLeft = 350
 const godnessHeaderImageRect = {
   left: godnessHeaderImageLeft,
@@ -18,7 +20,7 @@ const godnessHeaderImageRect = {
   height: 1024
 }
 
-const godnessImage = wx.createImage()
+const godnessImage = Image()
 const godnessImageLeft = godnessHeaderImageLeft + 800
 const godnessImageRect = {
   left: godnessImageLeft,

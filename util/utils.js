@@ -4,6 +4,7 @@
 */
 
 import { Interpolator } from '../util/animation'
+import { Rect } from '../common/element'
 
 
 let moveX = 0
@@ -67,14 +68,20 @@ export class Utils {
   * [strokeWidth] Stroke 的宽度
   * 圆角矩形会是全圆角矩形, 高度就是 radius * 2
   */
-  static drawRoundRect(context, strokeWidth, rect, radius, strokeColor, text) {
+  static drawRoundRect(context, param = {
+    strokeWidth: Number,
+    rect: Rect,
+    radius: Number,
+    strokeColor: String,
+    text: String
+  }) {
     context.beginPath()
-    context.strokeStyle = strokeColor
-    context.lineWidth = strokeWidth
+    context.strokeStyle = param.strokeColor
+    context.lineWidth = param.strokeWidth
     context.lineCap = 'round'
 
     let buttonHeight = 0
-    if (rect.height > radius * 2) buttonHeight = rect.height - radius * 2;
+    if (param.rect.height > param.radius * 2) buttonHeight = param.rect.height - param.radius * 2;
 
     /*
     * 这里重新修订了距离顶部的距离修复点击区域问题, 因为 `Radius` 偏移出去的高度不会
@@ -97,9 +104,9 @@ export class Utils {
       else heightModulus = 0
 
       context.arc(
-        rect.left + rect.width * modulus,
-        rect.top + buttonHeight * heightModulus + radius,
-        radius,
+        param.rect.left + param.rect.width * modulus,
+        param.rect.top + buttonHeight * heightModulus + param.radius,
+        param.radius,
         convertAngel(180 + 90 * it),
         convertAngel(180 + 90 * (it + 1)),
         false
@@ -111,10 +118,10 @@ export class Utils {
     context.restore()
 
     Utils.drawText(context, {
-      text: text,
-      textColor: strokeColor,
+      text: param.text,
+      textColor: param.strokeColor,
       centerY:
-        rect.top + (buttonHeight + radius - buttonTextSize) / 2 - strokeWidth + radius,
+      param.rect.top + (buttonHeight + param.radius - buttonTextSize) / 2 - param.strokeWidth + param.radius,
       lineHeight: 0,
       textSize: '' + buttonTextSize + '',
       isBold: true
@@ -123,8 +130,8 @@ export class Utils {
 
   static drawRound(context, param = {
     color: String,
-    rect: {},
-    radius: 0,
+    rect: Rect,
+    radius: Number,
     strokeWidth: null
   }) {
     context.beginPath()
@@ -418,6 +425,7 @@ export class Utils {
         isRetrying = false
         retryTimes = 3
       }
+      // 这个打印要长期保留, 出现网络问题需要随时定位到这里 by KaySaith
       console.log(retryTimes + 'retry')
     }, 3000)
   }
@@ -428,13 +436,13 @@ export class Utils {
     text: String,
     color: String,
     font: String,
-    lineSpace: null,
-    textSpace: null,
-    textSize: null,
-    maxWidth: null,
-    left: 0,
-    top: 0,
-    textMeasuredWidth: null,
+    lineSpace: Number,
+    textSpace: Number,
+    textSize: Number,
+    maxWidth: Number,
+    left: Number,
+    top: Number,
+    textMeasuredWidth: Array,
     getTotalHeight: Function,
     }
   ) {
@@ -484,13 +492,13 @@ export class Utils {
       text: String,
       color: String,
       font: String,
-      lineSpace: null,
-      textSpace: null,
-      textSize: null,
-      maxHeight: null,
-      left: 0,
-      top: 0,
-      textMeasuredWidth: null
+      lineSpace: Number,
+      textSpace: Number,
+      textSize: Number,
+      maxHeight: Number,
+      left: Number,
+      top: Number,
+      textMeasuredWidth: Array
     }
   ) {
 

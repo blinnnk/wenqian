@@ -8,6 +8,7 @@ import { Global } from 'global'
 import { Utils } from '../util/utils'
 import { NetUtils } from '../util/netUtils'
 import { Api } from '../common/api'
+import { Image } from '../common/element'
 
 // 落叶动画用到的参数
 let leafSrc =
@@ -118,7 +119,7 @@ export class Component {
   // 画落叶的函数
   static fallingLeaf(context) {
     for (let index = 0; index < fallingLeafCount; index++) {
-      const leafImage = wx.createImage()
+      const leafImage = Image()
       leafY += 1
       // X轴的动画算法
       leafX = context.canvas.width / 2 * (1.75 - index % 2) *

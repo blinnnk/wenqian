@@ -6,6 +6,8 @@
 
 (() => {
 
+
+
   /*—————— String Extension ——————*/
 
   String.prototype.lastIndex = function () {

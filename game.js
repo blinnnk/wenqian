@@ -17,7 +17,7 @@ import { DestinyPage } from 'module/destiny/view'
 import { Explanation } from 'module/explanation/view'
 import { DestinyDetail } from 'module/destinyDetail/destinyDetail'
 import { ProdDetail } from 'module/destinyDetail/prodDetail'
-import { PoemDetail } from 'module/destinyDetail/poemDetail'
+import { PoemDetail } from 'module/poemDetail/view'
 import { History } from 'module/history/view'
 import { Interpolator } from 'util/animation'
 import { Touch, ProdHorizontalOffset } from 'common/launch'
@@ -117,18 +117,18 @@ function clickToLoadPage(clickRect, targetPageName) {
     event.condition({
       current: PageName.prodDetail,
       target: PageName.poemDetail,
-      do: PoemDetail.getPoemImage
+      do: PoemDetail.updatePoemImage
     })
     // 拉取解签的内容
     event.condition({
       target: PageName.explanationDetail,
-      do: () => Explanation.updateContent()
+      do: Explanation.updateContent
     })
     // 点击保存按钮把签语图片保存到本地相册
     event.condition({
       current: PageName.poemDetail,
       target: PageName.poemDetail,
-      do: () => PoemDetail.savePoemImageToAlbum()
+      do: PoemDetail.savePoemImageToAlbum
     })
     // 每次进入选签筒的界面需要先校验是否更新冷却时间的状态
     event.condition({
