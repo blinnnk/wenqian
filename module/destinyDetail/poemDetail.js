@@ -8,7 +8,7 @@ import { Global } from '../../common/global'
 import { Component } from '../../common/component'
 import { Utils } from '../../util/utils'
 import { NetUtils } from '../../util/netUtils'
-import { Api } from '../../common/api'
+
 
 const destinyImage = wx.createImage()
 const destinyImageRect = {
@@ -49,17 +49,18 @@ export class PoemDetail {
     wx.getStorage({
       key: 'prodImage',
       success: function(result) {
-        console.log('fuck shit' + result.data)
         // 如果有本地缓存文件就校验是否是我们需要取的那一只
-        if (result.data.boxType === Global.currentBoxType && result.data.prodIndex === Global.prodInfo.index)
+        if (
+          result.data.boxType === Global.currentBoxType
+          && result.data.prodIndex === Global.prodInfo.index
+        )
           destinyImage.src = result.data.localPath
         // 如果不是就从新拉取并保存在本地
         else getLocalImageFromServer()
       },
-      fail: () => getLocalImageFromServer()
+      fail: () => Utils.retry(getLocalImageFromServer)
     })
     function getLocalImageFromServer() {
-      console.log('hey baby')
       // 显示 Loading
       wx.showLoading({ title: '正在生成签语' })
       NetUtils.downloadFile({

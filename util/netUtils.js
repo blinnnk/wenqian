@@ -35,7 +35,7 @@ export class NetUtils {
     param = { 
       url: String, 
       response: Function, 
-      apiParameters: {},
+      apiParameters: Object,
       fail: Function, 
       complete: Function
     }

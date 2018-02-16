@@ -4,7 +4,6 @@
 */
 
 import { UIKit } from '../../common/uikit'
-import { UIColor } from '../../common/uikit'
 import { Component } from '../../common/component'
 import { Utils } from '../../util/utils'
 

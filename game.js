@@ -7,7 +7,7 @@ import 'common/extension'
 import 'common/launch'
 import Music from 'util/music'
 import { Controller } from 'util/controller'
-import { PageName} from 'common/uikit'
+import { PageName } from 'common/uikit'
 import { Global } from 'common/global'
 import { Component } from 'common/component'
 import { Utils } from 'util/utils'
@@ -37,11 +37,10 @@ Utils.sequentialExecution({
   // 主界面的刷新帧的控制器, 时机切开是保证界面显示的时候百分百有 `token` 及相关信息
   later: () => {
     /*
-    * 刷新界面签先判断是否需要更新网络图片. 因为小游戏的大小限制, 把占空间的图片都挪到了网上
+    * 刷新界面先判断是否需要更新网络图片. 因为小游戏的大小限制, 把占空间的图片都挪到了网上
     * 为了好的体验，如判断需要更新图片后, 这步会模仿游戏使用阻断式强制更新.
     */
     NetUtils.getLocalImageFromServer({
-      localObject: History.images,
       holdImages: (images) => Global.serverImages = images,
       // 更新网络资源并在界面显示当前下载的进度
       downloadListener: (percent) => 
@@ -72,8 +71,6 @@ Component.isShakingPhone({
         // 顺序执行刷新界面的方式
         Utils.sequentialExecution({
           early: (hasFinished) => ProdDetail.getProdInfo(() => {
-            // 这个打印正在排查一个罕见的数据拉取问题暂时保留 - @KaySaith
-            console.log('hi finish get prod info')
             resetGeneralParameters()
             hasFinished()
           }),
@@ -118,7 +115,7 @@ function clickToLoadPage(clickRect, targetPageName) {
     )
     // 加载签语网络图片并显示
     event.condition({
-      current: PageName.prodDetai,
+      current: PageName.prodDetail,
       target: PageName.poemDetail,
       do: PoemDetail.getPoemImage
     })
@@ -178,7 +175,7 @@ let hasPlayedUnlockSound = false
 
 // 使用限制设定开关点击事件
 function setBlockStatus(isBlocking) {
-  if (isBlocking === true) {
+  if (isBlocking) {
     hasPlayedUnlockSound = false
     // 关闭点击事件的区域
     buttonRect.guanYin = 0

@@ -56,8 +56,6 @@ export class Component {
   static context = context
 
   static isShakingPhone(param = { onShaking: Function, onEnd: Function }) {
-    // 默认关闭加速监听, 使用前需要打开一次
-    wx.stopAccelerometer()
     wx.onAccelerometerChange((value) => {
       accelerometerX.push(value.x)
       accelerometerY.push(value.y)
