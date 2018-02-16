@@ -4,8 +4,7 @@
 */
 
 import { Interpolator } from '../util/animation'
-import { Rect } from '../common/element'
-
+import { Rect, Image } from '../common/element'
 
 let moveX = 0
 let moveValue = 0
@@ -38,6 +37,54 @@ const corner = {
 
 // 工具
 export class Utils {
+
+  static getLocalImageByDrawingContent(param = {
+    key: String,
+    onDraw: Function,
+    holdInfo: Function,
+    isSmallImage: Boolean
+  }) {
+    param.isSmallImage = param.isSmallImage != null
+    // 先从本地缓存取
+    wx.getStorage({
+      key: param.key,
+      success: function(result) {
+        if (typeof param.holdInfo === 'function')
+          param.holdInfo(result.data)
+      },
+      fail: draContentAsImage
+    })
+
+    // 如果取不到就画
+    function draContentAsImage() {
+      const offScreenCanvas = wx.createCanvas()
+      offScreenCanvas.width = offScreenCanvas.width * 2
+      offScreenCanvas.height = offScreenCanvas.height * 2
+      const offScreenContext = offScreenCanvas.getContext('2d')
+      if (typeof param.onDraw === 'function') {
+        let destScale = param.isSmallImage === true ? 0.5 : 1
+        param.onDraw(offScreenContext, (rect) => {
+          let tempFilePath = offScreenCanvas.toTempFilePathSync({
+            x: rect.left,
+            y: rect.top,
+            width: rect.width,
+            height: rect.height,
+            destWidth: rect.width,
+            destHeight: rect.height * destScale
+          })
+          const info =  { path: tempFilePath, width: rect.width, height: rect.height }
+          // 画好后存到本地缓存
+          wx.setStorage({
+            key: param.key,
+            data: info,
+          })
+          // 返回本地缓存路径
+          if (typeof param.holdInfo === 'function')
+            param.holdInfo(info)
+        })
+      }
+    }
+  }
 
   static convertTimeWithMillsecond(millsecond) {
     const totalSecond = millsecond / 1000
@@ -405,7 +452,7 @@ export class Utils {
   }
 
   static Image(src) {
-    let image = wx.createImage()
+    let image = Image()
     image.src = src
     return image
   }
@@ -498,7 +545,8 @@ export class Utils {
       maxHeight: Number,
       left: Number,
       top: Number,
-      textMeasuredWidth: Array
+      textMeasuredWidth: Array,
+      getContentWidth: Function
     }
   ) {
 
@@ -533,7 +581,9 @@ export class Utils {
           currentRowTop += param.textSize + param.lineSpace
         }
       }
-
+      if (item == param.text.lastIndex()) {
+        if (typeof param.getContentWidth === 'function') param.getContentWidth(currentRowWidth)
+      }
     }
   }
 

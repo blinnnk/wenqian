@@ -54,7 +54,16 @@ const backImage = Utils.Image(UIKit.imageSrc.back)
 // 通用组件方法
 export class Component {
 
+  static canvas = Canvas
   static context = context
+  static adaptingIPhoneXTop = adaptingIPhoneXTop
+
+  static ScreenSize = {
+    width: Canvas.width * 2,
+    height: Canvas.height * 2
+  }
+
+  static backButtonRect = backButtonRect
 
   static isShakingPhone(param = { onShaking: Function, onEnd: Function }) {
     wx.onAccelerometerChange((value) => {
@@ -93,17 +102,6 @@ export class Component {
       }
     })
   }
-
-  static adaptingIPhoneXTop = adaptingIPhoneXTop
-
-  static canvas = Canvas
-
-  static ScreenSize = {
-    width: Canvas.width * 2,
-    height: Canvas.height * 2
-  }
-
-  static backButtonRect = backButtonRect
 
   static addBackButton(context) {
     Utils.drawCustomImage(context, backImage, backButtonRect)

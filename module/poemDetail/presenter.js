@@ -7,7 +7,6 @@ import { NetUtils } from '../../util/netUtils'
 import { Global } from '../../common/global'
 import { Utils } from '../../util/utils'
 
-
 export class Presenter {
 
   static setSrcOf(image) {

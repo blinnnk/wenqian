@@ -109,10 +109,8 @@ export class HomePage {
       branchRect,
       5,
       UIKit.size.branch,
-      function () {
-        // 画树叶的下落动画
-        Component.fallingLeaf(context)
-      }
+      // 画树叶的下落动画
+      () => Component.fallingLeaf(context)
     )
   }
 }
