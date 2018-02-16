@@ -9,9 +9,11 @@ import { Component } from '../../common/component'
 import { Utils } from '../../util/utils'
 import { NetUtils } from '../../util/netUtils'
 import { Api } from '../../common/api'
+import { Image } from '../../common/element'
 
-const prodImage = wx.createImage()
-const prodNameImage = wx.createImage()
+
+const prodImage = Image()
+const prodNameImage = Image()
 
 const moveDistance = Component.ScreenSize.height * 2
 
@@ -86,14 +88,13 @@ export class ProdDetail {
       lineHeight: 35
     })
 
-    Utils.drawRoundRect(
-      context,
-      6,
-      buttonRect,
-      UIKit.size.roundRectButtonHeight,
-      UIKit.color.title,
-      'Check Prod Detail'
-    )
+    Utils.drawRoundRect(context, {
+      strokeWidth: 6,
+      radius: UIKit.size.roundRectButtonHeight,
+      strokeColor: UIKit.color.title,
+      rect: buttonRect,
+      text: 'Check Prod Detail'
+    })
   }
 }
 

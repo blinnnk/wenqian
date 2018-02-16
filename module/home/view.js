@@ -6,6 +6,8 @@
 import { UIKit } from '../../common/uikit'
 import { Component } from '../../common/component'
 import { Utils } from '../../util/utils'
+import { Image } from '../../common/element'
+
 
 let ScreenSize = Component.ScreenSize
 
@@ -55,22 +57,22 @@ let destinyRect = {
 }
 
 // 主页的图片对象
-let logoImage = wx.createImage()
+let logoImage = Image()
 logoImage.src = UIKit.imageSrc.logo
 
-let buttonBackgroundImage = wx.createImage()
+let buttonBackgroundImage = Image()
 buttonBackgroundImage.src = UIKit.imageSrc.buttonBackground
 
-let historyImage = wx.createImage()
+let historyImage = Image()
 historyImage.src = UIKit.imageSrc.history
 
-let destinyImage = wx.createImage()
+let destinyImage = Image()
 destinyImage.src = UIKit.imageSrc.destiny
 
-let redDotImage = wx.createImage()
+let redDotImage = Image()
 redDotImage.src = UIKit.imageSrc.redDot
 
-let branchImage = wx.createImage()
+let branchImage = Image()
 branchImage.src = UIKit.imageSrc.branch
 
 export class HomePage {
@@ -107,10 +109,8 @@ export class HomePage {
       branchRect,
       5,
       UIKit.size.branch,
-      function () {
-        // 画树叶的下落动画
-        Component.fallingLeaf(context)
-      }
+      // 画树叶的下落动画
+      () => Component.fallingLeaf(context)
     )
   }
 }

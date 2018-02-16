@@ -8,6 +8,7 @@ import { Component } from '../../common/component'
 import { Utils } from '../../util/utils'
 import { Touch } from '../../common/launch'
 import { Global } from '../../common/global'
+import { Image } from '../../common/element'
 
 const boxSize = Component.ScreenSize.width * 0.9
 const shadowSize = Component.ScreenSize.width * 0.5
@@ -16,8 +17,8 @@ const boxLeft = Component.ScreenSize.width * 0.05
 const loveBoxLeft = Component.ScreenSize.width * 1.05
 
 const shadowImage = Utils.Image(UIKit.imageSrc.shadow)
-const boxImage = wx.createImage()
-const loveBoxImage = wx.createImage()
+const boxImage = Image()
+const loveBoxImage = Image()
 const loveShadowImage = Utils.Image(UIKit.imageSrc.shadow)
 
 const boxRect = {
@@ -73,7 +74,6 @@ const timeBackgroundRect = {
   height: 170 * 0.8
 }
 
-// 计算倒计时的参数
 let currentTime
 let isBlockStatus = false
 let countDownInterval = null
@@ -162,7 +162,7 @@ export class DestinyPage {
   * 是服务器时间, 这里面有多种场景的重新校验。例如, 页面切换, 后台到前台等。
   * 没有使用长连接，所以在每次进入界面前的触发点进行再次校验.
   */
-  static initLockTime(currentLockTime, callback) {
+  static initLockTime(currentLockTime) {
     if (currentLockTime <= 0) {
       isBlockStatus = false
       if (countDownInterval != null) {

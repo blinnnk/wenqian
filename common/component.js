@@ -8,6 +8,7 @@ import { Global } from 'global'
 import { Utils } from '../util/utils'
 import { NetUtils } from '../util/netUtils'
 import { Api } from '../common/api'
+import { Image } from '../common/element'
 
 // 落叶动画用到的参数
 let leafSrc =
@@ -53,7 +54,16 @@ const backImage = Utils.Image(UIKit.imageSrc.back)
 // 通用组件方法
 export class Component {
 
+  static canvas = Canvas
   static context = context
+  static adaptingIPhoneXTop = adaptingIPhoneXTop
+
+  static ScreenSize = {
+    width: Canvas.width * 2,
+    height: Canvas.height * 2
+  }
+
+  static backButtonRect = backButtonRect
 
   static isShakingPhone(param = { onShaking: Function, onEnd: Function }) {
     wx.onAccelerometerChange((value) => {
@@ -93,17 +103,6 @@ export class Component {
     })
   }
 
-  static adaptingIPhoneXTop = adaptingIPhoneXTop
-
-  static canvas = Canvas
-
-  static ScreenSize = {
-    width: Canvas.width * 2,
-    height: Canvas.height * 2
-  }
-
-  static backButtonRect = backButtonRect
-
   static addBackButton(context) {
     Utils.drawCustomImage(context, backImage, backButtonRect)
   }
@@ -118,7 +117,7 @@ export class Component {
   // 画落叶的函数
   static fallingLeaf(context) {
     for (let index = 0; index < fallingLeafCount; index++) {
-      const leafImage = wx.createImage()
+      const leafImage = Image()
       leafY += 1
       // X轴的动画算法
       leafX = context.canvas.width / 2 * (1.75 - index % 2) *

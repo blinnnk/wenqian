@@ -4,7 +4,6 @@
 */
 
 import { Component } from '../common/component'
-import { Utils } from '../util/utils'
 
 export const Controller = (onDraw) => {
   (function drawDetail() {
