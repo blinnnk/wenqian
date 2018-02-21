@@ -9,7 +9,6 @@ import { Utils } from '../../util/utils'
 import { Global } from '../../common/global'
 import { Presenter } from 'presenter'
 import { Model } from 'model'
-import { Image } from '../../common/element'
 
 
 const typeImage = Utils.Image(UIKit.imageSrc.zhouGongType)
@@ -30,8 +29,6 @@ const dotLeft = typeImageRect.left + typeImageRect.width / 2
 const prodIndexLeft = typeImageRect.left + (typeImageRect.width - UIKit.textSize.title) / 2
 
 let model
-let imageInfo = null
-let textContentImage = Image()
 
 export class Explanation {
 
@@ -93,15 +90,12 @@ export class Explanation {
         left: contentLeft,
         top: contentTotalHeight + touchMoveY,
         textMeasuredWidth: model.eachContentTextWidth,
-        getTotalHeight: (totalHeight) => {
-          contentTotalHeight += totalHeight + 50
-        }
+        getTotalHeight: (totalHeight) => contentTotalHeight += totalHeight + 50
       })
 
       if (item === Presenter.content.last()) {
         // 这个值传出去用来控制手指上下滚动事件边界的限制
-        if (typeof getContentHeight === 'function')
-          getContentHeight(contentTotalHeight)
+        if (typeof getContentHeight === 'function') getContentHeight(contentTotalHeight)
       }
     })
   }

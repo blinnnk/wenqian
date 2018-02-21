@@ -242,6 +242,7 @@ export class Utils {
       // 初始化用来判断是点击还是滑动的值
       currentMoveX = 0
       currentMoveY = 0
+      setTimeout(() => isClickEvent = false, 50)
     })
   }
 
