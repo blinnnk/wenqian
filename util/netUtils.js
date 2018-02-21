@@ -110,44 +110,41 @@ export class NetUtils {
     holdImages: Function, 
     downloadListener: Function,
   }) {
-    
-    requestFromServer()
 
     let allImageSize = 0
     let finishedSize = 0
+    let fileManager = wx.getFileSystemManager()
     const images = {}
 
-    function requestFromServer() {
-      // 访问接口获取图片地址
-      NetUtils.getResultWithApi({
-        url: Api.serverImage,
-        response: (result) => {
-          let objectKey
-          // 先获取全部图片的尺寸及字典的 `key` 值
-          for (objectKey in result.data.images) {
-            allImageSize += result.data.images[objectKey].size
-            finishedSize = allImageSize
-          }
-          let count = 0
-          // 下载图片并存储图片的名字地址到数组对象里面
-          for (objectKey in result.data.images) {
-            downloadFile(
-              // 这个函数内部会判断是否需要下载的逻辑
-              objectKey, 
-              result.data.images[objectKey].url, 
-              () => {
-                count += 1
-                if (count === Object.keys(result.data.images).length) {
-                  // 在循环完毕后回调传出全部的对象
-                  if (typeof parameters.holdImages === 'function')
-                    parameters.holdImages(images)
-                }
-              }
-            )
-          }
+    // 访问接口获取图片地址
+    NetUtils.getResultWithApi({
+      url: Api.serverImage,
+      response: (result) => {
+        let objectKey
+        // 先获取全部图片的尺寸及字典的 `key` 值
+        for (objectKey in result.data.images) {
+          allImageSize += result.data.images[objectKey].size
+          finishedSize = allImageSize
         }
-      })
-    }
+        let count = 0
+        // 下载图片并存储图片的名字地址到数组对象里面
+        for (objectKey in result.data.images) {
+          downloadFile(
+            // 这个函数内部会判断是否需要下载的逻辑
+            objectKey,
+            result.data.images[objectKey].url,
+            () => {
+              count += 1
+              if (count === Object.keys(result.data.images).length) {
+                // 在循环完毕后回调传出全部的对象
+                if (typeof parameters.holdImages === 'function')
+                  parameters.holdImages(images)
+              }
+            }
+          )
+        }
+      }
+    })
 
     function downloadFile(key, imagePath, getElement) {
       // 检查本地是否已经有存储的对应的 `Key` 值得图片
@@ -186,8 +183,17 @@ export class NetUtils {
         wx.getStorage({
           key: key,
           success: function (result) {
-            isSuccess = true
-            if (typeof getElement === 'function') getElement(images[key] = result.data)
+            // 检查文件是否存在, 使用中存在数据缓存在但文件却被回收的情况.
+            fileManager.getFileInfo({
+              filePath: result.data,
+              success: (fileResult) => {
+                if (fileResult.size > 0) {
+                  isSuccess = true
+                  if (typeof getElement === 'function') 
+                    getElement(images[key] = result.data)
+                }
+              }
+            })
           },
           complete: () => { if (typeof callback === 'function') callback(isSuccess) }
         })
