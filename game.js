@@ -221,7 +221,6 @@ function showPage(name, context) {
   if (name == null) return
   // 当前页面不是摇签界面关闭加速监听
 
-
   const names = {
     'home': () => Pages.home(context),
     'history': () => Pages.history(context),
