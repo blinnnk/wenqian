@@ -15,7 +15,7 @@ export function Model(data) {
     eachTitleTextWidth: [],
     eachContentTextWidth: []
   }
-  // 在这里提前计算好每个文字的宽度较少绘制时计算的压力
+  // 在这里提前计算好每个文字的宽度减少绘制时计算的压力
   model.eachTitleTextWidth = 
     Utils.measureEachText(Component.context, data.title, UIKit.textSize.title, UIKit.font.title)
   model.eachContentTextWidth = 

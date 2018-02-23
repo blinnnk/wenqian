@@ -101,6 +101,7 @@ export class ProdDetail {
 const prodTypeImageSrc = (name) => {
   const src = {
     '上上签': UIKit.prodType.prodName1,
+    '下下签': UIKit.prodType.prodName16,
     '上签': UIKit.prodType.prodName2,
     '上中签': UIKit.prodType.prodName3,
     '中签': UIKit.prodType.prodName4,
