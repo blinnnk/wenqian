@@ -43,7 +43,7 @@ Utils.sequentialExecution({
     NetUtils.getLocalImageFromServer({
       holdImages: (images) => Global.serverImages = images,
       // 更新网络资源并在界面显示当前下载的进度
-      downloadListener: (percent) => 
+      downloadListener: (percent) =>
         Component.drawWaiting({ percent: percent, complete: launchPage })
     })
 
@@ -51,7 +51,7 @@ Utils.sequentialExecution({
       currentPage = PageName.home
       controller = Controller((context) => showPage(currentPage, context))
     }
-  } 
+  }
 })
 
 // 摇晃手机的监听并判断是否处在可以求签的界面触发对应的事件
@@ -95,9 +95,9 @@ function clickToLoadPage(clickRect, targetPageName) {
     },
     setClickSoundEffect: () => {
       targetPageName === PageName.guanYinDetail
-      || targetPageName === PageName.zhouGongDetail
-      ? sound.playBells() 
-      : sound.playClickSoundEffect()
+        || targetPageName === PageName.zhouGongDetail
+        ? sound.playBells()
+        : sound.playClickSoundEffect()
     }
   }
   // 点击事件
@@ -105,7 +105,7 @@ function clickToLoadPage(clickRect, targetPageName) {
     resetGeneralParameters()
     // 不同点击事件设定不同的点击音效
     event.setClickSoundEffect()
-    
+
     // 如果目标页面是摇签界面就打开加速度监听
     executeByPageName(
       wx.startAccelerometer,
