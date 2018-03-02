@@ -110,7 +110,7 @@ const prodTypeImageSrc = (name) => {
     '中下签': UIKit.prodType.prodName7,
     '下签': UIKit.prodType.prodName8,
     '大吉': UIKit.prodType.prodName9,
-    '上吉': UIKit.prodType.prodName10,
+    '上吉签': UIKit.prodType.prodName10,
     '中吉签': UIKit.prodType.prodName11,
     '上平签': UIKit.prodType.prodName12,
     '中平签': UIKit.prodType.prodName13,
